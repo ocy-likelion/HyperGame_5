@@ -9,21 +9,23 @@ public class MineralGenerator : MonoBehaviour
     [SerializeField] GameObject prefab_Mineral;
     Vector2 GEN_POS = new Vector2(0, 4f);
 
-    public async void GenerateGold()
+    const float STONE_PROB = 0.40f;
+    const float COPPER_PROB = 0.25f;
+    const float SILVER_PROB = 0.15f;
+    const float GOLD_PROB = 0.05f;
+
+    public async void GenerateRandomMineral()
     {
-        await GenerateMineralAsync(MineralTypeEnum.Gold);
-    }
-    public async void GenerateSilver()
-    {
-        await GenerateMineralAsync(MineralTypeEnum.Silver);
-    }
-    public async void GenerateCopper()
-    {
-        await GenerateMineralAsync(MineralTypeEnum.Copper);
-    }
-    public async void GenerateStone()
-    {
-        await GenerateMineralAsync(MineralTypeEnum.Stone);
+        float n = Random.Range(0f, 1f);
+
+        if (n <= GOLD_PROB)
+            await GenerateMineralAsync(MineralTypeEnum.Gold);
+        else if (n <= GOLD_PROB + SILVER_PROB)
+            await GenerateMineralAsync(MineralTypeEnum.Silver);
+        else if (n <= GOLD_PROB + SILVER_PROB + COPPER_PROB)
+            await GenerateMineralAsync(MineralTypeEnum.Copper);
+        else
+            await GenerateMineralAsync(MineralTypeEnum.Stone);
     }
 
     async Task GenerateMineralAsync(MineralTypeEnum type)
@@ -48,7 +50,7 @@ public class MineralGenerator : MonoBehaviour
         }
 
         // 어드레서블로 게임오브젝트 불러오기
-        AsyncOperationHandle<Sprite> spriteLoadHandle = Addressables.LoadAssetAsync<Sprite>(address.ToString());
+        AsyncOperationHandle<Sprite> spriteLoadHandle = Addressables.LoadAssetAsync<Sprite>("Sprite_Stone_1"); // address.ToString()
         Sprite sprite = await spriteLoadHandle.Task;
 
         // 오브젝트 생성

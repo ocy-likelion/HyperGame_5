@@ -18,8 +18,6 @@ public class MineralObj : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
         pM = col.sharedMaterial;
-
-        //SetMineralProperty();
     }
 
     void Update()
@@ -39,10 +37,13 @@ public class MineralObj : MonoBehaviour
             rb.linearVelocity = vel.normalized * MAX_SPEED;
         }
     }
-    void SetMineralProperty()
-    {
-        rb.mass = MASS;
-        pM.friction = so_Mineral.Friction;
-        pM.bounciness = so_Mineral.Bounciness;
-    }
+
+
+    //// LEGACY
+    //void SetMineralProperty()
+    //{
+    //    rb.mass = MASS;
+    //    pM.friction = so_Mineral.Friction;
+    //    pM.bounciness = so_Mineral.Bounciness;
+    //}
 }
