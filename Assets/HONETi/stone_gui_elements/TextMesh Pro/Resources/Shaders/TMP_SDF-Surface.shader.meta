@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 7de0b9a3fb739904d9c181ccf7e616e3
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179737
+  packageName: Stone & Jungle GUI / UI Kit + over 850 PNG + PDS/AI sources!
+  packageVersion: 1.0
+  assetPath: Assets/HONETi/stone_gui_elements/TextMesh Pro/Resources/Shaders/TMP_SDF-Surface.shader
+  uploadId: 397814

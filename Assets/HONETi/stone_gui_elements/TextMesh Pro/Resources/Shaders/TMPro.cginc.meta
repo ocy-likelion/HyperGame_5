@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4c3290eac43ba1f4aa55cb3f7608f626
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179737
+  packageName: Stone & Jungle GUI / UI Kit + over 850 PNG + PDS/AI sources!
+  packageVersion: 1.0
+  assetPath: Assets/HONETi/stone_gui_elements/TextMesh Pro/Resources/Shaders/TMPro.cginc
+  uploadId: 397814

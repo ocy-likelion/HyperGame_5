@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 2bb51dec21b704044991d58365ab2797
+timeCreated: 1450517184
+licenseType: Store
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179737
+  packageName: Stone & Jungle GUI / UI Kit + over 850 PNG + PDS/AI sources!
+  packageVersion: 1.0
+  assetPath: Assets/HONETi/stone_gui_elements/TextMesh Pro/Resources/Shaders/TMP_Sprite.shader
+  uploadId: 397814
