@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,7 +15,7 @@ public class PlayManager : MonoBehaviour
     float blockSpawnPointFreqeuncy = 1.5f;
 
     float currentTowerHeight;
-    float goalTowerHeight = 10.0f; // ÀÓ½Ã
+    float goalTowerHeight = 10.0f; // ì„ì‹œ
 
     float totalElapsedTime = 0.0f;
 
@@ -26,12 +26,12 @@ public class PlayManager : MonoBehaviour
 
     void Update()
     {
-        #region ÀÓ½Ã blockSpawnPoint ÀÌµ¿, µå·¡±× ¾Ø µå·ÓÀ¸·Î °íÃÄ¾ß ÇÔ
+        #region ì„ì‹œ blockSpawnPoint ì´ë™, ë“œë˜ê·¸ ì•¤ ë“œë¡­ìœ¼ë¡œ ê³ ì³ì•¼ í•¨
         blockSpawnPoint.transform.position = new Vector3(Mathf.Sin(Time.time * blockSpawnPointFreqeuncy), 4.0f, 0.0f);
         #endregion
 
         CheckHighestBlock();
-        CheckTowerHeight();  // ºí·°À» ¸· »ı¼ºÇßÀ» ¶§ÀÇ À§Ä¡·Î Å¸¿ö ³ôÀÌ°¡ °»½ÅµÇ´Â ¹®Á¦
+        CheckTowerHeight();  // ë¸”ëŸ­ì„ ë§‰ ìƒì„±í–ˆì„ ë•Œì˜ ìœ„ì¹˜ë¡œ íƒ€ì›Œ ë†’ì´ê°€ ê°±ì‹ ë˜ëŠ” ë¬¸ì œ
 
         Debug.Log(currentTowerHeight);
     }
@@ -44,10 +44,14 @@ public class PlayManager : MonoBehaviour
 
     void CheckHighestBlock()
     {
-        // ±â¹Í È°¿ëÀ» À§ÇÑ ÃÖ»ó´Ü ºí·° °»½Å
+        // íƒ€ì›Œ ë†’ì´ ê°±ì‹ 
+        // ê¸°ë¯¹ í™œìš©ì„ ìœ„í•œ ìµœìƒë‹¨ ë¸”ëŸ­ ê°±ì‹ 
+        currentTowerHeight = -10.0f;
+        
         foreach (var block in blockList)
         {
             float height = block.GetComponent<Collider2D>().bounds.max.y;
+
             if (height > currentTowerHeight)
             {
                 currentTowerHeight = height;
@@ -58,7 +62,7 @@ public class PlayManager : MonoBehaviour
 
     void CheckTowerHeight()
     {
-        // Å¸¿ö ³ôÀÌ °»½Å
+        // ëª©í‘œ ìœ„ì¹˜ì— ë„ë‹¬í•˜ë©´ ê²Œì„ í´ë¦¬ì–´
         if (currentTowerHeight > goalTowerHeight)
         {
             EventBus.Instance.Publish(Consts.GAMECLEAR);
@@ -68,23 +72,23 @@ public class PlayManager : MonoBehaviour
     #region gimmicks
     void Wind()
     {
-        Debug.Log("Èİ");
+        Debug.Log("íœ­");
     }
 
     void Mole()
     {
-        Debug.Log("µÎ´õÁö");
+        Debug.Log("ë‘ë”ì§€");
     }
     #endregion
 
-    #region °³¹ß¿ë
+    #region ê°œë°œìš©
 
     float nextTurnTime = 0.5f;
 
 
     public void CreateBlock()
     {
-        // ±¤¹° »ı¼º ¹× µå·Ó
+        // ê´‘ë¬¼ ìƒì„± ë° ë“œë¡­
         DropButton.gameObject.SetActive(false);
 
         GameObject newBlock = Instantiate(BlockPrefab);

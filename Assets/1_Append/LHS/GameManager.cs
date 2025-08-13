@@ -1,4 +1,4 @@
-using TMPro;
+ï»¿using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -35,26 +35,26 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        // °ÔÀÓ ½ÃÀÛ
+        // ê²Œì„ ì‹œì‘
     }
 
     public void PauseGame()
     {
-        // °ÔÀÓ ÀÏ½ÃÁ¤Áö
+        // ê²Œì„ ì¼ì‹œì •ì§€
         Time.timeScale = 0.0f;
         PausePanel.gameObject.SetActive(true);
     }
 
     public void ResumeGame()
     {
-        // °ÔÀÓ Àç°³
+        // ê²Œì„ ì¬ê°œ
         Time.timeScale = 1.0f;
         PausePanel.gameObject.SetActive(false);
     }
 
     public void RestartGame()
     {
-        // °ÔÀÓ Àç½ÃÀÛ
+        // ê²Œì„ ì¬ì‹œì‘
         Time.timeScale = 1.0f;
         ClearPanel.gameObject.SetActive(false);
         GameOverPanel.gameObject.SetActive(false);
@@ -63,23 +63,23 @@ public class GameManager : MonoBehaviour
 
     public void QuitGame()
     {
-        // ¸ŞÀÎ ¸Ş´º·Î?
+        // ë©”ì¸ ë©”ë‰´ë¡œ?
         //SceneManager.LoadScene();
     }
 
     void GameClear()
     {
-        // °ÔÀÓ Å¬¸®¾î
+        // ê²Œì„ í´ë¦¬ì–´
         Time.timeScale = 0.0f;
         ClearPanel.gameObject.SetActive(true);
     }
 
     void GameOver()
     {
-        // °ÔÀÓ ¿À¹ö
+        // ê²Œì„ ì˜¤ë²„
     }
 
-    #region °³¹ß¿ë
+    #region ê°œë°œìš©
 
     #endregion
 }

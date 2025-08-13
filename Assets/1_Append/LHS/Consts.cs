@@ -1,4 +1,4 @@
-public static class Consts
+﻿public static class Consts
 {
     // to use string
     public static string GAMECLEAR = "GameClear";
