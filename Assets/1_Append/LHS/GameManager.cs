@@ -77,6 +77,8 @@ public class GameManager : MonoBehaviour
     void GameOver()
     {
         // 게임 오버
+        Time.timeScale = 0.0f;
+        GameOverPanel.gameObject.SetActive(true);
     }
 
     #region 개발용

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,11 +18,13 @@ public class PlayManager : MonoBehaviour
     float currentTowerHeight;
     float goalTowerHeight = 10.0f; // 임시
 
+    public TMP_Text elapsedTimeText;
     float totalElapsedTime = 0.0f;
+    float timeLimit = 10.0f;
 
     void Start()
     {
-        StartCoroutine("GameTimer");
+        StartCoroutine(GameTimer());
     }
 
     void Update()
@@ -29,6 +32,8 @@ public class PlayManager : MonoBehaviour
         #region 임시 blockSpawnPoint 이동, 드래그 앤 드롭으로 고쳐야 함
         blockSpawnPoint.transform.position = new Vector3(Mathf.Sin(Time.time * blockSpawnPointFreqeuncy), 4.0f, 0.0f);
         #endregion
+
+        elapsedTimeText.text = ((int)totalElapsedTime).ToString();
 
         CheckHighestBlock();
         CheckTowerHeight();  // 블럭을 막 생성했을 때의 위치로 타워 높이가 갱신되는 문제
@@ -38,8 +43,13 @@ public class PlayManager : MonoBehaviour
 
     IEnumerator GameTimer()
     {
-        totalElapsedTime += Time.deltaTime;
-        yield return null;
+        while (totalElapsedTime < timeLimit)
+        {
+            totalElapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        EventBus.Instance.Publish(Consts.GAMEOVER);
     }
 
     void CheckHighestBlock()
@@ -84,7 +94,6 @@ public class PlayManager : MonoBehaviour
     #region 개발용
 
     float nextTurnTime = 0.5f;
-
 
     public void CreateBlock()
     {
