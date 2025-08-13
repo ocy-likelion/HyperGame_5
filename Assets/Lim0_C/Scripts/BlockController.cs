@@ -25,7 +25,7 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     //초기화
     private void Init()
     {
-        // 화면 중앙 좌표
+        // 화면 중상단 좌표
         Vector3 screenUpperCenter =
             new Vector3(Screen.width * 0.5f, Screen.height * 0.8f, CAMERA_OFFSET);
         // 화면 좌표 → 월드 좌표 변환
@@ -39,6 +39,7 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         predicPos.y -= 4f;
         _predictionLine.position = predicPos;
         _predictionLine.gameObject.SetActive(false);
+        
 
     }
     //돌 생성 기능
