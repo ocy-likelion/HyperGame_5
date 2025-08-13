@@ -30,6 +30,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1619a5cc860e7bb4caec9ca8cff2b264
+    m_Address: Assets/1_Append/SSH/09_Assets/Sprite_NaturalGas_Left 1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 23d03d67e020dea4898723d3c5c43ee1
     m_Address: Sprite_Copper_2
     m_ReadOnly: 0
@@ -40,6 +45,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3a51e410e3b50604a96f1a7de85b44d8
+    m_Address: Sprite_Feather_1
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3d5e064cc21e1184f9e5811051dcb835
     m_Address: Sprite_Copper_3
     m_ReadOnly: 0
@@ -47,6 +57,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 79bdf43d0f418d2488b253dd22b3f9cf
     m_Address: Sprite_Stone_4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9759b49b711d4e441a9b6373b770aa48
+    m_Address: Sprite_Mole_1
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

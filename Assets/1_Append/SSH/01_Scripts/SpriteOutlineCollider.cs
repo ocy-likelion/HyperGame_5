@@ -6,9 +6,9 @@ public class SpriteOutlineCollider : MonoBehaviour
 {
     [Header("주요 프로퍼티")]
     float alphaThreshold = 0.1f;
-    [Tooltip("값이 클수록 콜라이더의 꼭짓점이 단순해집니다.")] public float simplifyTolerancePixels = 1f;
-    [Tooltip("값이 클수록 콜라이더가 작아집니다.")] [Range(0f, 0.05f)] public float shrinkAmount = 0.02f; // 콜라이더 축소값
-    [Tooltip("콜라이더 기즈모를 그릴지 여부입니다.")] public bool drawGizmos = true;
+    public float simplifyTolerancePixels = 1f; //값이 클수록 콜라이더의 꼭짓점이 단순해집니다.
+    [Range(0f, 0.05f)] public float shrinkAmount = 0.02f; // 값이 클수록 콜라이더가 작아집니다.
+    public bool drawGizmos = true; // 콜라이더 기즈모를 그릴지 여부입니다.
 
     [Header("부가 프로퍼티")]
     List<List<Vector2>> contours = new List<List<Vector2>>();

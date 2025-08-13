@@ -11,6 +11,7 @@ public class MineralObj : MonoBehaviour
     [Header("주요 프로퍼티")]
     const float MAX_SPEED = 5f;
     const float MASS = 10;
+    const float CRITICAL_POINT = -6f;
     [SerializeField] SO_Mineral so_Mineral;
 
     void Awake()
@@ -22,7 +23,7 @@ public class MineralObj : MonoBehaviour
 
     void Update()
     {
-        if (transform.position.y < -6)
+        if (transform.position.y < CRITICAL_POINT)
         {
             Destroy(gameObject);
         }
@@ -37,13 +38,4 @@ public class MineralObj : MonoBehaviour
             rb.linearVelocity = vel.normalized * MAX_SPEED;
         }
     }
-
-
-    //// LEGACY
-    //void SetMineralProperty()
-    //{
-    //    rb.mass = MASS;
-    //    pM.friction = so_Mineral.Friction;
-    //    pM.bounciness = so_Mineral.Bounciness;
-    //}
 }
