@@ -7,5 +7,7 @@
     public static string PAUSEGAME = "PauseGame";
     public static string RESUMEGAME = "ResumeGame";
 
+    public static string BLOCKLANDED = "BlockLanded";
+
     public static string GAMESCENE = "GameScene";
 }

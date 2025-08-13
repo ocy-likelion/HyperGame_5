@@ -10,17 +10,28 @@ public class PlayManager : MonoBehaviour
 
     public GameObject BlockPrefab;
     List<GameObject> blockList = new List<GameObject>();
+    List<GameObject> newBlockList = new List<GameObject>();
     GameObject highestBlock;
 
     public GameObject blockSpawnPoint;
     float blockSpawnPointFreqeuncy = 1.5f;
 
     float currentTowerHeight;
-    float goalTowerHeight = 10.0f; // 임시
+    float goalTowerHeight = 2.0f; // 임시
 
     public TMP_Text elapsedTimeText;
     float totalElapsedTime = 0.0f;
-    float timeLimit = 10.0f;
+    float timeLimit = 15.0f;
+
+    void OnEnable()
+    {
+        EventBus.Instance.Subscribe(Consts.BLOCKLANDED, AddBlock);
+    }
+
+    void OnDisable()
+    {
+        EventBus.Instance.Unsubscribe(Consts.BLOCKLANDED, AddBlock);
+    }
 
     void Start()
     {
@@ -36,9 +47,9 @@ public class PlayManager : MonoBehaviour
         elapsedTimeText.text = ((int)totalElapsedTime).ToString();
 
         CheckHighestBlock();
-        CheckTowerHeight();  // 블럭을 막 생성했을 때의 위치로 타워 높이가 갱신되는 문제
+        CheckTowerHeight();
 
-        Debug.Log(currentTowerHeight);
+        towerHeightLine.transform.position = new Vector3(0.0f, currentTowerHeight, 0.0f);
     }
 
     IEnumerator GameTimer()
@@ -56,16 +67,20 @@ public class PlayManager : MonoBehaviour
     {
         // 타워 높이 갱신
         // 기믹 활용을 위한 최상단 블럭 갱신
-        currentTowerHeight = -10.0f;
+        currentTowerHeight = -9999.0f;
         
         foreach (var block in blockList)
         {
             float height = block.GetComponent<Collider2D>().bounds.max.y;
 
+            //block.GetComponent<SpriteRenderer>().color = Color.white; // 임시
+            
             if (height > currentTowerHeight)
             {
                 currentTowerHeight = height;
                 highestBlock = block;
+                
+                //block.GetComponent<SpriteRenderer>().color = Color.blue; // 임시
             }
         }
     }
@@ -93,6 +108,7 @@ public class PlayManager : MonoBehaviour
 
     #region 개발용
 
+    [SerializeField] GameObject towerHeightLine;
     float nextTurnTime = 0.5f;
 
     public void CreateBlock()
@@ -107,9 +123,20 @@ public class PlayManager : MonoBehaviour
             blockSpawnPoint.transform.position.y,
             blockSpawnPoint.transform.position.z
             );
-        blockList.Add(newBlock);
 
-        StartCoroutine("WaitAndShowButton");
+        newBlockList.Add(newBlock);
+
+        StartCoroutine(WaitAndShowButton());
+    }
+
+    void AddBlock()
+    {
+        if (newBlockList.Count > 0)
+        {
+            blockList.Add(newBlockList[0]);
+        }
+
+        newBlockList.RemoveAt(0);
     }
 
     IEnumerator WaitAndShowButton()
