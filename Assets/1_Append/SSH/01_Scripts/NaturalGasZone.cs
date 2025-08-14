@@ -4,33 +4,36 @@ using UnityEngine;
 public class NaturalGasZone : MonoBehaviour
 {
     [SerializeField] Vector2 windDirection = Vector2.right; // 바람 방향
-    [SerializeField] float windStrength = 5f; // 바람 세기
+    [SerializeField] float windStrength = 5f; // 바람 세기 (유닛/초)
 
-    List<Rigidbody2D> affectedRbs = new List<Rigidbody2D>();
+    List<Transform> affectedObjects = new List<Transform>();
 
     void FixedUpdate()
     {
-        foreach (var rb in affectedRbs)
+        Vector3 move = (Vector3)windDirection.normalized * windStrength * Time.fixedDeltaTime;
+
+        foreach (var obj in affectedObjects)
         {
-            rb.AddForce(windDirection.normalized * windStrength, ForceMode2D.Force); // 질량에 상관없이 밀고 싶다면 추후 rb.mass를 곱할 것
+            if (obj != null)
+                obj.position += move;
         }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        Rigidbody2D rb = collision.attachedRigidbody;
-        if (rb != null && !affectedRbs.Contains(rb))
+        // Rigidbody가 없어도 Transform을 추가
+        if (!affectedObjects.Contains(collision.transform))
         {
-            affectedRbs.Add(rb);
+            Debug.Log("들어옴");
+            affectedObjects.Add(collision.transform);
         }
     }
 
     void OnTriggerExit2D(Collider2D collision)
     {
-        Rigidbody2D rb = collision.attachedRigidbody;
-        if (rb != null && affectedRbs.Contains(rb))
+        if (affectedObjects.Contains(collision.transform))
         {
-            affectedRbs.Remove(rb);
+            affectedObjects.Remove(collision.transform);
         }
     }
 }

@@ -91,6 +91,8 @@ public class MineralDataManager : MonoBehaviour
             float maxY = 0;
             foreach (var block in ingameBlockList)
             {
+                if (block == null) continue;
+
                 float temp = block.transform.position.y;
                 maxY = Mathf.Max(temp, maxY);
             }

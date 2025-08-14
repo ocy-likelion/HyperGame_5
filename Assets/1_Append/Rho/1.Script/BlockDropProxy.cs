@@ -37,7 +37,6 @@ public class BlockDropProxy : MonoBehaviour
             _blockTopObject.GetComponent<BlockOnlyTop>().InstantiateProxyObject(mineralDataManager.GetParentTopObject(), GetComponent<SpriteRenderer>().sprite);
             proxyObjectPool.Return(gameObject);
             mineralDataManager.AddLastBlock(_blockTopObject);
-            Debug.Log(_blockTopObject.GetInstanceID());
         }
     }
 }
