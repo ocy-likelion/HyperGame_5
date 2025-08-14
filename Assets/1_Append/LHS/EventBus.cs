@@ -59,11 +59,14 @@ public class EventBus : MonoBehaviour
 
     public void Unsubscribe(string eventName, Action listener)
     {
-        eventDictionary[eventName] -= listener;
-
-        if (eventDictionary[eventName] == null)
+        if (eventDictionary.ContainsKey(eventName)) 
         {
-            eventDictionary.Remove(eventName);
+            eventDictionary[eventName] -= listener;
+            
+            if (eventDictionary[eventName] == null)
+            {
+                eventDictionary.Remove(eventName);
+            }
         }
     }
 
