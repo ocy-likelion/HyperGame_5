@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6032233432903053141
+--- !u!1 &806113692991070866
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,26 +8,26 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7025888969759638967}
-  - component: {fileID: 8388552272564340551}
-  - component: {fileID: 1720022197518935586}
-  - component: {fileID: 8959742380816257675}
-  - component: {fileID: 2149585147520040931}
-  - component: {fileID: 1092203900604189966}
+  - component: {fileID: 7550482515747326382}
+  - component: {fileID: 9011749439727557724}
+  - component: {fileID: 5922926264826098271}
+  - component: {fileID: 8211464422232322748}
+  - component: {fileID: 372090305634053209}
+  - component: {fileID: 997234667906010929}
   m_Layer: 0
-  m_Name: Prefab_Mineral
-  m_TagString: Untagged
+  m_Name: Prefab_Top
+  m_TagString: Block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7025888969759638967
+--- !u!4 &7550482515747326382
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6032233432903053141}
+  m_GameObject: {fileID: 806113692991070866}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -36,13 +36,13 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &8388552272564340551
+--- !u!212 &9011749439727557724
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6032233432903053141}
+  m_GameObject: {fileID: 806113692991070866}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -91,13 +91,13 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!60 &1720022197518935586
+--- !u!60 &5922926264826098271
 PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6032233432903053141}
+  m_GameObject: {fileID: 806113692991070866}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -143,14 +143,14 @@ PolygonCollider2D:
       - {x: 0.58778536, y: -0.80901694}
       - {x: 0.9510565, y: 0.30901712}
   m_UseDelaunayMesh: 0
---- !u!50 &8959742380816257675
+--- !u!50 &8211464422232322748
 Rigidbody2D:
   serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6032233432903053141}
+  m_GameObject: {fileID: 806113692991070866}
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
@@ -170,13 +170,13 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
---- !u!114 &2149585147520040931
+--- !u!114 &372090305634053209
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6032233432903053141}
+  m_GameObject: {fileID: 806113692991070866}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9fc0a4e3635345d4eaca784cd36808ad, type: 3}
@@ -185,15 +185,15 @@ MonoBehaviour:
   simplifyTolerancePixels: 1
   shrinkAmount: 0.01
   drawGizmos: 1
---- !u!114 &1092203900604189966
+--- !u!114 &997234667906010929
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6032233432903053141}
+  m_GameObject: {fileID: 806113692991070866}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fedcfecd254fe2b4d8b69b21bca7bc21, type: 3}
+  m_Script: {fileID: 11500000, guid: cd6d179508a4efe459b8fe8227c64546, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

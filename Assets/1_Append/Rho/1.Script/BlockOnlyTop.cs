@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class BlockOnlyTop : MonoBehaviour
 {
-    private MineralTypeEnum mineralType;
     private Rigidbody2D rigid;
     private readonly float slideForce = -7f;
     private void Awake()
@@ -10,10 +9,11 @@ public class BlockOnlyTop : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
     }
 
-    public void InstantiateProxyObject(MineralTypeEnum _mineralType, Transform _parent)
+    public void InstantiateProxyObject(Transform _parent, Sprite sprite)
     {
-        mineralType = _mineralType;
         this.transform.SetParent(_parent);
+        GetComponent<SpriteRenderer>().sprite = sprite;
+        GetComponent<SpriteOutlineCollider>().BuildCollider();
     }
 
     public void ApplySlideMotion() // 크리스탈 기믹

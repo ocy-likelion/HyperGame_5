@@ -11,7 +11,7 @@ public class MineralDataManager : MonoBehaviour
     [SerializeField] private Transform topParent;
 
     [Header("Prefabs")]
-    [SerializeField] private GameObject prefabTopMineral;
+    [SerializeField] private GameObject prefab_BlockDropProxy;
     [SerializeField] ProxyObjectPool blockDropProxyPool;
 
     [Header("Properties")]
@@ -80,10 +80,10 @@ public class MineralDataManager : MonoBehaviour
 
         // Load sprite asynchronously
         AsyncOperationHandle<Sprite> spriteLoadHandle = Addressables.LoadAssetAsync<Sprite>(address.ToString());
-        spriteLoadHandle.Completed += (opHandle) => OnSpriteLoadCompleted(opHandle, type);
+        spriteLoadHandle.Completed += (opHandle) => OnSpriteLoadCompleted(opHandle);
     }
 
-    private void OnSpriteLoadCompleted(AsyncOperationHandle<Sprite> opHandle, MineralTypeEnum type)
+    private void OnSpriteLoadCompleted(AsyncOperationHandle<Sprite> opHandle)
     {
         if (opHandle.Status == AsyncOperationStatus.Succeeded)
         {
@@ -99,15 +99,13 @@ public class MineralDataManager : MonoBehaviour
             Vector3 spawnPosition = new Vector3(x, tempY, 0);
 
             // Instantiate prefab
-            GameObject proxyBlock = blockDropProxyPool.Get(type);
+            GameObject proxyBlock = blockDropProxyPool.Get();
 
-            GameObject topBlock = Instantiate(proxyBlock);
-            proxyBlock.SetActive(true);
-
-            proxyBlock.GetComponent<BlockDropProxy>().InstantiateProxyObject(type, this, blockDropProxyPool, proxyBlock);
+            proxyBlock.GetComponent<BlockDropProxy>().InstantiateProxyObject(this, blockDropProxyPool, proxyBlock);
             proxyBlock.transform.position = spawnPosition;
             proxyBlock.transform.SetParent(topParent);
             proxyBlock.GetComponent<SpriteRenderer>().sprite = opHandle.Result;
+            proxyBlock.GetComponent<SpriteOutlineCollider>().BuildCollider();
         }
     }
 

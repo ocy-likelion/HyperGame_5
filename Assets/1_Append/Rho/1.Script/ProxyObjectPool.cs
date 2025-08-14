@@ -40,7 +40,7 @@ public class ProxyObjectPool : MonoBehaviour
         }
     }
 
-    public GameObject Get(MineralTypeEnum mineralType)
+    public GameObject Get()
     {
         if (proxyQueue.Count == 0)
         {
@@ -57,7 +57,7 @@ public class ProxyObjectPool : MonoBehaviour
         return jewelGameObject;
     }
 
-    public void Return(MineralTypeEnum _mineralType, GameObject _gameObject)
+    public void Return(GameObject _gameObject)
     {
         proxyQueue.Enqueue(_gameObject);
         _gameObject.SetActive(false);
