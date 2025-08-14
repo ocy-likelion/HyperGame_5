@@ -43,6 +43,7 @@ public class UIManager : MonoBehaviour
     public Sprite[] TutorialImages;
     public string[] TutorialTexts;
     private int currentTutorialIndex = 0;
+    public TextMeshProUGUI IndexText;
 
     public bool isPaused = false;
 
@@ -233,6 +234,7 @@ public class UIManager : MonoBehaviour
             currentTutorialIndex++;
             TutorialImage.sprite = TutorialImages[currentTutorialIndex];
             TutorialText.text = TutorialTexts[currentTutorialIndex];
+            UpdateTutorialIndexText();
         }
     }
 
@@ -243,7 +245,13 @@ public class UIManager : MonoBehaviour
             currentTutorialIndex--;
             TutorialImage.sprite = TutorialImages[currentTutorialIndex];
             TutorialText.text = TutorialTexts[currentTutorialIndex];
+            UpdateTutorialIndexText();
         }
+    }
+
+    public void UpdateTutorialIndexText()
+    {
+        IndexText.text = $"{currentTutorialIndex + 1}/{TutorialImages.Length}";
     }
 
     public void Reset()
