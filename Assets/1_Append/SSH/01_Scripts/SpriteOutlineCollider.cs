@@ -4,20 +4,19 @@ using UnityEngine;
 
 public class SpriteOutlineCollider : MonoBehaviour
 {
-    [Header("ÁÖ¿ä ÇÁ·ÎÆÛÆ¼")]
+    [Header("ì£¼ìš” í”„ë¡œí¼í‹°")]
     float alphaThreshold = 0.1f;
-    public float simplifyTolerancePixels = 1f; //°ªÀÌ Å¬¼ö·Ï Äİ¶óÀÌ´õÀÇ ²ÀÁşÁ¡ÀÌ ´Ü¼øÇØÁı´Ï´Ù.
-    [Range(0f, 0.05f)] public float shrinkAmount = 0.02f; // °ªÀÌ Å¬¼ö·Ï Äİ¶óÀÌ´õ°¡ ÀÛ¾ÆÁı´Ï´Ù.
-    public bool drawGizmos = true; // Äİ¶óÀÌ´õ ±âÁî¸ğ¸¦ ±×¸±Áö ¿©ºÎÀÔ´Ï´Ù.
+    public float simplifyTolerancePixels = 1f; //ê°’ì´ í´ìˆ˜ë¡ ì½œë¼ì´ë”ì˜ ê¼­ì§“ì ì´ ë‹¨ìˆœí•´ì§‘ë‹ˆë‹¤.
+    [Range(0f, 0.05f)] public float shrinkAmount = 0.02f; // ê°’ì´ í´ìˆ˜ë¡ ì½œë¼ì´ë”ê°€ ì‘ì•„ì§‘ë‹ˆë‹¤.
+    public bool drawGizmos = true; // ì½œë¼ì´ë” ê¸°ì¦ˆëª¨ë¥¼ ê·¸ë¦´ì§€ ì—¬ë¶€ì…ë‹ˆë‹¤.
 
-    [Header("ºÎ°¡ ÇÁ·ÎÆÛÆ¼")]
+    [Header("ë¶€ê°€ í”„ë¡œí¼í‹°")]
     List<List<Vector2>> contours = new List<List<Vector2>>();
 
     void Start()
     {
         BuildCollider();
     }
-
     public void BuildCollider()
     {
         contours.Clear();
@@ -26,14 +25,14 @@ public class SpriteOutlineCollider : MonoBehaviour
         Sprite sprite = sr.sprite;
         PolygonCollider2D poly = GetComponent<PolygonCollider2D>();
 
-        if (sprite == null) { Debug.LogError("[PPRC] SpriteRenderer.sprite °¡ ¾ø½À´Ï´Ù."); return; }
+        if (sprite == null) { Debug.LogError("[PPRC] SpriteRenderer.sprite ê°€ ì—†ìŠµë‹ˆë‹¤."); return; }
         Texture2D tex = sprite.texture;
-        if (!tex.isReadable) { Debug.LogError("[PPRC] ÅØ½ºÃ³°¡ Read/Write Enabled °¡ ¾Æ´Õ´Ï´Ù."); return; }
+        if (!tex.isReadable) { Debug.LogError("[PPRC] í…ìŠ¤ì²˜ê°€ Read/Write Enabled ê°€ ì•„ë‹™ë‹ˆë‹¤."); return; }
 
         Rect texRect = sprite.textureRect;
         int w = (int)texRect.width;
         int h = (int)texRect.height;
-        if (w == 0 || h == 0) { Debug.LogError("[PPRC] sprite.textureRect°¡ ºñ¾îÀÖÀ½."); return; }
+        if (w == 0 || h == 0) { Debug.LogError("[PPRC] sprite.textureRectê°€ ë¹„ì–´ìˆìŒ."); return; }
 
         Color32[] allPixels = tex.GetPixels32();
 
@@ -84,7 +83,7 @@ public class SpriteOutlineCollider : MonoBehaviour
         if (adjacency.Count == 0)
         {
             poly.pathCount = 0;
-            Debug.LogWarning("[PPRC] °æ°è ¾øÀ½(¿ÏÀü Åõ¸í?).");
+            Debug.LogWarning("[PPRC] ê²½ê³„ ì—†ìŒ(ì™„ì „ íˆ¬ëª…?).");
             return;
         }
 
@@ -139,7 +138,7 @@ public class SpriteOutlineCollider : MonoBehaviour
 
                     if (loop.Count > (w + h) * 16)
                     {
-                        Debug.LogWarning("[PPRC] ·çÇÁ°¡ ºñÁ¤»óÀûÀ¸·Î Å­, ÁßÁö.");
+                        Debug.LogWarning("[PPRC] ë£¨í”„ê°€ ë¹„ì •ìƒì ìœ¼ë¡œ í¼, ì¤‘ì§€.");
                         break;
                     }
                 }
@@ -160,7 +159,7 @@ public class SpriteOutlineCollider : MonoBehaviour
             }
         }
 
-        Debug.Log($"[PPRC] ÄÁÅõ¾î °³¼ö: {contours.Count}");
+        Debug.Log($"[PPRC] ì»¨íˆ¬ì–´ ê°œìˆ˜: {contours.Count}");
 
         float ppu = sprite.pixelsPerUnit;
         Vector2 pivot = sprite.pivot;
@@ -177,11 +176,11 @@ public class SpriteOutlineCollider : MonoBehaviour
                 c[j] = local;
             }
 
-            // ¿©±â¼­ Ãà¼Ò Àû¿ë
+            // ì—¬ê¸°ì„œ ì¶•ì†Œ ì ìš©
             if (shrinkAmount > 0.001f)
                 c = ShrinkPolygon(c, shrinkAmount);
 
-            // ´Ü¼øÈ­´Â Ãà¼Ò ÈÄ°¡ ´õ ÀÚ¿¬½º·´Áö¸¸ »óÈ²¿¡ µû¶ó º¯°æ °¡´É
+            // ë‹¨ìˆœí™”ëŠ” ì¶•ì†Œ í›„ê°€ ë” ìì—°ìŠ¤ëŸ½ì§€ë§Œ ìƒí™©ì— ë”°ë¼ ë³€ê²½ ê°€ëŠ¥
             if (simplifyTolerancePixels > 0.001f)
             {
                 float tolUnits = simplifyTolerancePixels / ppu;
@@ -197,9 +196,8 @@ public class SpriteOutlineCollider : MonoBehaviour
             poly.SetPath(i, contours[i].ToArray());
         }
 
-        Debug.Log($"[PPRC] Äİ¶óÀÌ´õ °æ·Î Àû¿ë ¿Ï·á. ÃÑ pathCount={poly.pathCount}");
+        Debug.Log($"[PPRC] ì½œë¼ì´ë” ê²½ë¡œ ì ìš© ì™„ë£Œ. ì´ pathCount={poly.pathCount}");
     }
-
     static List<Vector2> RemoveColinear(List<Vector2> pts)
     {
         if (pts.Count < 3) return new List<Vector2>(pts);
@@ -216,7 +214,6 @@ public class SpriteOutlineCollider : MonoBehaviour
         }
         return outp;
     }
-
     static List<Vector2> RamerDouglasPeucker(List<Vector2> points, float epsilon)
     {
         if (points == null || points.Count < 3) return new List<Vector2>(points);
@@ -255,14 +252,12 @@ public class SpriteOutlineCollider : MonoBehaviour
         Vector2 proj = a + t * (b - a);
         return Vector2.Distance(p, proj);
     }
-
     Vector2 GetPolygonCentroid(List<Vector2> polygon)
     {
         Vector2 sum = Vector2.zero;
         foreach (var p in polygon) sum += p;
         return sum / polygon.Count;
     }
-
     List<Vector2> ShrinkPolygon(List<Vector2> polygon, float amount)
     {
         Vector2 centroid = GetPolygonCentroid(polygon);
@@ -274,7 +269,6 @@ public class SpriteOutlineCollider : MonoBehaviour
         }
         return shrunk;
     }
-
     void OnDrawGizmosSelected()
     {
         if (!drawGizmos || contours == null) return;

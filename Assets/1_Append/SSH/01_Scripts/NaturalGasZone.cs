@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class NaturalGasZone : MonoBehaviour
 {
-    [SerializeField] Vector2 windDirection = Vector2.right; // ¹Ù¶÷ ¹æÇâ
-    [SerializeField] float windStrength = 5f; // ¹Ù¶÷ ¼¼±â
+    [SerializeField] Vector2 windDirection = Vector2.right; // ë°”ëŒ ë°©í–¥
+    [SerializeField] float windStrength = 5f; // ë°”ëŒ ì„¸ê¸°
 
     List<Rigidbody2D> affectedRbs = new List<Rigidbody2D>();
 
@@ -12,7 +12,7 @@ public class NaturalGasZone : MonoBehaviour
     {
         foreach (var rb in affectedRbs)
         {
-            rb.AddForce(windDirection.normalized * windStrength, ForceMode2D.Force); // Áú·®¿¡ »ó°ü¾øÀÌ ¹Ğ°í ½Í´Ù¸é ÃßÈÄ rb.mass¸¦ °öÇÒ °Í
+            rb.AddForce(windDirection.normalized * windStrength, ForceMode2D.Force); // ì§ˆëŸ‰ì— ìƒê´€ì—†ì´ ë°€ê³  ì‹¶ë‹¤ë©´ ì¶”í›„ rb.massë¥¼ ê³±í•  ê²ƒ
         }
     }
 
