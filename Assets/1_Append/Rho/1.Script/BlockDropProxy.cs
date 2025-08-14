@@ -6,17 +6,16 @@ public class BlockDropProxy : MonoBehaviour
     private EJewelType jewelType;
     private JewelDataManager jewelDataManager;
     private ProxyObjectPool proxyObjectPool;
-    private GameObject blockTopObject;
+    [SerializeField] GameObject blockTopObject;
     private bool isEnd = false;
-    public void InstantiateProxyObject(EJewelType _jewelType, JewelDataManager _jewelDataManager, ProxyObjectPool _proxyObjectPool, GameObject _blockTopObject)
+
+    public void InstantiateProxyObject(EJewelType _jewelType, JewelDataManager _jewelDataManager, ProxyObjectPool _proxyObjectPool)
     {
         isEnd = false;
         jewelType = _jewelType;
         jewelDataManager = _jewelDataManager;
         proxyObjectPool = _proxyObjectPool;
         this.transform.SetParent(proxyObjectPool.transform);
-        blockTopObject = _blockTopObject;
-        blockTopObject.SetActive(false);
     }
 
     void FixedUpdate()
@@ -34,10 +33,9 @@ public class BlockDropProxy : MonoBehaviour
         {
             isEnd = true;
             var _blockTopObject = Instantiate(blockTopObject, this.transform.position, Quaternion.Euler(Vector2.zero));
-            _blockTopObject.SetActive(true);
-            _blockTopObject.GetComponent<BlockOnlyTop>().InstantiateProxyObject(jewelType, jewelDataManager.GetParentTopObject());
-            proxyObjectPool.Return(jewelType, this.gameObject);
+            _blockTopObject.GetComponent<BlockOnlyTop>().InstantiateProxyObject(jewelType, jewelDataManager.GetParentTopObject(), GetComponent<SpriteRenderer>().sprite);
             jewelDataManager.AddLastBlock(_blockTopObject);
+            gameObject.SetActive(false);
         }
     }
 }

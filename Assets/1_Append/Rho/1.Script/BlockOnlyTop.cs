@@ -10,13 +10,14 @@ public class BlockOnlyTop : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
     }
 
-    public void InstantiateProxyObject(EJewelType _jewelType, Transform _parent)
+    public void InstantiateProxyObject(EJewelType _jewelType, Transform _parent, Sprite sprite)
     {
         jewelType = _jewelType;
         this.transform.SetParent(_parent);
+        GetComponent<SpriteRenderer>().sprite = sprite;
     }
 
-    public void ApplySlideMotion() // ≈©∏ÆΩ∫≈ª ±‚πÕ
+    public void ApplySlideMotion() // ÌÅ¨Î¶¨Ïä§ÌÉà Í∏∞ÎØπ
     {
         rigid.linearVelocity = new Vector2(slideForce, slideForce);
     }

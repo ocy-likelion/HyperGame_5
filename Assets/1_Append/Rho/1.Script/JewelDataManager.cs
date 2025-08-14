@@ -21,6 +21,11 @@ public class JewelDataManager : MonoBehaviour
             queueGameObject.Add(jewel.jewelType, jewel.jewelGameObject);
         }
     }
+
+    public void CalledWhenDropBlock(GameObject go)
+    {
+
+    }
     public void InitializeWithJewelToEasy()
     {
         GameObject blockTopObject = queueGameObject[EJewelType.easy];
@@ -34,7 +39,7 @@ public class JewelDataManager : MonoBehaviour
 
         float tempY = maxY + 10f;
         blockProxyObject.transform.position = new Vector3(x, tempY, 0);
-        blockProxyObject.GetComponent<BlockDropProxy>().InstantiateProxyObject(EJewelType.easy, this, blockDropProxyPool, blockTopObject);
+        blockProxyObject.GetComponent<BlockDropProxy>().InstantiateProxyObject(EJewelType.easy, this, blockDropProxyPool, blockTopObject, GetComponent<SpriteRenderer>().sprite);
     }
 
     public void InitializeWithJewelToModerate_1()

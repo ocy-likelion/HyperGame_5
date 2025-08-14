@@ -13,10 +13,10 @@ public class SpriteOutlineCollider : MonoBehaviour
     [Header("부가 프로퍼티")]
     List<List<Vector2>> contours = new List<List<Vector2>>();
 
-    void Start()
-    {
-        BuildCollider();
-    }
+    //void Start()
+    //{
+    //    BuildCollider();
+    //}
     public void BuildCollider()
     {
         contours.Clear();

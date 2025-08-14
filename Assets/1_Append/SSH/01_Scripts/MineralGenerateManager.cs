@@ -10,8 +10,8 @@ public class MineralGenerateManager : MonoBehaviour
     [Header("컴포넌트")]
     SabotageEventManager sabotageEventManager;
 
-    [Header("프리팹")]
-    [SerializeField] GameObject prefab_Mineral;
+    [Header("씬 오브젝트")]
+    [SerializeField] GameObject prefab_Proxy;
 
     [Header("주요 프로퍼티")]
     readonly Vector2 GEN_POS = new Vector2(0, 5f); // 광물 생성 지점
@@ -84,7 +84,6 @@ public class MineralGenerateManager : MonoBehaviour
         // 어드레서블로 스프라이트 불러오기
         AsyncOperationHandle<Sprite> spriteLoadHandle = Addressables.LoadAssetAsync<Sprite>(address.ToString()); // address.ToString()
         spriteLoadHandle.Completed += OnSpriteLoadCompleted;
-
     }
 
     void OnSpriteLoadCompleted(AsyncOperationHandle<Sprite> opHandle) // 스프라이트 불러오기 성공 시 프리팹을 생성하는 메서드
@@ -92,17 +91,20 @@ public class MineralGenerateManager : MonoBehaviour
         if (opHandle.Status == AsyncOperationStatus.Succeeded)
         {
             // 오브젝트 생성
-            GameObject prefab = Instantiate(prefab_Mineral);
-            prefab.transform.position = GEN_POS;
+            prefab_Proxy.SetActive(true);
+            prefab_Proxy.transform.position = GEN_POS;
 
-            // 블럭 크게 키우기
-            if (mineralCount % 4 == 0)
-            {
-                prefab.transform.DOScale(prefab.transform.localScale * 1.5f, 0.2f).SetEase(Ease.OutQuart);
-            }
+            //// 블럭 크게 키우기
+            //if (mineralCount % 4 == 0)
+            //{
+            //    prefab_Proxy.transform.DOScale(prefab_Proxy.transform.localScale * 1.5f, 0.2f).SetEase(Ease.OutQuart);
+            //}
 
             // 스프라이트 할당
-            prefab.GetComponent<SpriteRenderer>().sprite = opHandle.Result;
+            prefab_Proxy.GetComponent<SpriteRenderer>().sprite = opHandle.Result;
+
+            // 콜라이더 생성
+            prefab_Proxy.GetComponent<SpriteOutlineCollider>().BuildCollider();
         }
     }
 }
