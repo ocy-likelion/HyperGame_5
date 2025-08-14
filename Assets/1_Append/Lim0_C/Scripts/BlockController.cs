@@ -21,14 +21,6 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     private float _currentTowerHeight;
     private GameObject _highestBlock;
 
-    public GameObject HighestBlock
-    {
-        get
-        {
-            return _highestBlock;
-        }
-    }
-
     private void Start()
     {
         Init();
@@ -55,7 +47,7 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         _blockSpawnPosition = worldPos;
     }
 
-    #region temp
+    #region 임시
     //카메라 위치 조정
     void CheckCameraHeight()
     {   
@@ -88,10 +80,8 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
             CheckCameraHeight();
         }
     }
-    
-
+   
     #endregion
-    
     
     //돌 생성 기능
     private void SpawnBlock()
@@ -168,8 +158,7 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         RaycastHit2D hit = Physics2D.Raycast(_currentBlock.transform.position, Vector2.down, 10);
         var predictLineRender = _predictionLine.GetComponent<LineRenderer>();
         predictLineRender.SetPosition(0, _currentBlock.transform.position);
-        //-3 지면 높이
-        var line2Y = hit.collider ? hit.point.y : -3;
+        var line2Y = hit.collider ? hit.point.y : -3;   //-3 지면 높이
         var linePoint2 = new Vector3(_currentBlock.transform.position.x, line2Y, 0);
         predictLineRender.SetPosition(1, linePoint2);
     }
