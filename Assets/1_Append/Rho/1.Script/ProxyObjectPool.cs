@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Build.Content;
 using UnityEngine;
 public enum EJewelType
 {
@@ -24,40 +26,40 @@ public class SerializableKeyValue<EJewelType, GameObject>
 
 public class ProxyObjectPool : MonoBehaviour
 {
-    [SerializeField] private List<SerializableKeyValue<EJewelType, GameObject>> jewelTypePrefab;
-    private Dictionary<EJewelType, GameObject> queueGameObject = new Dictionary<EJewelType, GameObject>();
+    [SerializeField] GameObject proxyGameObject;
+    private Queue<GameObject> proxyQueue = new Queue<GameObject>();
+    private const int LOAD_COUNT = 3;
 
     private void Awake()
     {
-        foreach (var jewel in jewelTypePrefab)
+        for (int i = 0; i < LOAD_COUNT; i++)
         {
-            GameObject _jewelGameObject = Instantiate(jewel.jewelGameObject, this.transform);
-            queueGameObject.Add(jewel.jewelType, _jewelGameObject);
-            _jewelGameObject.SetActive(false);
+            GameObject proxyTempObject = Instantiate(proxyGameObject);
+            proxyQueue.Enqueue(proxyTempObject);
+            proxyTempObject.SetActive(false);
         }
     }
 
-    public GameObject Get(EJewelType jewelType)
+    public GameObject Get(MineralTypeEnum mineralType)
     {
-        if (jewelTypePrefab.Count == 0)
+        if (proxyQueue.Count == 0)
         {
-            foreach (var jewel in jewelTypePrefab)
+            foreach (var jewel in proxyQueue)
             {
-                GameObject _jewelGameObject = Instantiate(jewel.jewelGameObject, this.transform);
-                queueGameObject.Add(jewel.jewelType, _jewelGameObject);
-                _jewelGameObject.SetActive(false);
+                GameObject proxyTempObject = Instantiate(proxyGameObject);
+                proxyQueue.Enqueue(proxyTempObject);
+                proxyTempObject.SetActive(false);
             }
         }
 
-        GameObject jewelGameObject = queueGameObject[jewelType];
+        GameObject jewelGameObject = proxyQueue.Dequeue();
         jewelGameObject.SetActive(true);
-        queueGameObject.Remove(jewelType);
         return jewelGameObject;
     }
 
-    public void Return(EJewelType jewelType, GameObject _gameObject)
+    public void Return(MineralTypeEnum _mineralType, GameObject _gameObject)
     {
-        queueGameObject.Add(jewelType, _gameObject);
+        proxyQueue.Enqueue(_gameObject);
         _gameObject.SetActive(false);
     }
 }

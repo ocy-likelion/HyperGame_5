@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BlockOnlyTop : MonoBehaviour
 {
-    private EJewelType jewelType;
+    private MineralTypeEnum mineralType;
     private Rigidbody2D rigid;
     private readonly float slideForce = -7f;
     private void Awake()
@@ -10,13 +10,13 @@ public class BlockOnlyTop : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
     }
 
-    public void InstantiateProxyObject(EJewelType _jewelType, Transform _parent)
+    public void InstantiateProxyObject(MineralTypeEnum _mineralType, Transform _parent)
     {
-        jewelType = _jewelType;
+        mineralType = _mineralType;
         this.transform.SetParent(_parent);
     }
 
-    public void ApplySlideMotion() // ≈©∏ÆΩ∫≈ª ±‚πÕ
+    public void ApplySlideMotion() // ÌÅ¨Î¶¨Ïä§ÌÉà Í∏∞ÎØπ
     {
         rigid.linearVelocity = new Vector2(slideForce, slideForce);
     }

@@ -225,13 +225,13 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
   m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
-  m_isOrthographic: 0
+  m_isOrthographic: 1
   m_isCullingEnabled: 0
   m_horizontalMapping: 0
   m_verticalMapping: 0
@@ -417,9 +417,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1485766983}
-        m_TargetAssemblyTypeName: JewelDataManager, Assembly-CSharp
-        m_MethodName: InitializeWithJewelToEasy
+      - m_Target: {fileID: 1485766985}
+        m_TargetAssemblyTypeName: MineralDataManager, Assembly-CSharp
+        m_MethodName: GenerateRandomMineral
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -802,7 +802,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1485766983}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: JewelDataManager, Assembly-CSharp
         m_MethodName: InitializeWithJewelToModerate_1
         m_Mode: 1
@@ -935,7 +935,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1485766983}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: JewelDataManager, Assembly-CSharp
         m_MethodName: InitializeWithJewelToDifficult
         m_Mode: 1
@@ -1014,13 +1014,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 043811beeb6cd3440bd070d82ad50f51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jewelTypePrefab:
-  - jewelType: 0
-    jewelGameObject: {fileID: 5174599973887183862, guid: 22c16365e141d954facd1a28e1a3539f, type: 3}
-  - jewelType: 1
-    jewelGameObject: {fileID: 5174599973887183862, guid: 3829116d61b03ca449485b3b68b4da08, type: 3}
-  - jewelType: 2
-    jewelGameObject: {fileID: 5174599973887183862, guid: 22dd61f7156ff2c488d59a2ceff24858, type: 3}
+  proxyGameObject: {fileID: 6032233432903053141, guid: 2f40ccd3d86fa5246a7d5b72864a207f, type: 3}
 --- !u!4 &868854921
 Transform:
   m_ObjectHideFlags: 0
@@ -1142,13 +1136,13 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
   m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
-  m_isOrthographic: 0
+  m_isOrthographic: 1
   m_isCullingEnabled: 0
   m_horizontalMapping: 0
   m_verticalMapping: 0
@@ -1417,7 +1411,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1485766983}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: JewelDataManager, Assembly-CSharp
         m_MethodName: LeftArrowButton
         m_Mode: 1
@@ -1573,13 +1567,13 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
   m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
-  m_isOrthographic: 0
+  m_isOrthographic: 1
   m_isCullingEnabled: 0
   m_horizontalMapping: 0
   m_verticalMapping: 0
@@ -1793,7 +1787,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1485766983}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: JewelDataManager, Assembly-CSharp
         m_MethodName: StartSlidingToObject
         m_Mode: 1
@@ -1852,37 +1846,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1485766984}
-  - component: {fileID: 1485766983}
+  - component: {fileID: 1485766985}
   m_Layer: 0
-  m_Name: JewelDataManager
+  m_Name: MineralDataManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1485766983
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1485766982}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ccc06ef655c5f87478bdbc271559131c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  x: 0
-  proxyParent: {fileID: 868854921}
-  topParent: {fileID: 538359388}
-  jewelTypePrefab:
-  - jewelType: 0
-    jewelGameObject: {fileID: 5174599973887183862, guid: 0e06112b1af31404fb07c801fa846aa5, type: 3}
-  - jewelType: 1
-    jewelGameObject: {fileID: 5174599973887183862, guid: e53cf510431a2974e8a51bdcdfeb8900, type: 3}
-  - jewelType: 2
-    jewelGameObject: {fileID: 5174599973887183862, guid: 1662bc5482e964e4e95421fbd451ecab, type: 3}
-  blockDropProxyPool: {fileID: 868854920}
 --- !u!4 &1485766984
 Transform:
   m_ObjectHideFlags: 0
@@ -1898,6 +1869,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1485766985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1485766982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e22edccc4575be44593f66eb4268f21e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  topParent: {fileID: 538359388}
+  prefabTopMineral: {fileID: 6032233432903053141, guid: 2f40ccd3d86fa5246a7d5b72864a207f, type: 3}
+  blockDropProxyPool: {fileID: 868854920}
 --- !u!1 &1558580663
 GameObject:
   m_ObjectHideFlags: 0
@@ -1981,7 +1967,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1485766983}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: JewelDataManager, Assembly-CSharp
         m_MethodName: RightArrowButton
         m_Mode: 1
@@ -2137,13 +2123,13 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
   m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
-  m_isOrthographic: 0
+  m_isOrthographic: 1
   m_isCullingEnabled: 0
   m_horizontalMapping: 0
   m_verticalMapping: 0
@@ -2273,13 +2259,13 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
   m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
-  m_isOrthographic: 0
+  m_isOrthographic: 1
   m_isCullingEnabled: 0
   m_horizontalMapping: 0
   m_verticalMapping: 0
@@ -2409,13 +2395,13 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
   m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
-  m_isOrthographic: 0
+  m_isOrthographic: 1
   m_isCullingEnabled: 0
   m_horizontalMapping: 0
   m_verticalMapping: 0

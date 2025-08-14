@@ -1,70 +1,67 @@
 using DG.Tweening;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using System.Collections.Generic;
 
-public class MineralGenerateManager : MonoBehaviour
+public class MineralDataManager : MonoBehaviour
 {
-    [Header("컴포넌트")]
-    SabotageEventManager sabotageEventManager;
+    [Header("Components")]
+    [SerializeField] private Transform topParent;
 
-    [Header("프리팹")]
-    [SerializeField] GameObject prefab_Mineral;
+    [Header("Prefabs")]
+    [SerializeField] private GameObject prefabTopMineral;
+    [SerializeField] ProxyObjectPool blockDropProxyPool;
 
-    [Header("주요 프로퍼티")]
-    readonly Vector2 GEN_POS = new Vector2(0, 5f); // 광물 생성 지점
-    int mineralCount = 0; // 생성한 광물 개수
+    [Header("Properties")]
+    private readonly Vector2 GEN_POS = new Vector2(0, 5f); // Mineral generation point
+    private int mineralCount = 0; // Generated mineral count
+    private float x = 0; // Horizontal position control
+    private List<GameObject> ingameBlockList = new List<GameObject>(); // List of active blocks
 
-    // 각 광물의 등장 확률
-    const float STONE_PROB = 0.75f;
-    const float COPPER_PROB = 0.20f;
-    const float SILVER_PROB = 0.10f;
-    const float GOLD_PROB = 0.05f;
+    // Mineral appearance probabilities
+    private const float STONE_PROB = 0.75f;
+    private const float COPPER_PROB = 0.20f;
+    private const float SILVER_PROB = 0.10f;
+    private const float GOLD_PROB = 0.05f;
 
-    void Awake()
+    private void Awake()
     {
-        sabotageEventManager = GetComponent<SabotageEventManager>();
-
         mineralCount = 0;
     }
 
-    public void GenerateRandomMineral() // 확률에 따라 무작위 광물을 생성하는 메서드
+    public void GenerateRandomMineral()
     {
-        // 확률 난수 생성
         float n = Random.Range(0f, 1f);
+        MineralTypeEnum type;
 
-        // 확률에 따라 광물 프리팹 생성
+        // Determine mineral type based on probability
         if (n <= GOLD_PROB)
         {
-            GenerateMineralAsync(MineralTypeEnum.Gold);
+            type = MineralTypeEnum.Gold;
         }
         else if (n <= GOLD_PROB + SILVER_PROB)
         {
-            GenerateMineralAsync(MineralTypeEnum.Silver);
+            type = MineralTypeEnum.Silver;
         }
         else if (n <= GOLD_PROB + SILVER_PROB + COPPER_PROB)
         {
-            GenerateMineralAsync(MineralTypeEnum.Copper);
+            type = MineralTypeEnum.Copper;
         }
         else
         {
-            GenerateMineralAsync(MineralTypeEnum.Stone);
+            type = MineralTypeEnum.Stone;
         }
 
-        // 광물 개수 추가
+        GenerateMineralAsync(type);
         mineralCount++;
-
-        // 이벤트 생성
-        sabotageEventManager.EventCheckByMineralCount(mineralCount);
     }
 
-    void GenerateMineralAsync(MineralTypeEnum type) // 광물 종류에 따라 프리팹을 생성하는 메서드
+    private void GenerateMineralAsync(MineralTypeEnum type)
     {
-        // type에 따라 각기 다른 스프라이트 어드레스 설정
-        StringBuilder address = new();
-        address.Append($"Sprite_{type.ToString()}");
+        // Set sprite address based on mineral type
+        StringBuilder address = new StringBuilder($"Sprite_{type.ToString()}");
         switch (type)
         {
             case MineralTypeEnum.Stone:
@@ -81,29 +78,69 @@ public class MineralGenerateManager : MonoBehaviour
                 break;
         }
 
-        // 어드레서블로 스프라이트 불러오기
-        AsyncOperationHandle<Sprite> spriteLoadHandle = Addressables.LoadAssetAsync<Sprite>(address.ToString()); // address.ToString()
-        spriteLoadHandle.Completed += OnSpriteLoadCompleted;
-
+        // Load sprite asynchronously
+        AsyncOperationHandle<Sprite> spriteLoadHandle = Addressables.LoadAssetAsync<Sprite>(address.ToString());
+        spriteLoadHandle.Completed += (opHandle) => OnSpriteLoadCompleted(opHandle, type);
     }
 
-    void OnSpriteLoadCompleted(AsyncOperationHandle<Sprite> opHandle) // 스프라이트 불러오기 성공 시 프리팹을 생성하는 메서드
+    private void OnSpriteLoadCompleted(AsyncOperationHandle<Sprite> opHandle, MineralTypeEnum type)
     {
         if (opHandle.Status == AsyncOperationStatus.Succeeded)
         {
-            // 오브젝트 생성
-            GameObject prefab = Instantiate(prefab_Mineral);
-            prefab.transform.position = GEN_POS;
-
-            // 블럭 크게 키우기
-            if (mineralCount % 4 == 0)
+            // Calculate max Y position from existing blocks
+            float maxY = 0;
+            foreach (var block in ingameBlockList)
             {
-                prefab.transform.DOScale(prefab.transform.localScale * 1.5f, 0.2f).SetEase(Ease.OutQuart);
+                float temp = block.transform.position.y;
+                maxY = Mathf.Max(temp, maxY);
             }
 
-            // 스프라이트 할당
-            prefab.GetComponent<SpriteRenderer>().sprite = opHandle.Result;
+            float tempY = maxY + 10f;
+            Vector3 spawnPosition = new Vector3(x, tempY, 0);
+
+            // Instantiate prefab
+            GameObject proxyBlock = blockDropProxyPool.Get(type);
+
+            GameObject topBlock = Instantiate(proxyBlock);
+            proxyBlock.SetActive(true);
+
+            proxyBlock.GetComponent<BlockDropProxy>().InstantiateProxyObject(type, this, blockDropProxyPool, proxyBlock);
+            proxyBlock.transform.position = spawnPosition;
+            proxyBlock.transform.SetParent(topParent);
+            proxyBlock.GetComponent<SpriteRenderer>().sprite = opHandle.Result;
         }
     }
-}
 
+    public void StartSlidingToObject()
+    {
+        if (ingameBlockList.Count > 0)
+        {
+            var lastBlock = ingameBlockList[ingameBlockList.Count - 1];
+            var blockTop = lastBlock.GetComponent<BlockOnlyTop>();
+            if (blockTop != null)
+            {
+                blockTop.ApplySlideMotion();
+            }
+        }
+    }
+
+    public void AddLastBlock(GameObject _object)
+    {
+        ingameBlockList.Add(_object);
+    }
+
+    public void RightArrowButton()
+    {
+        x += 1f;
+    }
+
+    public void LeftArrowButton()
+    {
+        x -= 1f;
+    }
+
+    public Transform GetParentTopObject()
+    {
+        return topParent;
+    }
+}
