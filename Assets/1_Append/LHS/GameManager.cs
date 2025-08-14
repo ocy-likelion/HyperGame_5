@@ -33,6 +33,8 @@ public class GameManager : MonoBehaviour
 
     }
 
+    #region 게임 진행
+
     public void StartGame()
     {
         // 게임 시작
@@ -80,6 +82,19 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0.0f;
         GameOverPanel.gameObject.SetActive(true);
     }
+    #endregion
+
+    #region 소리
+    void SoundOn()
+    {
+        // 음소거 해제
+    }
+
+    void SoundOff()
+    {
+        // 음소거
+    }
+    #endregion
 
     #region 개발용
 
