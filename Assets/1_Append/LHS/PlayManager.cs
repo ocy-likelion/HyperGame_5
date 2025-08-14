@@ -16,7 +16,7 @@ public class PlayManager : MonoBehaviour
     public GameObject blockSpawnPoint;
     float blockSpawnPointFreqeuncy = 1.5f;
 
-    float currentTowerHeight;
+    public float currentTowerHeight;
     float goalTowerHeight = 2.0f; // 임시
 
     public TMP_Text elapsedTimeText;
