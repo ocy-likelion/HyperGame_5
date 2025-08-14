@@ -77,4 +77,11 @@ public class EventBus : MonoBehaviour
             eventDictionary[eventName].Invoke();
         }
     }
+    
+    public Action<GameObject> SpawnBlock;
+    //블록 스폰시 호출될 함수
+    public void SpawnBlockCall(GameObject newBlock)
+    {
+        SpawnBlock?.Invoke(newBlock);
+    }
 }

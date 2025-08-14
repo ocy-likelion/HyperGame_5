@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -6,15 +7,15 @@ using UnityEngine.UI;
 
 public class PlayManager : MonoBehaviour
 {
-    public Button DropButton;
+    // public Button DropButton;
 
     public GameObject BlockPrefab;
     List<GameObject> blockList = new List<GameObject>();
     List<GameObject> newBlockList = new List<GameObject>();
     GameObject highestBlock;
 
-    public GameObject blockSpawnPoint;
-    float blockSpawnPointFreqeuncy = 1.5f;
+    // public GameObject blockSpawnPoint;
+    // float blockSpawnPointFreqeuncy = 1.5f;
 
     float currentTowerHeight;
     float goalTowerHeight = 2.0f; // 임시
@@ -26,6 +27,7 @@ public class PlayManager : MonoBehaviour
     void OnEnable()
     {
         EventBus.Instance.Subscribe(Consts.BLOCKLANDED, AddBlock);
+        EventBus.Instance.Subscribe("RespawnBlock",RespawnBlock);
     }
 
     void OnDisable()
@@ -36,12 +38,13 @@ public class PlayManager : MonoBehaviour
     void Start()
     {
         StartCoroutine(GameTimer());
+        CreateBlock();
     }
 
     void Update()
     {
         #region 임시 blockSpawnPoint 이동, 드래그 앤 드롭으로 고쳐야 함
-        blockSpawnPoint.transform.position = new Vector3(Mathf.Sin(Time.time * blockSpawnPointFreqeuncy), 4.0f, 0.0f);
+        // blockSpawnPoint.transform.position = new Vector3(Mathf.Sin(Time.time * blockSpawnPointFreqeuncy), 4.0f, 0.0f);
         #endregion
 
         elapsedTimeText.text = ((int)totalElapsedTime).ToString();
@@ -109,24 +112,23 @@ public class PlayManager : MonoBehaviour
     #region 개발용
 
     [SerializeField] GameObject towerHeightLine;
-    float nextTurnTime = 0.5f;
+    float nextTurnTime = 2f;
 
     public void CreateBlock()
     {
         // 광물 생성 및 드롭
-        DropButton.gameObject.SetActive(false);
+        // DropButton.gameObject.SetActive(false);
 
         GameObject newBlock = Instantiate(BlockPrefab);
-
-        newBlock.transform.position = new Vector3(
-            blockSpawnPoint.transform.position.x,
-            blockSpawnPoint.transform.position.y,
-            blockSpawnPoint.transform.position.z
-            );
-
+        EventBus.Instance.SpawnBlockCall(newBlock);
+        // newBlock.transform.position = new Vector3(
+        //     blockSpawnPoint.transform.position.x,
+        //     blockSpawnPoint.transform.position.y,
+        //     blockSpawnPoint.transform.position.z
+        //     );
         newBlockList.Add(newBlock);
 
-        StartCoroutine(WaitAndShowButton());
+        // StartCoroutine(WaitAndShowButton());
     }
 
     void AddBlock()
@@ -142,7 +144,18 @@ public class PlayManager : MonoBehaviour
     {
         yield return new WaitForSeconds(nextTurnTime);
 
-        DropButton.gameObject.SetActive(true);
+        // DropButton.gameObject.SetActive(true);
+    }
+
+    void RespawnBlock()
+    {
+        StartCoroutine(WaitAndCreateBlock());
+    }
+    IEnumerator WaitAndCreateBlock()
+    {
+        yield return new WaitForSeconds(nextTurnTime);
+
+        CreateBlock();
     }
     #endregion 
 }

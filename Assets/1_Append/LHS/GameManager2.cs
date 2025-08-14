@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour
+public class GameManager2 : MonoBehaviour
 {
     public Button DropButton; // unused
     public Image ClearPanel;
