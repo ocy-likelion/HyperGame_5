@@ -134,9 +134,8 @@ public class PlayManager : MonoBehaviour
         if (newBlockList.Count > 0)
         {
             blockList.Add(newBlockList[0]);
+            newBlockList.RemoveAt(0);
         }
-
-        newBlockList.RemoveAt(0);
     }
 
     IEnumerator WaitAndShowButton()
