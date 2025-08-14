@@ -3,6 +3,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -12,43 +13,61 @@ public class UIManager : MonoBehaviour
     public GameObject ResultUI;
 
     [Header("타이머 관련")]
-    public float timerDuration = 30f;
     public Slider Timer;
     public Image TimerImage;
-    [Range(0f, 1f)] public float shakeStartNormalized = 0.4f; // 남은비율이 이 값 이하부터 흔들기
-    public float minAmp = 0f;   // 최소 진폭(px)
-    public float maxAmp = 18f;  // 최대 진폭(px)
+    [Range(0f, 1f)] public float shakeStartNormalized = 0.4f;
+    public float minAmp = 0f;
+    public float maxAmp = 18f;
     public int minVibrato = 10;
     public int maxVibrato = 40;
     public AnimationCurve intensityCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-
 
     [Header("사운드 관련")]
     public Image SoundButton;
     public Sprite SoundButtonOn;
     public Sprite SoundButtonOff;
+    public TextMeshProUGUI SoundText;
 
     [Header("클리어탭")]
     public Image CliarImage;
     public Sprite SuccessSprite;
     public Sprite FailSprite;
     public TextMeshProUGUI ClearScore;
+    public GameObject SuccessEffect;
+    public GameObject FailEffect;
+    public TextMeshProUGUI ClearScoreText;
 
     [Header("튜토리얼")]
     public Image TutorialImage;
     public TextMeshProUGUI TutorialText;
     public Sprite[] TutorialImages;
-    public Text[] TutorialTexts;
+    public string[] TutorialTexts;
     private int currentTutorialIndex = 0;
+    public TextMeshProUGUI IndexText;
 
-    bool SoundOn = true;
-    bool Success = true; // 성공 여부
+   
+    [Header("팝업 효과")]
+    [Range(0.5f, 1f)] public float popStartScale = 0.85f;
+    public float popStep1 = 0.18f;     // 1.05까지
+    public float popStep2 = 0.10f;     // 1.00으로
+    public float fadeIn = 0.15f;
+    public float closeStep1 = 0.08f;   // 1.00 -> 0.92
+    public float closeStep2 = 0.12f;   // 0.92 -> 0.75
+    public float fadeOut = 0.12f;
+    public float popOvershoot = 2.2f;
+
+    public bool isPaused = false;
+
+    public TextMeshProUGUI ScoreText;
+    public GameManager gameManager;
+    
     RectTransform timerRT;
     Vector2 basePos;
     Tween valueTw;
     Tween loopTw;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    const string SHAKE_ID = "TimerShake";
+
     void Start()
     {
         timerRT = TimerImage.rectTransform;
@@ -56,129 +75,200 @@ public class UIManager : MonoBehaviour
         StartTimer();
     }
 
+    void OnDisable() { KillTimerTweens(); }
+    void OnDestroy() { KillTimerTweens(); }
 
-    // Update is called once per frame
     void Update()
     {
+        if (gameManager) ScoreText.text = gameManager.score.ToString();
 
+        if (!PlayedGame.hadPlayed)
+        {
+            ShowTutorialUI();
+            PlayedGame.hadPlayed = true;
+        }
+    }
+
+    void ShowPopup(GameObject panel)
+    {
+        if (!panel) return;
+        var rt = panel.GetComponent<RectTransform>();
+        var cg = panel.GetComponent<CanvasGroup>() ?? panel.AddComponent<CanvasGroup>();
+        cg.interactable = true; cg.blocksRaycasts = true;
+
+        DOTween.Kill(panel);
+        panel.SetActive(true);
+        rt.localScale = Vector3.one * popStartScale;
+        cg.alpha = 0f;
+
+        DOTween.Sequence().SetUpdate(true).SetLink(panel)
+            .Append(cg.DOFade(1f, fadeIn))
+            .Join(rt.DOScale(1.05f, popStep1).SetEase(Ease.OutCubic))
+            .Append(rt.DOScale(1.00f, popStep2).SetEase(Ease.OutBack, popOvershoot));
+    }
+
+    void HidePopup(GameObject panel)
+    {
+        if (!panel) return;
+        var rt = panel.GetComponent<RectTransform>();
+        var cg = panel.GetComponent<CanvasGroup>() ?? panel.AddComponent<CanvasGroup>();
+
+        DOTween.Kill(panel);
+        DOTween.Sequence().SetUpdate(true).SetLink(panel)
+            .Append(rt.DOScale(0.92f, closeStep1).SetEase(Ease.InCubic))
+            .Append(rt.DOScale(0.75f, closeStep2).SetEase(Ease.InBack, 1.5f))
+            .Join(cg.DOFade(0f, fadeOut))
+            .OnComplete(() => { panel.SetActive(false); rt.localScale = Vector3.one; });
     }
 
     public void ShowTutorialUI()
     {
-        TutorialUI.SetActive(true);
-        PauseUI.SetActive(false);
-        ResultUI.SetActive(false);
+        PauseGame();
+        ShowPopup(TutorialUI); HidePopup(PauseUI); HidePopup(ResultUI);
         ShowTutorialImage();
     }
 
     public void ShowPauseUI()
     {
-        PauseUI.SetActive(true);
-        TutorialUI.SetActive(false);
-        ResultUI.SetActive(false);
+        PauseGame();
+        ShowPopup(PauseUI); HidePopup(TutorialUI); HidePopup(ResultUI);
     }
+
     public void ShowResultUI()
     {
-        ResultUI.SetActive(true);
-        PauseUI.SetActive(false);
-        TutorialUI.SetActive(false);
+        PauseGame();
+        ShowPopup(ResultUI); HidePopup(PauseUI); HidePopup(TutorialUI);
     }
 
     public void CloseUI()
     {
-        TutorialUI.SetActive(false);
-        PauseUI.SetActive(false);
-        ResultUI.SetActive(false);
+        ResumeGame();
+        HidePopup(TutorialUI); HidePopup(PauseUI); HidePopup(ResultUI);
+    }
+
+
+    void PauseGame()
+    {
+        isPaused = true;
+        Time.timeScale = 0f; 
+    }
+
+    void ResumeGame()
+    {
+        isPaused = false;
+        Time.timeScale = 1f;
     }
 
     public void Sound()
     {
-        SoundOn = !SoundOn;
-        if (SoundOn)
+        bool soundOn = SoundButton.sprite != SoundButtonOn;
+        if (soundOn)
         {
             SoundButton.sprite = SoundButtonOn;
+            SoundText.text = "음소거";
         }
         else
         {
             SoundButton.sprite = SoundButtonOff;
+            SoundText.text = "소리 켜기";
         }
     }
 
-    public void Result()
+    public void Result(bool success)
     {
-        if (Success) CliarImage.sprite = SuccessSprite;
-        else CliarImage.sprite = FailSprite;
-
-        //ClearScore.text = "Score: " + Score.ToString();
+        if (success)
+        {
+            ActivateEffectUnscaled(SuccessEffect); // 결과 이펙트는 unscaled로 재생
+            CliarImage.sprite = SuccessSprite;
+            ClearScoreText.text = gameManager ? gameManager.score.ToString() : "";
+        }
+        else
+        {
+            ActivateEffectUnscaled(FailEffect);
+            CliarImage.sprite = FailSprite;
+            ClearScoreText.text = "";
+        }
     }
 
     public void StartTimer()
     {
-        // 기존 트윈 정리
-        DOTween.Kill(Timer); DOTween.Kill("ShakeLoop");
+        KillTimerTweens(); // 기존 트윈 정리
 
-        Timer.minValue = 0; Timer.maxValue = 1; Timer.value = 1;
+        Timer.minValue = 0;
+        Timer.maxValue = 1;
+        Timer.value = 1;
 
-        // 1) 값 1→0
-        valueTw = Timer.DOValue(0f, timerDuration)
+     
+        valueTw = Timer.DOValue(0f, gameManager.timerDuration)
             .SetEase(Ease.Linear)
-            .SetUpdate(true)
+            .SetUpdate(false) 
+            .SetLink(Timer.gameObject, LinkBehaviour.KillOnDestroy | LinkBehaviour.PauseOnDisable)
             .OnComplete(() =>
             {
-                DOTween.Kill("ShakeLoop");
-                timerRT.anchoredPosition = basePos;
+                DOTween.Kill(SHAKE_ID);
+                if (this && timerRT) timerRT.anchoredPosition = basePos;
                 OnTimerEnd();
             });
 
-        // 2) 흔들림 루프 시작
-        RunShakeLoop(); // 아래 함수
+        RunShakeLoop();
     }
 
     void RunShakeLoop()
     {
-        // duration 동안 0→1로 흘러가는 가상 타이머를 이용해 매 프레임 앵커를 갱신
         loopTw = DOVirtual.Float(0f, 1f, 0.05f, _ =>
         {
-            if (!valueTw.IsActive() || !valueTw.IsPlaying()) return;
-
-            float norm = Timer.value; // 1→0
-            float t = Mathf.InverseLerp(shakeStartNormalized, 0f, norm);
-            if (t <= 0f)
+            if (!this || timerRT == null) return;
+            if (valueTw == null || !valueTw.IsActive() || !valueTw.IsPlaying())
             {
                 timerRT.anchoredPosition = basePos;
                 return;
             }
 
+            float norm = Timer.value;               // 1→0
+            float t = Mathf.InverseLerp(shakeStartNormalized, 0f, norm);
+            if (t <= 0f) { timerRT.anchoredPosition = basePos; return; }
+
             t = intensityCurve.Evaluate(t);
             float amp = Mathf.Lerp(minAmp, maxAmp, t);
-            // 랜덤 흔들림
             Vector2 jitter = Random.insideUnitCircle * amp;
             timerRT.anchoredPosition = basePos + jitter;
 
         }).SetLoops(-1, LoopType.Restart)
-          .SetId("ShakeLoop")
-          .SetUpdate(true);
+          .SetId(SHAKE_ID)
+          .SetUpdate(false)
+          .SetLink(gameObject, LinkBehaviour.KillOnDestroy | LinkBehaviour.PauseOnDisable)
+          .OnKill(() => { if (this && timerRT) timerRT.anchoredPosition = basePos; });
     }
+
+    void KillTimerTweens()
+    {
+        valueTw?.Kill(); valueTw = null;
+        loopTw?.Kill(); loopTw = null;
+        if (Timer) DOTween.Kill(Timer);
+        DOTween.Kill(SHAKE_ID);
+    }
+
     void OnTimerEnd()
     {
-        // 타이머 종료 시 처리할 로직
         Debug.Log("타이머가 종료되었습니다.");
-        // 예: 게임 오버 처리, UI 업데이트 등
+       
     }
 
     public void ShowTutorialImage()
     {
-        TutorialImage.sprite = TutorialImages[0];
-        TutorialText.text = TutorialTexts[0].text;
+        if (TutorialImages.Length > 0) TutorialImage.sprite = TutorialImages[0];
+        if (TutorialTexts.Length > 0) TutorialText.text = TutorialTexts[0];
+        currentTutorialIndex = 0;
     }
 
     public void NextTutorialImage()
     {
-        if (currentTutorialIndex < TutorialImages.Length - 1) 
-        { 
-            currentTutorialIndex += 1;
+        if (currentTutorialIndex < TutorialImages.Length - 1)
+        {
+            currentTutorialIndex++;
             TutorialImage.sprite = TutorialImages[currentTutorialIndex];
-            TutorialText.text = TutorialTexts[currentTutorialIndex].text;
+            TutorialText.text = TutorialTexts[currentTutorialIndex];
+            UpdateTutorialIndexText();
         }
     }
 
@@ -186,9 +276,66 @@ public class UIManager : MonoBehaviour
     {
         if (currentTutorialIndex > 0)
         {
-            currentTutorialIndex -= 1;
+            currentTutorialIndex--;
             TutorialImage.sprite = TutorialImages[currentTutorialIndex];
-            TutorialText.text = TutorialTexts[currentTutorialIndex].text;
+            TutorialText.text = TutorialTexts[currentTutorialIndex];
+            UpdateTutorialIndexText();
+        }
+    }
+
+    public void UpdateTutorialIndexText()
+    {
+        IndexText.text = $"{currentTutorialIndex + 1}/{TutorialImages.Length}";
+    }
+
+    public void Reset()
+    {
+        // 게임 멈춤 상태 해제
+        Time.timeScale = 1f;
+
+        KillTimerTweens(); // 씬 갈아끼우기 전에 안전 종료
+        SceneManager.LoadScene("MainScene");
+    }
+
+
+    void ActivateEffectUnscaled(GameObject fx)
+    {
+        if (!fx) return;
+        if (!fx.TryGetComponent<UnscaledParticleDriver>(out _))
+            fx.AddComponent<UnscaledParticleDriver>();
+        fx.SetActive(false);
+        fx.SetActive(true); // 재생 트리거
+    }
+}
+
+[DisallowMultipleComponent]
+public class UnscaledParticleDriver : MonoBehaviour
+{
+    ParticleSystem[] systems;
+
+    void Awake()
+    {
+        systems = GetComponentsInChildren<ParticleSystem>(true);
+    }
+
+    void OnEnable()
+    {
+        foreach (var ps in systems)
+        {
+            if (ps == null) continue;
+            ps.Simulate(0f, true, true);
+            ps.Play(true);
+        }
+    }
+
+    void LateUpdate()
+    {
+        if (Time.timeScale != 0f) return;
+        float dt = Time.unscaledDeltaTime;
+        if (dt <= 0f) return;
+        foreach (var ps in systems)
+        {
+            if (ps != null) ps.Simulate(dt, true, false);
         }
     }
 }
