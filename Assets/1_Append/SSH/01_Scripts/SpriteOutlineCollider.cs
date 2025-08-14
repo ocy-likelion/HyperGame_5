@@ -159,8 +159,6 @@ public class SpriteOutlineCollider : MonoBehaviour
             }
         }
 
-        Debug.Log($"[PPRC] 컨투어 개수: {contours.Count}");
-
         float ppu = sprite.pixelsPerUnit;
         Vector2 pivot = sprite.pivot;
         for (int i = 0; i < contours.Count; i++)
@@ -196,7 +194,6 @@ public class SpriteOutlineCollider : MonoBehaviour
             poly.SetPath(i, contours[i].ToArray());
         }
 
-        Debug.Log($"[PPRC] 콜라이더 경로 적용 완료. 총 pathCount={poly.pathCount}");
     }
     static List<Vector2> RemoveColinear(List<Vector2> pts)
     {

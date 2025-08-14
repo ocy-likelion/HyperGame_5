@@ -56,7 +56,6 @@ public class ProxyObjectPool : MonoBehaviour
         jewelGameObject.SetActive(true);
         return jewelGameObject;
     }
-
     public void Return(GameObject _gameObject)
     {
         proxyQueue.Enqueue(_gameObject);

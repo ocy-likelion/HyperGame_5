@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class BlockOnlyTop : MonoBehaviour
 {
-    private Rigidbody2D rigid;
+    private Rigidbody2D rb;
     private readonly float slideForce = -7f;
     private void Awake()
     {
-        rigid = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     public void InstantiateProxyObject(Transform _parent, Sprite sprite)
@@ -18,6 +18,6 @@ public class BlockOnlyTop : MonoBehaviour
 
     public void ApplySlideMotion() // 크리스탈 기믹
     {
-        rigid.linearVelocity = new Vector2(slideForce, slideForce);
+        rb.linearVelocity = new Vector2(slideForce, slideForce);
     }
 }

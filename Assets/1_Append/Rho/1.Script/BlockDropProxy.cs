@@ -1,14 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-//public enum MineralTypeEnum
-//{
-//    Stone,
-//    Copper,
-//    Silver,
-//    Gold
-//}
-
 public class BlockDropProxy : MonoBehaviour
 {
     private MineralDataManager mineralDataManager;
@@ -36,13 +28,16 @@ public class BlockDropProxy : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D collision)
     {
+        if (isEnd) return;
         if (collision.gameObject.CompareTag("Block"))
         {
             isEnd = true;
+
             GameObject _blockTopObject = Instantiate(blockTopObject, this.transform.position, Quaternion.Euler(Vector2.zero));
             _blockTopObject.GetComponent<BlockOnlyTop>().InstantiateProxyObject(mineralDataManager.GetParentTopObject(), GetComponent<SpriteRenderer>().sprite);
-            proxyObjectPool.Return(this.gameObject);
+            proxyObjectPool.Return(gameObject);
             mineralDataManager.AddLastBlock(_blockTopObject);
+            Debug.Log(_blockTopObject.GetInstanceID());
         }
     }
 }
