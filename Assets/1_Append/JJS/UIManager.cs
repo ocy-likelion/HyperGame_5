@@ -45,11 +45,22 @@ public class UIManager : MonoBehaviour
     private int currentTutorialIndex = 0;
     public TextMeshProUGUI IndexText;
 
+   
+    [Header("팝업 효과")]
+    [Range(0.5f, 1f)] public float popStartScale = 0.85f;
+    public float popStep1 = 0.18f;     // 1.05까지
+    public float popStep2 = 0.10f;     // 1.00으로
+    public float fadeIn = 0.15f;
+    public float closeStep1 = 0.08f;   // 1.00 -> 0.92
+    public float closeStep2 = 0.12f;   // 0.92 -> 0.75
+    public float fadeOut = 0.12f;
+    public float popOvershoot = 2.2f;
+
     public bool isPaused = false;
 
     public TextMeshProUGUI ScoreText;
     public GameManager gameManager;
-
+    
     RectTransform timerRT;
     Vector2 basePos;
     Tween valueTw;
@@ -78,44 +89,68 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    void ShowPopup(GameObject panel)
+    {
+        if (!panel) return;
+        var rt = panel.GetComponent<RectTransform>();
+        var cg = panel.GetComponent<CanvasGroup>() ?? panel.AddComponent<CanvasGroup>();
+        cg.interactable = true; cg.blocksRaycasts = true;
+
+        DOTween.Kill(panel);
+        panel.SetActive(true);
+        rt.localScale = Vector3.one * popStartScale;
+        cg.alpha = 0f;
+
+        DOTween.Sequence().SetUpdate(true).SetLink(panel)
+            .Append(cg.DOFade(1f, fadeIn))
+            .Join(rt.DOScale(1.05f, popStep1).SetEase(Ease.OutCubic))
+            .Append(rt.DOScale(1.00f, popStep2).SetEase(Ease.OutBack, popOvershoot));
+    }
+
+    void HidePopup(GameObject panel)
+    {
+        if (!panel) return;
+        var rt = panel.GetComponent<RectTransform>();
+        var cg = panel.GetComponent<CanvasGroup>() ?? panel.AddComponent<CanvasGroup>();
+
+        DOTween.Kill(panel);
+        DOTween.Sequence().SetUpdate(true).SetLink(panel)
+            .Append(rt.DOScale(0.92f, closeStep1).SetEase(Ease.InCubic))
+            .Append(rt.DOScale(0.75f, closeStep2).SetEase(Ease.InBack, 1.5f))
+            .Join(cg.DOFade(0f, fadeOut))
+            .OnComplete(() => { panel.SetActive(false); rt.localScale = Vector3.one; });
+    }
+
     public void ShowTutorialUI()
     {
         PauseGame();
-        TutorialUI.SetActive(true);
-        PauseUI.SetActive(false);
-        ResultUI.SetActive(false);
+        ShowPopup(TutorialUI); HidePopup(PauseUI); HidePopup(ResultUI);
         ShowTutorialImage();
     }
 
     public void ShowPauseUI()
     {
         PauseGame();
-        PauseUI.SetActive(true);
-        TutorialUI.SetActive(false);
-        ResultUI.SetActive(false);
+        ShowPopup(PauseUI); HidePopup(TutorialUI); HidePopup(ResultUI);
     }
 
     public void ShowResultUI()
     {
         PauseGame();
-        ResultUI.SetActive(true);
-        PauseUI.SetActive(false);
-        TutorialUI.SetActive(false);
+        ShowPopup(ResultUI); HidePopup(PauseUI); HidePopup(TutorialUI);
     }
 
     public void CloseUI()
     {
         ResumeGame();
-        TutorialUI.SetActive(false);
-        PauseUI.SetActive(false);
-        ResultUI.SetActive(false);
+        HidePopup(TutorialUI); HidePopup(PauseUI); HidePopup(ResultUI);
     }
+
 
     void PauseGame()
     {
         isPaused = true;
-        Time.timeScale = 0f; // ★ 게임 세계 정지
-        // (UI 전용 트윈/파티클은 unscaled로 따로 돌림)
+        Time.timeScale = 0f; 
     }
 
     void ResumeGame()
@@ -163,10 +198,10 @@ public class UIManager : MonoBehaviour
         Timer.maxValue = 1;
         Timer.value = 1;
 
-        // 1) 값 1→0  ★ scaled time으로 변경 (timeScale=0이면 자동 정지)
+     
         valueTw = Timer.DOValue(0f, gameManager.timerDuration)
             .SetEase(Ease.Linear)
-            .SetUpdate(false) // ★ 중요: unscaled(=true) 제거
+            .SetUpdate(false) 
             .SetLink(Timer.gameObject, LinkBehaviour.KillOnDestroy | LinkBehaviour.PauseOnDisable)
             .OnComplete(() =>
             {
@@ -175,7 +210,6 @@ public class UIManager : MonoBehaviour
                 OnTimerEnd();
             });
 
-        // 2) 흔들림 루프 시작  ★ 이것도 scaled time으로 (일시정지 시 멈춤)
         RunShakeLoop();
     }
 
@@ -201,7 +235,7 @@ public class UIManager : MonoBehaviour
 
         }).SetLoops(-1, LoopType.Restart)
           .SetId(SHAKE_ID)
-          .SetUpdate(false) // ★ 중요: unscaled(=true) 제거
+          .SetUpdate(false)
           .SetLink(gameObject, LinkBehaviour.KillOnDestroy | LinkBehaviour.PauseOnDisable)
           .OnKill(() => { if (this && timerRT) timerRT.anchoredPosition = basePos; });
     }
@@ -217,7 +251,7 @@ public class UIManager : MonoBehaviour
     void OnTimerEnd()
     {
         Debug.Log("타이머가 종료되었습니다.");
-        // gameManager?.EndGame();
+       
     }
 
     public void ShowTutorialImage()
@@ -264,7 +298,6 @@ public class UIManager : MonoBehaviour
     }
 
 
-    // 결과 이펙트가 timeScale=0이어도 보이게(없으면 자동 부착)
     void ActivateEffectUnscaled(GameObject fx)
     {
         if (!fx) return;
@@ -275,7 +308,6 @@ public class UIManager : MonoBehaviour
     }
 }
 
-/// timeScale=0에서도 파티클이 재생되도록 강제 시뮬레이션
 [DisallowMultipleComponent]
 public class UnscaledParticleDriver : MonoBehaviour
 {
