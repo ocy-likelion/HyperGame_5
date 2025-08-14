@@ -47,7 +47,7 @@
     },
     "com.unity.2d.psdimporter": {
       "version": "9.0.3",
-      "depth": 1,
+      "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.2d.common": "9.0.4",
