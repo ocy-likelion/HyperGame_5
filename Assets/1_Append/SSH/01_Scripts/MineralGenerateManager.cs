@@ -13,6 +13,7 @@ public class MineralDataManager : MonoBehaviour
     [Header("Prefabs")]
     [SerializeField] private GameObject prefab_BlockDropProxy;
     [SerializeField] ProxyObjectPool blockDropProxyPool;
+    [SerializeField] EffectObjectPool effectObjectPool;
 
     [Header("Properties")]
     private readonly Vector2 GEN_POS = new Vector2(0, 5f); // Mineral generation point
@@ -103,7 +104,7 @@ public class MineralDataManager : MonoBehaviour
             // Instantiate prefab
             GameObject proxyBlock = blockDropProxyPool.Get();
 
-            proxyBlock.GetComponent<BlockDropProxy>().InstantiateProxyObject(this, blockDropProxyPool, proxyBlock);
+            proxyBlock.GetComponent<BlockDropProxy>().InstantiateProxyObject(this, blockDropProxyPool, effectObjectPool);
             proxyBlock.transform.position = spawnPosition;
             proxyBlock.transform.SetParent(topParent);
             proxyBlock.GetComponent<SpriteRenderer>().sprite = opHandle.Result;
