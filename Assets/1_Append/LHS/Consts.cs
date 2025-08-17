@@ -10,4 +10,7 @@
     public static string BLOCKLANDED = "BlockLanded";
 
     public static string GAMESCENE = "GameScene";
+    
+    public const float CAMERA_OFFSET = 7.38f;
+    public const float HEIGHT_OFFSET = 3f;
 }

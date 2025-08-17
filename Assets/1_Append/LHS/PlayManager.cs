@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,6 +10,7 @@ public class PlayManager : MonoBehaviour
 {
     // public Button DropButton;
 
+    [SerializeField]private Camera mainCamera;
     public GameObject BlockPrefab;
     List<GameObject> blockList = new List<GameObject>();
     List<GameObject> newBlockList = new List<GameObject>();
@@ -33,6 +35,7 @@ public class PlayManager : MonoBehaviour
     void OnDisable()
     {
         EventBus.Instance.Unsubscribe(Consts.BLOCKLANDED, AddBlock);
+        EventBus.Instance.Unsubscribe("RespawnBlock",RespawnBlock);
     }
 
     void Start()
@@ -120,13 +123,13 @@ public class PlayManager : MonoBehaviour
         // DropButton.gameObject.SetActive(false);
 
         GameObject newBlock = Instantiate(BlockPrefab);
-        EventBus.Instance.SpawnBlockCall(newBlock);
+        EventBus.Instance.Publish("SpawnBlock", newBlock);
+        newBlockList.Add(newBlock);
         // newBlock.transform.position = new Vector3(
         //     blockSpawnPoint.transform.position.x,
         //     blockSpawnPoint.transform.position.y,
         //     blockSpawnPoint.transform.position.z
         //     );
-        newBlockList.Add(newBlock);
 
         // StartCoroutine(WaitAndShowButton());
     }
@@ -140,12 +143,12 @@ public class PlayManager : MonoBehaviour
         }
     }
 
-    IEnumerator WaitAndShowButton()
-    {
-        yield return new WaitForSeconds(nextTurnTime);
-
-        // DropButton.gameObject.SetActive(true);
-    }
+    // IEnumerator WaitAndShowButton()
+    // {
+    //     yield return new WaitForSeconds(nextTurnTime);
+    //
+    //     DropButton.gameObject.SetActive(true);
+    // }
 
     void RespawnBlock()
     {
@@ -154,8 +157,37 @@ public class PlayManager : MonoBehaviour
     IEnumerator WaitAndCreateBlock()
     {
         yield return new WaitForSeconds(nextTurnTime);
-
+        
+        //쓰러지 고있는지 판단해서 쓰러지면 더 기다리게 함
+        while (CheckTowerIsNotSafe())
+        {
+            yield return new WaitForSeconds(nextTurnTime);
+        }
+        EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight());
+        yield return new WaitForSeconds(1f);    //카메라 움직이는 동안 생성 기다림
         CreateBlock();
+    }
+    //타워가 안정한지 체크
+    bool CheckTowerIsNotSafe()
+    {
+        var velocityX = highestBlock.GetComponent<Rigidbody2D>().linearVelocityX;
+        var velocityY = highestBlock.GetComponent<Rigidbody2D>().linearVelocityY;
+        var isNotSafe = (velocityY <= -0.03f);
+        
+        return isNotSafe;
+    }
+    //카메라 높이값 계산
+    float CalculateSetCameraHeight()
+    {
+        //화면 중하단 좌표
+        Vector3 screenLowerCenter =
+            new Vector3(Screen.width * 0.5f, Screen.height * 0.2f, Consts.CAMERA_OFFSET);
+        Vector3 worldPos = mainCamera.ScreenToWorldPoint(screenLowerCenter);
+
+        var height = highestBlock.transform.position.y + Consts.HEIGHT_OFFSET;
+        //비용이 비싸다함 어떤것이 더 효율인 좋은지 모름
+        // mainCamera.GetComponent<CameraController>().SetCameraHeight(height);
+        return height;
     }
     #endregion 
 }

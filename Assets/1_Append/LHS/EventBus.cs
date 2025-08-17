@@ -78,10 +78,34 @@ public class EventBus : MonoBehaviour
         }
     }
     
-    public Action<GameObject> SpawnBlock;
-    //블록 스폰시 호출될 함수
-    public void SpawnBlockCall(GameObject newBlock)
+    private Dictionary<string, Delegate> eventDictionaryT = new Dictionary<string, Delegate>();
+
+    public void Subscribe<T>(string eventName, Action<T> listener)
     {
-        SpawnBlock?.Invoke(newBlock);
+        if (eventDictionaryT.ContainsKey(eventName))
+        {
+            eventDictionaryT[eventName] = (Action<T>)eventDictionaryT[eventName] + listener;
+        }
+        else
+        {
+            eventDictionaryT[eventName] = listener;
+        }
+    }
+
+    public void Unsubscribe<T>(string eventName, Action<T> listener)
+    {
+        if (eventDictionaryT.ContainsKey(eventName))
+        {
+            eventDictionaryT[eventName] = (Action<T>)eventDictionaryT[eventName] - listener;
+        }
+    }
+
+    public void Publish<T>(string eventName, T param)
+    {
+        if (eventDictionaryT.ContainsKey(eventName))
+        {
+            var action = eventDictionaryT[eventName] as Action<T>;
+            action?.Invoke(param);
+        }
     }
 }

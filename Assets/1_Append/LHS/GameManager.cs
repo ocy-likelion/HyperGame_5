@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameManager2 : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     public UIManager uiManager; // UI 매니저 참조
     private bool gameEnd = false; // 게임 종료 여부
