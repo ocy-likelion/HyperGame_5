@@ -9,7 +9,7 @@ public class BlockDropProxy : MonoBehaviour
     private bool isEnd = false;
     [SerializeField] GameObject blockTopObject;
     
-    public void InstantiateProxyObject(MineralDataManager _mineralDataManager, ProxyObjectPool _proxyObjectPool, EffectObjectPool _effectObjectPool)
+    public void InstantiateProxyObject(MineralDataManager _mineralDataManager, ProxyObjectPool _proxyObjectPool,EffectObjectPool _effectObjectPool)
     {
         isEnd = false;
         mineralDataManager = _mineralDataManager;
@@ -31,11 +31,10 @@ public class BlockDropProxy : MonoBehaviour
         if (isEnd) return;
         if (collision.gameObject.CompareTag("Block"))
         {
-            effectObjectPool.Get(this.gameObject.transform);
             isEnd = true;
 
             GameObject _blockTopObject = Instantiate(blockTopObject, this.transform.position, Quaternion.Euler(Vector2.zero));
-            _blockTopObject.GetComponent<BlockOnlyTop>().InstantiateProxyObject(mineralDataManager.GetParentTopObject(), GetComponent<SpriteRenderer>().sprite);
+            _blockTopObject.GetComponent<BlockOnlyTop>().InstantiateProxyObject(mineralDataManager.GetParentTopObject(), GetComponent<SpriteRenderer>().sprite, effectObjectPool);
             proxyObjectPool.Return(gameObject);
             mineralDataManager.AddLastBlock(_blockTopObject);
         }

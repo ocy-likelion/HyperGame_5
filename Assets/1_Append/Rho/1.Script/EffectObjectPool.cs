@@ -21,17 +21,17 @@ public class EffectObjectPool : MonoBehaviour
         }
     }
 
-    public void Get(Transform transform)
+    public void Get(Transform _transform)
     {
         GameObject effectObject = effectQueue.Dequeue();
         effectObject.SetActive(true);
-        effectObject.transform.position = transform.position;
+        effectObject.transform.position = _transform.position;
         effectObject.GetComponent<EffectObject>().PlayEffect();
     }
     
     public void Return(GameObject _effectObject)
     {
         effectQueue.Enqueue(_effectObject);
-        //gameObject.SetActive(false);
+        _effectObject.SetActive(false);
     }
 }

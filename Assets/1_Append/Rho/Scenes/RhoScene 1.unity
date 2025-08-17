@@ -2571,6 +2571,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Prefab_NaturalGasZone_Left
       objectReference: {fileID: 0}
+    - target: {fileID: 4559391581277431205, guid: 3d7fccbe369da634496943ffb079697b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

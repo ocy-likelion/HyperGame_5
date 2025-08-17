@@ -15,18 +15,13 @@ public class EffectObject : MonoBehaviour
 
     public void PlayEffect()
     {
-        if (particle.isPlaying)
-        {
-            particle.Stop();
-        }
-
-        particle.Play();
         StartCoroutine(ParticleCoroutine());
     }
 
     IEnumerator ParticleCoroutine()
     {
-        yield return new WaitForSeconds(0.5f);
+        particle.Play();
+        yield return new WaitForSeconds(1.5f);
         effectPool.Return(this.gameObject);
     }
 }

@@ -9,11 +9,12 @@ public class BlockOnlyTop : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void InstantiateProxyObject(Transform _parent, Sprite sprite)
+    public void InstantiateProxyObject(Transform _parent, Sprite sprite, EffectObjectPool _effectObjectPool)
     {
         this.transform.SetParent(_parent);
         GetComponent<SpriteRenderer>().sprite = sprite;
         GetComponent<SpriteOutlineCollider>().BuildCollider();
+        _effectObjectPool.Get(this.gameObject.transform);
     }
 
     public void ApplySlideMotion() // 크리스탈 기믹
