@@ -25,12 +25,12 @@ public class PlayManager : MonoBehaviour
 
     void OnEnable()
     {
-        EventBus.Instance.Subscribe(Consts.BLOCKLANDED, AddBlock);
+        EventBus.Instance.Subscribe(Consts.BLOCK_LANDED, AddBlock);
     }
 
     void OnDisable()
     {
-        EventBus.Instance.Unsubscribe(Consts.BLOCKLANDED, AddBlock);
+        EventBus.Instance.Unsubscribe(Consts.BLOCK_LANDED, AddBlock);
     }
 
     void Start()
@@ -60,7 +60,7 @@ public class PlayManager : MonoBehaviour
             yield return null;
         }
 
-        EventBus.Instance.Publish(Consts.GAMEOVER);
+        EventBus.Instance.Publish(Consts.GAME_OVER);
     }
 
     void CheckHighestBlock()

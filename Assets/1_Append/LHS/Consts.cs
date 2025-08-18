@@ -1,13 +1,14 @@
 ﻿public static class Consts
 {
     // to use string
-    public static string GAMECLEAR = "GameClear";
-    public static string GAMEOVER = "GameOver";
+    public static string GAME_CLEAR = "GameClear";
+    public static string GAME_OVER = "GameOver";
+    public static string END_GAME = "EndGame";
 
-    public static string PAUSEGAME = "PauseGame";
-    public static string RESUMEGAME = "ResumeGame";
+    public static string PAUSE_GAME = "PauseGame";
+    public static string RESUME_GAME = "ResumeGame";
 
-    public static string BLOCKLANDED = "BlockLanded";
+    public static string BLOCK_LANDED = "BlockLanded";
 
-    public static string GAMESCENE = "GameScene";
+    public static string GAME_SCENE = "GameScene";
 }
