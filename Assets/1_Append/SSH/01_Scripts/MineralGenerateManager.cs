@@ -9,6 +9,7 @@ public class MineralDataManager : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private Transform topParent;
+    private SabotageEventManager sabotageEventManager;
 
     [Header("Prefabs")]
     [SerializeField] private GameObject prefab_BlockDropProxy;
@@ -30,6 +31,7 @@ public class MineralDataManager : MonoBehaviour
     private void Awake()
     {
         mineralCount = 0;
+        sabotageEventManager = GetComponent<SabotageEventManager>();    
     }
 
     public void GenerateRandomMineral()
@@ -57,6 +59,7 @@ public class MineralDataManager : MonoBehaviour
 
         GenerateMineralAsync(type);
         mineralCount++;
+        sabotageEventManager.EventCheckByMineralCount(mineralCount);
     }
 
     private void GenerateMineralAsync(MineralTypeEnum type)
