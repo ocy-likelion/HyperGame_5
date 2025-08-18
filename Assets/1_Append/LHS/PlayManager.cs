@@ -22,14 +22,17 @@ public class PlayManager : MonoBehaviour
     public TMP_Text elapsedTimeText;
     float totalElapsedTime = 0.0f;
     float timeLimit = 15.0f;
+    bool gameEnded = false;
 
     void OnEnable()
     {
+        EventBus.Instance.Subscribe(Consts.END_GAME, EndGame);
         EventBus.Instance.Subscribe(Consts.BLOCK_LANDED, AddBlock);
     }
 
     void OnDisable()
     {
+        EventBus.Instance.Unsubscribe(Consts.END_GAME, EndGame);
         EventBus.Instance.Unsubscribe(Consts.BLOCK_LANDED, AddBlock);
     }
 
@@ -43,6 +46,8 @@ public class PlayManager : MonoBehaviour
         #region 임시 blockSpawnPoint 이동, 드래그 앤 드롭으로 고쳐야 함
         blockSpawnPoint.transform.position = new Vector3(Mathf.Sin(Time.time * blockSpawnPointFreqeuncy), 4.0f, 0.0f);
         #endregion
+
+        if (gameEnded == true) return;
 
         elapsedTimeText.text = ((int)totalElapsedTime).ToString();
 
@@ -61,6 +66,11 @@ public class PlayManager : MonoBehaviour
         }
 
         EventBus.Instance.Publish(Consts.GAME_OVER);
+    }
+
+    void EndGame()
+    {
+        gameEnded = true;
     }
 
     void CheckHighestBlock()
@@ -90,7 +100,9 @@ public class PlayManager : MonoBehaviour
         // 목표 위치에 도달하면 게임 클리어
         if (currentTowerHeight > goalTowerHeight)
         {
-            EventBus.Instance.Publish(Consts.GAMECLEAR);
+            GameManager gameManager = GameObject.FindFirstObjectByType<GameManager>();
+            gameManager.isWin = true;
+            EventBus.Instance.Publish(Consts.END_GAME);
         }
     }
 
