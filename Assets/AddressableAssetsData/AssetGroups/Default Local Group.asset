@@ -15,33 +15,28 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 85189d12400b4374a8a5b66302154478
   m_SerializeEntries:
-  - m_GUID: 06c7bb912728a0f4a9544e0aa28eb6d9
-    m_Address: Sprite_Silver_1
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0ea7feaff8be7c544907fa8cb0ff1212
-    m_Address: Sprite_Stone_1
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1026710cccd8b8344aba24d7601602ec
-    m_Address: Sprite_Gold_1
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1619a5cc860e7bb4caec9ca8cff2b264
     m_Address: Assets/1_Append/SSH/09_Assets/Sprite_NaturalGas_Left 1.png
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 23d03d67e020dea4898723d3c5c43ee1
-    m_Address: Sprite_Copper_2
+  - m_GUID: 1a8bdfa8d82edcc4ba50b58c7d88bb02
+    m_Address: Sprite_Stone_1
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 290a516ad9d55b54ca4da947421e246f
-    m_Address: Sprite_Copper_1
+  - m_GUID: 1b26bd3dec6dd554d920efd875c84910
+    m_Address: Sprite_Silver_1
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 334d710f926492e4ba910b0ccde985a7
+    m_Address: Sprite_Copper_3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 35b3bda19ad864642afb21f813ac332a
+    m_Address: Sprite_Stone_4
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -50,13 +45,13 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3d5e064cc21e1184f9e5811051dcb835
-    m_Address: Sprite_Copper_3
+  - m_GUID: 60500955960396048bb87dce35cc0432
+    m_Address: Sprite_Silver_2
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 79bdf43d0f418d2488b253dd22b3f9cf
-    m_Address: Sprite_Stone_4
+  - m_GUID: 83c559fd1da03b540a913eebdd939a99
+    m_Address: Sprite_Stone_2
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -65,18 +60,23 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: cf7ea74aecccd6f4fb2d565938eab896
-    m_Address: Sprite_Silver_2
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d61327c0ea4baaa4e9cd5d245d98616e
+  - m_GUID: b0c1e2be98bbf594aa81fa1a55c39bb9
     m_Address: Sprite_Stone_3
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d8398724cfdd2d645802618105da0480
-    m_Address: Sprite_Stone_2
+  - m_GUID: b1e04f93007eaad48a3ab54ab8584e25
+    m_Address: Sprite_Gold_1
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b88a3a1118d7ba149b3ceee525cf7f03
+    m_Address: Sprite_Copper_2
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ffdebbcd93850f6418016d7f5e64e672
+    m_Address: Sprite_Copper_1
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
