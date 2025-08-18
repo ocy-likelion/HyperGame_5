@@ -1,40 +1,36 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public UIManager uiManager; // UI 매니저 참조
-    private bool gameEnd = false; // 게임 종료 여부
-    public bool isWin = false; // 게임 승리 여부
-    public float timerDuration = 30f; // 제한 시간
+    public UIManager uiManager;
+    private bool gameEnd = false;
+    public bool isWin = false;
+    public float timerDuration = 30f;
     private float currentTime;
-    public int score = 0; // 게임 점수;
-
+    public int score = 5000;
 
     void OnEnable()
     {
-       EventBus.Instance.Subscribe(Consts.END_GAME, EndGame);
+        EventBus.Instance.Subscribe(Consts.END_GAME, EndGame);
     }
 
     void OnDisable()
     {
-       EventBus.Instance.Unsubscribe(Consts.END_GAME, EndGame);
+        EventBus.Instance.Unsubscribe(Consts.END_GAME, EndGame);
     }
 
     void Start()
     {
-        currentTime = timerDuration; // 시작 시 타이머 초기화
-
+        currentTime = timerDuration;
     }
 
     void Update()
     {
-        if (gameEnd) return; // 이미 종료 상태면 더 이상 진행 안 함
+        if (gameEnd) return;
 
-        // 타이머 감소
         currentTime -= Time.deltaTime;
 
-        // 조건 체크
-        if (currentTime <= 0 || isWin)
+        if (currentTime <= 0f || isWin)
         {
             gameEnd = true;
             EndGame();
@@ -43,18 +39,27 @@ public class GameManager : MonoBehaviour
 
     private void EndGame()
     {
-        // 결과 UI 활성화
-        uiManager.ShowResultUI();
-        uiManager.Result(isWin);
+        if (isWin)
+        {
+            int timeBonus = Mathf.Max(0, Mathf.FloorToInt(currentTime) * 100);
+            int from = score;
+            int to = from + timeBonus;
+
+            uiManager.PlaySuccessBonus(timeBonus, from, to, onComplete: () =>
+            {
+                score = to;                 // ← 애니 끝난 뒤 실제 점수 커밋
+                uiManager.ShowResultUI();   // 결과창 오픈
+                uiManager.Result(true);
+            });
+        }
+        else
+        {
+            uiManager.ShowResultUI();
+            uiManager.Result(false);
+        }
     }
 
-    // 테스트용 승리 트리거
-    public void Test()
-    {
-        isWin = true;
-    }
 
-    #region 개발용
 
-    #endregion
+    public void Test() { isWin = true; }
 }
