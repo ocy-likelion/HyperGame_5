@@ -20,23 +20,8 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1a8bdfa8d82edcc4ba50b58c7d88bb02
+  - m_GUID: 1d2b09f66e84cf345b27d5a427c16c9d
     m_Address: Sprite_Stone_1
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1b26bd3dec6dd554d920efd875c84910
-    m_Address: Sprite_Silver_1
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 334d710f926492e4ba910b0ccde985a7
-    m_Address: Sprite_Copper_3
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 35b3bda19ad864642afb21f813ac332a
-    m_Address: Sprite_Stone_4
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -45,13 +30,28 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 60500955960396048bb87dce35cc0432
+  - m_GUID: 425d3e5b18ce48543b4786fbc0c4ef8b
+    m_Address: Sprite_Copper_3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 515a131e5e5843648921da92e39bbbf1
+    m_Address: Sprite_Stone_3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 691c0afb12a449b4c879b556262439ee
+    m_Address: Sprite_Copper_1
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7b35cdd590d3c624186dcca2f0212f63
     m_Address: Sprite_Silver_2
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 83c559fd1da03b540a913eebdd939a99
-    m_Address: Sprite_Stone_2
+  - m_GUID: 8119f65eb70d90944b622531f12ad361
+    m_Address: Sprite_Silver_1
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -60,23 +60,23 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b0c1e2be98bbf594aa81fa1a55c39bb9
-    m_Address: Sprite_Stone_3
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b1e04f93007eaad48a3ab54ab8584e25
-    m_Address: Sprite_Gold_1
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b88a3a1118d7ba149b3ceee525cf7f03
+  - m_GUID: a18ba7adcc6733a4cb2efc0f6d2b7306
     m_Address: Sprite_Copper_2
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ffdebbcd93850f6418016d7f5e64e672
-    m_Address: Sprite_Copper_1
+  - m_GUID: abb625622945b0f42b45e31dbed7b9fb
+    m_Address: Sprite_Stone_4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e5727234c05fb5547b4f9b1d5ec21f19
+    m_Address: Sprite_Stone_2
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa4a300a9733ddd4ba36dddb0f82e851
+    m_Address: Sprite_Gold_1
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

@@ -14,7 +14,7 @@ public class SpriteOutlineCollider : MonoBehaviour
     List<List<Vector2>> contours = new List<List<Vector2>>();
 
     [Header("최적화")]
-    const int DOWNSCALE_AMOUNT = 16; // 2~4 정도가 적당
+    const int DOWNSCALE_AMOUNT = 2; // 2~4 정도가 적당
 
     void Start()
     {
