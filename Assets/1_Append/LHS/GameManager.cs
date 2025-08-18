@@ -54,19 +54,6 @@ public class GameManager : MonoBehaviour
         isWin = true;
     }
 
-
-    #region 소리
-    void SoundOn()
-    {
-        // 음소거 해제
-    }
-
-    void SoundOff()
-    {
-        // 음소거
-    }
-    #endregion
-
     #region 개발용
 
     #endregion
