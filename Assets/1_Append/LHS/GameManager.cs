@@ -1,7 +1,4 @@
-﻿using TMPro;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,14 +12,12 @@ public class GameManager : MonoBehaviour
 
     void OnEnable()
     {
-        //EventBus.Instance.Subscribe(Consts.GAMECLEAR, GameClear);
-       // EventBus.Instance.Subscribe(Consts.GAMEOVER, GameOver);
+       EventBus.Instance.Subscribe(Consts.END_GAME, EndGame);
     }
 
     void OnDisable()
     {
-       // EventBus.Instance.Unsubscribe(Consts.GAMECLEAR, GameClear);
-       // EventBus.Instance.Unsubscribe(Consts.GAMEOVER, GameOver);
+       EventBus.Instance.Unsubscribe(Consts.END_GAME, EndGame);
     }
 
     void Start()
