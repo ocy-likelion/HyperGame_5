@@ -6,7 +6,7 @@ public class BlockListAdder : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        EventBus.Instance.Publish(Consts.BLOCKLANDED);
+        EventBus.Instance.Publish(Consts.BLOCK_LANDED);
 
         BlockListAdder adder = GetComponent<BlockListAdder>();
         Destroy(adder); // 이 일회용 컴포넌트 삭제
