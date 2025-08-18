@@ -7,12 +7,12 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
-    [Header("UI ±¸¼º¿ä¼Ò")]
+    [Header("UI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public GameObject TutorialUI;
     public GameObject PauseUI;
     public GameObject ResultUI;
 
-    [Header("Å¸ÀÌ¸Ó °ü·Ã")]
+    [Header("Å¸ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public Slider Timer;
     public Image TimerImage;
     [Range(0f, 1f)] public float shakeStartNormalized = 0.4f;
@@ -22,13 +22,13 @@ public class UIManager : MonoBehaviour
     public int maxVibrato = 40;
     public AnimationCurve intensityCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-    [Header("»ç¿îµå °ü·Ã")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public Image SoundButton;
     public Sprite SoundButtonOn;
     public Sprite SoundButtonOff;
     public TextMeshProUGUI SoundText;
 
-    [Header("Å¬¸®¾îÅÇ")]
+    [Header("Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public Image CliarImage;
     public Sprite SuccessSprite;
     public Sprite FailSprite;
@@ -37,7 +37,7 @@ public class UIManager : MonoBehaviour
     public GameObject FailEffect;
     public TextMeshProUGUI ClearScoreText;
 
-    [Header("Æ©Åä¸®¾ó")]
+    [Header("Æ©ï¿½ä¸®ï¿½ï¿½")]
     public Image TutorialImage;
     public TextMeshProUGUI TutorialText;
     public Sprite[] TutorialImages;
@@ -46,10 +46,10 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI IndexText;
 
    
-    [Header("ÆË¾÷ È¿°ú")]
+    [Header("ï¿½Ë¾ï¿½ È¿ï¿½ï¿½")]
     [Range(0.5f, 1f)] public float popStartScale = 0.85f;
-    public float popStep1 = 0.18f;     // 1.05±îÁö
-    public float popStep2 = 0.10f;     // 1.00À¸·Î
+    public float popStep1 = 0.18f;     // 1.05ï¿½ï¿½ï¿½ï¿½
+    public float popStep2 = 0.10f;     // 1.00ï¿½ï¿½ï¿½ï¿½
     public float fadeIn = 0.15f;
     public float closeStep1 = 0.08f;   // 1.00 -> 0.92
     public float closeStep2 = 0.12f;   // 0.92 -> 0.75
@@ -165,12 +165,12 @@ public class UIManager : MonoBehaviour
         if (soundOn)
         {
             SoundButton.sprite = SoundButtonOn;
-            SoundText.text = "À½¼Ò°Å";
+            SoundText.text = "ï¿½ï¿½ï¿½Ò°ï¿½";
         }
         else
         {
             SoundButton.sprite = SoundButtonOff;
-            SoundText.text = "¼Ò¸® ÄÑ±â";
+            SoundText.text = "ï¿½Ò¸ï¿½ ï¿½Ñ±ï¿½";
         }
     }
 
@@ -178,7 +178,7 @@ public class UIManager : MonoBehaviour
     {
         if (success)
         {
-            ActivateEffectUnscaled(SuccessEffect); // °á°ú ÀÌÆåÆ®´Â unscaled·Î Àç»ý
+            ActivateEffectUnscaled(SuccessEffect); // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ unscaledï¿½ï¿½ ï¿½ï¿½ï¿½
             CliarImage.sprite = SuccessSprite;
             ClearScoreText.text = gameManager ? gameManager.score.ToString() : "";
         }
@@ -192,7 +192,7 @@ public class UIManager : MonoBehaviour
 
     public void StartTimer()
     {
-        KillTimerTweens(); // ±âÁ¸ Æ®À© Á¤¸®
+        KillTimerTweens(); // ï¿½ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
         Timer.minValue = 0;
         Timer.maxValue = 1;
@@ -224,7 +224,7 @@ public class UIManager : MonoBehaviour
                 return;
             }
 
-            float norm = Timer.value;               // 1¡æ0
+            float norm = Timer.value;               // 1ï¿½ï¿½0
             float t = Mathf.InverseLerp(shakeStartNormalized, 0f, norm);
             if (t <= 0f) { timerRT.anchoredPosition = basePos; return; }
 
@@ -250,7 +250,7 @@ public class UIManager : MonoBehaviour
 
     void OnTimerEnd()
     {
-        Debug.Log("Å¸ÀÌ¸Ó°¡ Á¾·áµÇ¾ú½À´Ï´Ù.");
+        Debug.Log("Å¸ï¿½Ì¸Ó°ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
        
     }
 
@@ -290,11 +290,11 @@ public class UIManager : MonoBehaviour
 
     public void Reset()
     {
-        // °ÔÀÓ ¸ØÃã »óÅÂ ÇØÁ¦
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         Time.timeScale = 1f;
 
-        KillTimerTweens(); // ¾À °¥¾Æ³¢¿ì±â Àü¿¡ ¾ÈÀü Á¾·á
-        SceneManager.LoadScene("MainScene");
+        KillTimerTweens(); // ï¿½ï¿½ ï¿½ï¿½ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        SceneManager.LoadScene("MainSceneTest");
     }
 
 
@@ -304,7 +304,7 @@ public class UIManager : MonoBehaviour
         if (!fx.TryGetComponent<UnscaledParticleDriver>(out _))
             fx.AddComponent<UnscaledParticleDriver>();
         fx.SetActive(false);
-        fx.SetActive(true); // Àç»ý Æ®¸®°Å
+        fx.SetActive(true); // ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½
     }
 }
 
