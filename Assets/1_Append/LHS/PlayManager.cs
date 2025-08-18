@@ -103,7 +103,9 @@ public class PlayManager : MonoBehaviour
             float height = block.GetComponent<Collider2D>().bounds.max.y;
 
             //block.GetComponent<SpriteRenderer>().color = Color.white; // 임시
-            
+
+            if (block == null) return;
+
             if (height > currentTowerHeight)
             {
                 currentTowerHeight = height;

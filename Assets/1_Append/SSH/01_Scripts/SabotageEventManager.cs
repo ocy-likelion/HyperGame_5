@@ -6,10 +6,10 @@ public class SabotageEventManager : MonoBehaviour
 {
     [Header("프리팹")]
     [SerializeField] GameObject prefab_Mole;
-    [SerializeField] GameObject prefab_Feather;
 
     [Header("씬 오브젝트")]
     [SerializeField] GameObject platform;
+    [SerializeField] GameObject deadLine;
     [SerializeField] GameObject lava;
     [SerializeField] BlockController blockController;
 
@@ -43,6 +43,7 @@ public class SabotageEventManager : MonoBehaviour
         if (isTriggeredSinkHole) return;
 
         platform.transform.DOMove((Vector2)platform.transform.position + SINKHOLE_POS, SINKHOLE_DURATION);
+        deadLine.transform.DOMove((Vector2)deadLine.transform.position + SINKHOLE_POS, SINKHOLE_DURATION);
         ShakeCamera(SINKHOLE_DURATION, SHAKE_CAMERA_AMOUNT);
         isTriggeredSinkHole = true;
     }
