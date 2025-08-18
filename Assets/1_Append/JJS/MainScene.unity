@@ -3351,7 +3351,7 @@ PrefabInstance:
     - target: {fileID: 5488096167722824718, guid: ccf1b0e3d23ad49418f8f73db33e264a, type: 3}
       propertyPath: mainCamera
       value: 
-      objectReference: {fileID: 444366525}
+      objectReference: {fileID: 1378813127}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6189,17 +6189,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.05905819, y: -0.30210078}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 6.59, y: 1.99}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 5.4940624, y: 0.68978286}
   m_EdgeRadius: 0
 --- !u!212 &1635174786
 SpriteRenderer:
@@ -6245,8 +6245,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.51572317, g: 0.08595381, b: 0.08595381, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 9843e6e11bf2b5b47b38451f6c911725, type: 3}
+  m_Color: {r: 0.78113204, g: 0.63522243, b: 0.63522243, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -6266,7 +6266,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -3, z: 0}
-  m_LocalScale: {x: 10, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
