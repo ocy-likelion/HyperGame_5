@@ -6,17 +6,21 @@ public class SpriteOutlineCollider : MonoBehaviour
 {
     [Header("주요 프로퍼티")]
     float alphaThreshold = 0.1f;
-    public float simplifyTolerancePixels = 1f; //값이 클수록 콜라이더의 꼭짓점이 단순해집니다.
-    [Range(0f, 0.05f)] public float shrinkAmount = 0.02f; // 값이 클수록 콜라이더가 작아집니다.
-    public bool drawGizmos = true; // 콜라이더 기즈모를 그릴지 여부입니다.
+    public float simplifyTolerancePixels = 1f;
+    [Range(0f, 0.05f)] public float shrinkAmount = 0.02f;
+    public bool drawGizmos = true;
 
     [Header("부가 프로퍼티")]
     List<List<Vector2>> contours = new List<List<Vector2>>();
+
+    [Header("최적화")]
+    const int DOWNSCALE_AMOUNT = 2; // 2~4 정도가 적당
 
     void Start()
     {
         BuildCollider();
     }
+
     public void BuildCollider()
     {
         contours.Clear();
@@ -46,10 +50,19 @@ public class SpriteOutlineCollider : MonoBehaviour
             Array.Copy(allPixels, src, sprPixels, y * w, w);
         }
 
-        bool[,] mask = new bool[w, h];
-        for (int y = 0; y < h; y++)
-            for (int x = 0; x < w; x++)
-                mask[x, y] = (sprPixels[y * w + x].a / 255f) > alphaThreshold;
+        // ---------------- Downscale 적용 ----------------
+        int w2 = Mathf.Max(1, w / DOWNSCALE_AMOUNT);
+        int h2 = Mathf.Max(1, h / DOWNSCALE_AMOUNT);
+        bool[,] mask = new bool[w2, h2];
+
+        for (int y = 0; y < h2; y++)
+            for (int x = 0; x < w2; x++)
+            {
+                int srcX = x * DOWNSCALE_AMOUNT;
+                int srcY = y * DOWNSCALE_AMOUNT;
+                mask[x, y] = (sprPixels[srcY * w + srcX].a / 255f) > alphaThreshold;
+            }
+        // ------------------------------------------------
 
         var adjacency = new Dictionary<Vector2Int, HashSet<Vector2Int>>();
 
@@ -60,22 +73,23 @@ public class SpriteOutlineCollider : MonoBehaviour
             sa.Add(b); sb.Add(a);
         }
 
-        for (int y = 0; y < h; y++)
+        // edge 생성도 downscale mask 기준
+        for (int y = 0; y < h2; y++)
         {
-            for (int x = 0; x < w; x++)
+            for (int x = 0; x < w2; x++)
             {
                 if (!mask[x, y]) continue;
 
                 if (x - 1 < 0 || !mask[x - 1, y])
                     AddEdge(new Vector2Int(x, y), new Vector2Int(x, y + 1));
 
-                if (x + 1 >= w || !mask[x + 1, y])
+                if (x + 1 >= w2 || !mask[x + 1, y])
                     AddEdge(new Vector2Int(x + 1, y + 1), new Vector2Int(x + 1, y));
 
                 if (y - 1 < 0 || !mask[x, y - 1])
                     AddEdge(new Vector2Int(x + 1, y), new Vector2Int(x, y));
 
-                if (y + 1 >= h || !mask[x, y + 1])
+                if (y + 1 >= h2 || !mask[x, y + 1])
                     AddEdge(new Vector2Int(x, y + 1), new Vector2Int(x + 1, y + 1));
             }
         }
@@ -136,7 +150,7 @@ public class SpriteOutlineCollider : MonoBehaviour
                     if (next == loop[0]) break;
                     loop.Add(next);
 
-                    if (loop.Count > (w + h) * 16)
+                    if (loop.Count > (w2 + h2) * 16)
                     {
                         Debug.LogWarning("[PPRC] 루프가 비정상적으로 큼, 중지.");
                         break;
@@ -166,7 +180,9 @@ public class SpriteOutlineCollider : MonoBehaviour
             var c = contours[i];
             for (int j = 0; j < c.Count; j++)
             {
-                Vector2 p = c[j];
+                // downscale 보정
+                Vector2 p = c[j] * DOWNSCALE_AMOUNT;
+
                 if (sr.flipX) p.x = w - p.x;
                 if (sr.flipY) p.y = h - p.y;
 
@@ -174,11 +190,9 @@ public class SpriteOutlineCollider : MonoBehaviour
                 c[j] = local;
             }
 
-            // 여기서 축소 적용
             if (shrinkAmount > 0.001f)
                 c = ShrinkPolygon(c, shrinkAmount);
 
-            // 단순화는 축소 후가 더 자연스럽지만 상황에 따라 변경 가능
             if (simplifyTolerancePixels > 0.001f)
             {
                 float tolUnits = simplifyTolerancePixels / ppu;
@@ -193,8 +207,8 @@ public class SpriteOutlineCollider : MonoBehaviour
         {
             poly.SetPath(i, contours[i].ToArray());
         }
-
     }
+
     static List<Vector2> RemoveColinear(List<Vector2> pts)
     {
         if (pts.Count < 3) return new List<Vector2>(pts);
@@ -211,6 +225,7 @@ public class SpriteOutlineCollider : MonoBehaviour
         }
         return outp;
     }
+
     static List<Vector2> RamerDouglasPeucker(List<Vector2> points, float epsilon)
     {
         if (points == null || points.Count < 3) return new List<Vector2>(points);
@@ -241,6 +256,7 @@ public class SpriteOutlineCollider : MonoBehaviour
         for (int i = 0; i < points.Count; i++) if (keep[i]) res.Add(points[i]);
         return res;
     }
+
     static float DistancePointLine(Vector2 p, Vector2 a, Vector2 b)
     {
         if (a == b) return Vector2.Distance(p, a);
@@ -249,12 +265,14 @@ public class SpriteOutlineCollider : MonoBehaviour
         Vector2 proj = a + t * (b - a);
         return Vector2.Distance(p, proj);
     }
+
     Vector2 GetPolygonCentroid(List<Vector2> polygon)
     {
         Vector2 sum = Vector2.zero;
         foreach (var p in polygon) sum += p;
         return sum / polygon.Count;
     }
+
     List<Vector2> ShrinkPolygon(List<Vector2> polygon, float amount)
     {
         Vector2 centroid = GetPolygonCentroid(polygon);
@@ -266,6 +284,7 @@ public class SpriteOutlineCollider : MonoBehaviour
         }
         return shrunk;
     }
+
     void OnDrawGizmosSelected()
     {
         if (!drawGizmos || contours == null) return;

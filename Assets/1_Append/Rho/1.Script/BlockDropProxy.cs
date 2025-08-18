@@ -29,7 +29,7 @@ public class BlockDropProxy : MonoBehaviour
     public void OnTriggerEnter2D(Collider2D collision)
     {
         if (isEnd) return;
-        if (collision.gameObject.CompareTag("Block"))
+        if (collision.gameObject.CompareTag("Block") || collision.gameObject.CompareTag("Platform"))
         {
             isEnd = true;
 

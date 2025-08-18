@@ -5,11 +5,11 @@ using UnityEngine;
 public class SabotageEventManager : MonoBehaviour
 {
     [Header("프리팹")]
-    [SerializeField] GameObject prefab_Mole;
-    [SerializeField] GameObject prefab_Feather;
+    //[SerializeField] GameObject prefab_Mole;
+    //[SerializeField] GameObject prefab_Feather;
 
     [Header("씬 오브젝트")]
-    [SerializeField] GameObject ground;
+    [SerializeField] GameObject platform;
     [SerializeField] GameObject lava;
 
     [Header("주요 프로퍼티")]
@@ -32,32 +32,32 @@ public class SabotageEventManager : MonoBehaviour
 
     public void EventCheckByMineralCount(int mineralCount) // 모든 방해 이벤트를 관리하는 메서드
     {
-        if (mineralCount % 8 == 0)
-        {
-            TriggerMoleEvent();
-        }
-        if (mineralCount % 12 == 0)
+        if (mineralCount % 4 == 0)
         {
             TriggerSinkHoleEvent();
         }
-        if (mineralCount % 6 == 0)
-        {
-            TriggerFeatherEvent();
-        }
+        //if (mineralCount % 8 == 0)
+        //{
+        //    TriggerMoleEvent();
+        //}
+        //if (mineralCount % 6 == 0)
+        //{
+        //    TriggerFeatherEvent();
+        //}
     }
-    void TriggerMoleEvent() // 두더지 이벤트 메서드
-    {
-        GameObject go = Instantiate(prefab_Mole);
-        go.transform.position = MOLE_GEN_POS + new Vector2(Random.Range(-3f, 3f), 0);
-    }
-    void TriggerFeatherEvent() // 깃털 이벤트 메서드
-    {
-        GameObject go = Instantiate(prefab_Feather);
-        go.transform.position = FEATHER_GEN_POS + new Vector2(Random.Range(-3f, 3f), 0);
-    }
+    //void TriggerMoleEvent() // 두더지 이벤트 메서드
+    //{
+    //    GameObject go = Instantiate(prefab_Mole);
+    //    go.transform.position = MOLE_GEN_POS + new Vector2(Random.Range(-3f, 3f), 0);
+    //}
+    //void TriggerFeatherEvent() // 깃털 이벤트 메서드
+    //{
+    //    GameObject go = Instantiate(prefab_Feather);
+    //    go.transform.position = FEATHER_GEN_POS + new Vector2(Random.Range(-3f, 3f), 0);
+    //}
     void TriggerSinkHoleEvent() // 싱크홀 이벤트 메서드
     {
-        ground.transform.DOMove((Vector2)ground.transform.position + SINKHOLE_POS, SINKHOLE_DURATION);
+        platform.transform.DOMove((Vector2)platform.transform.position + SINKHOLE_POS, SINKHOLE_DURATION);
         ShakeCamera(SINKHOLE_DURATION, SHAKE_CAMERA_AMOUNT);
     }
     void ShakeCamera(float duration, float strength) // 카메라 쉐이킹 메서드
