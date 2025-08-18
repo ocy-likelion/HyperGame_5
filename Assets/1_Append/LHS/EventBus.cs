@@ -78,6 +78,7 @@ public class EventBus : MonoBehaviour
         }
     }
     
+    // events using generic
     private Dictionary<string, Delegate> eventDictionaryT = new Dictionary<string, Delegate>();
 
     public void Subscribe<T>(string eventName, Action<T> listener)
