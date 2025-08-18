@@ -20,7 +20,7 @@ public class PlayManager : MonoBehaviour
     // float blockSpawnPointFreqeuncy = 1.5f;
 
     public float currentTowerHeight;
-    float goalTowerHeight = 2.0f; // 임시
+    float goalTowerHeight = 4.0f; // 임시
 
     public TMP_Text elapsedTimeText;
     float totalElapsedTime = 0.0f;
@@ -29,10 +29,12 @@ public class PlayManager : MonoBehaviour
 
     // 컴포넌트
     MineralDataManager mineralDataManager;
+    SabotageEventManager sabotageEventManager;
 
     void Awake()
     {
         mineralDataManager = GetComponent<MineralDataManager>();
+        TryGetComponent<SabotageEventManager>(out sabotageEventManager);
     }
     void OnEnable()
     {
@@ -68,6 +70,10 @@ public class PlayManager : MonoBehaviour
         CheckTowerHeight();
 
         towerHeightLine.transform.position = new Vector3(0.0f, currentTowerHeight, 0.0f);
+
+        if (currentTowerHeight > 1.5f) sabotageEventManager.TriggerMoleEvent();
+
+        if (currentTowerHeight > 2.5f) sabotageEventManager.TriggerSinkHoleEvent();
     }
 
     IEnumerator GameTimer()

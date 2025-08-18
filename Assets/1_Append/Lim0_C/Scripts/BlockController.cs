@@ -117,4 +117,8 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         var linePoint2 = new Vector3(_currentBlock.transform.position.x, line2Y, 0);
         predictLineRender.SetPosition(1, linePoint2);
     }
+    public Vector3 GetBlockSpawnPos()
+    {
+        return _blockSpawnPosition;
+    }
 }

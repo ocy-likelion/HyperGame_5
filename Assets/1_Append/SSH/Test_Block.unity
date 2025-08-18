@@ -1025,7 +1025,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e22edccc4575be44593f66eb4268f21e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab_Mineral: {fileID: 6032233432903053141, guid: 2f40ccd3d86fa5246a7d5b72864a207f, type: 3}
+  topParent: {fileID: 0}
+  prefab_BlockDropProxy: {fileID: 0}
+  blockDropProxyPool: {fileID: 0}
+  effectObjectPool: {fileID: 0}
 --- !u!114 &1570515642
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1040,8 +1043,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab_Mole: {fileID: 7869635054863380352, guid: 66707e7c659c8624d86edf462d743ceb, type: 3}
   prefab_Feather: {fileID: 9215933578767433083, guid: 6a2f4f486d233c24fbf46fcdc62c05cf, type: 3}
-  ground: {fileID: 1510516321}
+  platform: {fileID: 0}
   lava: {fileID: 1782654879}
+  blockController: {fileID: 0}
 --- !u!1 &1782654879
 GameObject:
   m_ObjectHideFlags: 0
@@ -1146,7 +1150,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.70710677, z: -0.70710677, w: 0}
   m_LocalPosition: {x: 0, y: -11, z: -0.1}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}

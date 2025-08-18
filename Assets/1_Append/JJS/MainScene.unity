@@ -408,6 +408,7 @@ GameObject:
   - component: {fileID: 161776130}
   - component: {fileID: 161776129}
   - component: {fileID: 161776131}
+  - component: {fileID: 161776132}
   m_Layer: 0
   m_Name: PlayManager
   m_TagString: Untagged
@@ -464,6 +465,23 @@ MonoBehaviour:
   prefab_BlockDropProxy: {fileID: 5202448632294348487, guid: 4ce01d19bc5e67441b38280376ff5f46, type: 3}
   blockDropProxyPool: {fileID: 1924520201}
   effectObjectPool: {fileID: 1664005037}
+--- !u!114 &161776132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161776128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 083f12aa2f3085547a8c4a6621204dee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab_Mole: {fileID: 7869635054863380352, guid: 66707e7c659c8624d86edf462d743ceb, type: 3}
+  prefab_Feather: {fileID: 0}
+  platform: {fileID: 1635174783}
+  lava: {fileID: 0}
+  blockController: {fileID: 1353140901}
 --- !u!1 &251976600
 GameObject:
   m_ObjectHideFlags: 0
@@ -4691,6 +4709,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1292622977}
   m_CullTransparentMesh: 1
+--- !u!114 &1353140901 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5488096167722824718, guid: ccf1b0e3d23ad49418f8f73db33e264a, type: 3}
+  m_PrefabInstance: {fileID: 886254980}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 555bc7cd8a8597d4ba9d91a4348f2837, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1378813125
 GameObject:
   m_ObjectHideFlags: 0
