@@ -2379,8 +2379,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 50000
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8e50a271e2d465649ac1fb4965a7d43e, type: 2}
-  m_sharedMaterial: {fileID: 6412805146833517776, guid: 8e50a271e2d465649ac1fb4965a7d43e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2473,7 +2473,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &484755477
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4940,7 +4940,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &926949779
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5813,8 +5813,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC810\uC218"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8e50a271e2d465649ac1fb4965a7d43e, type: 2}
-  m_sharedMaterial: {fileID: 6412805146833517776, guid: 8e50a271e2d465649ac1fb4965a7d43e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5949,8 +5949,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uB2E4\uC74C \uBE14\uB7ED"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8e50a271e2d465649ac1fb4965a7d43e, type: 2}
-  m_sharedMaterial: {fileID: 6412805146833517776, guid: 8e50a271e2d465649ac1fb4965a7d43e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6741,7 +6741,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 213a880078e1c514b9e214962c8b1c2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  towerHeightLine: {fileID: 0}
   riseSpeed: 1.5
   fallSpeed: 10
   instantFall: 1
