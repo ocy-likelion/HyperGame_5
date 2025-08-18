@@ -5041,6 +5041,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.78
       objectReference: {fileID: 0}
+    - target: {fileID: -8137813610356888312, guid: 2c769a7ea2635ef46aa7259c5dd16557, type: 3}
+      propertyPath: m_SortingOrder
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: -7376519497580912293, guid: 2c769a7ea2635ef46aa7259c5dd16557, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.63
@@ -5063,7 +5067,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2253911629886400664, guid: 2c769a7ea2635ef46aa7259c5dd16557, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 780907679586622944, guid: 2c769a7ea2635ef46aa7259c5dd16557, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5266,10 +5270,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 213a880078e1c514b9e214962c8b1c2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playManager: {fileID: 161776129}
+  cam: {fileID: 0}
+  climbSpeed: 2.8
   riseSpeed: 1.5
   fallSpeed: 10
   instantFall: 1
-  playManager: {fileID: 0}
+  hangOffsetY: 0.25
+  sideOffsetX: 0
+  offscreenMargin: 0.08
+  respawnDelay: 2
 --- !u!1 &1448341898
 GameObject:
   m_ObjectHideFlags: 0

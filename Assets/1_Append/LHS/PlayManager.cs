@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -21,6 +21,20 @@ public class PlayManager : MonoBehaviour
     float totalElapsedTime = 0.0f;
     float timeLimit = 15.0f;
     bool gameEnded = false;
+
+    public GameObject HighestBlock => highestBlock;
+
+    public Vector3 HighestTopPoint
+    {
+        get
+        {
+            if (highestBlock == null) return Vector3.zero;
+            var col = highestBlock.GetComponent<Collider2D>();
+            if (col == null) return highestBlock.transform.position;
+            var b = col.bounds;
+            return new Vector3(highestBlock.transform.position.x, b.max.y, highestBlock.transform.position.z);
+        }
+    }
 
     void OnEnable()
     {

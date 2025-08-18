@@ -438,7 +438,7 @@ public class UIManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         KillTimerTweens();
-        SceneManager.LoadScene("MainSceneTest");
+        SceneManager.LoadScene("MainScene");
     }
 
     void ActivateEffectUnscaled(GameObject fx)
