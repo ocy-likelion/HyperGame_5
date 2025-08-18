@@ -32,10 +32,10 @@ public class SabotageEventManager : MonoBehaviour
 
     public void EventCheckByMineralCount(int mineralCount) // 모든 방해 이벤트를 관리하는 메서드
     {
-        if (mineralCount % 4 == 0)
-        {
-            TriggerSinkHoleEvent();
-        }
+        //if (mineralCount % 4 == 0)
+        //{
+        //    TriggerSinkHoleEvent();
+        //}
         //if (mineralCount % 8 == 0)
         //{
         //    TriggerMoleEvent();

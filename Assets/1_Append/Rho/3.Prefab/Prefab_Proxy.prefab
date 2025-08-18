@@ -171,6 +171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fedcfecd254fe2b4d8b69b21bca7bc21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsEnd: 1
   blockTopObject: {fileID: 806113692991070866, guid: ce81a4c517042214e807e8ae7cd77781, type: 3}
 --- !u!198 &4195398550892658664
 ParticleSystem:

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -12,7 +12,7 @@ public class PlayManager : MonoBehaviour
 
     [SerializeField]private Camera mainCamera;
     public GameObject BlockPrefab;
-    List<GameObject> blockList = new List<GameObject>();
+    public List<GameObject> blockList = new List<GameObject>();
     List<GameObject> newBlockList = new List<GameObject>();
     GameObject highestBlock;
 
@@ -27,6 +27,13 @@ public class PlayManager : MonoBehaviour
     float timeLimit = 15.0f;
     bool gameEnded = false;
 
+    // 컴포넌트
+    MineralDataManager mineralDataManager;
+
+    void Awake()
+    {
+        mineralDataManager = GetComponent<MineralDataManager>();
+    }
     void OnEnable()
     {
         EventBus.Instance.Subscribe(Consts.END_GAME, EndGame);
@@ -134,9 +141,9 @@ public class PlayManager : MonoBehaviour
         // 광물 생성 및 드롭
         // DropButton.gameObject.SetActive(false);
 
-        GameObject newBlock = Instantiate(BlockPrefab);
-        EventBus.Instance.Publish("SpawnBlock", newBlock);
-        newBlockList.Add(newBlock);
+        //GameObject newBlock = Instantiate(BlockPrefab);
+        //EventBus.Instance.Publish("SpawnBlock", newBlock);
+        //newBlockList.Add(newBlock);
         // newBlock.transform.position = new Vector3(
         //     blockSpawnPoint.transform.position.x,
         //     blockSpawnPoint.transform.position.y,
@@ -144,6 +151,8 @@ public class PlayManager : MonoBehaviour
         //     );
 
         // StartCoroutine(WaitAndShowButton());
+
+        mineralDataManager.GenerateRandomMineral();
     }
 
     void AddBlock()

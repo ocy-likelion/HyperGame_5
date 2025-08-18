@@ -55,7 +55,7 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         if (_currentBlock is not null) return;
         UpdateBlockSpawnPosition();
         _currentBlock = newBlock;
-        _currentBlock.GetComponent<Rigidbody2D>().simulated = false;
+        //_currentBlock.GetComponent<Rigidbody2D>().simulated = false;
         _currentBlock.GetComponent<Transform>().position = _blockSpawnPosition;
             
         if (_isPointerDown)
@@ -79,7 +79,8 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     {
         _isPointerDown = false;
         if (_currentBlock is null) return;
-        _currentBlock.GetComponent<Rigidbody2D>().simulated = true;
+        //_currentBlock.GetComponent<Rigidbody2D>().simulated = true;
+        _currentBlock.GetComponent<BlockDropProxy>().IsEnd = false;
         _currentBlock = null;
         _predictionLine.gameObject.SetActive(false);
         EventBus.Instance.Publish("RespawnBlock");
