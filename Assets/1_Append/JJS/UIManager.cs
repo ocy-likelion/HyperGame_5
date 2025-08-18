@@ -29,10 +29,9 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI SoundText;
 
     [Header("클리어탭")]
-    public Image CliarImage;
+    public Image ClearImage;
     public Sprite SuccessSprite;
     public Sprite FailSprite;
-    public TextMeshProUGUI ClearScore;
     public GameObject SuccessEffect;
     public GameObject FailEffect;
     public TextMeshProUGUI ClearScoreText;
@@ -179,13 +178,13 @@ public class UIManager : MonoBehaviour
         if (success)
         {
             ActivateEffectUnscaled(SuccessEffect); // 결과 이펙트는 unscaled로 재생
-            CliarImage.sprite = SuccessSprite;
+            ClearImage.sprite = SuccessSprite;
             ClearScoreText.text = gameManager ? gameManager.score.ToString() : "";
         }
         else
         {
             ActivateEffectUnscaled(FailEffect);
-            CliarImage.sprite = FailSprite;
+            ClearImage.sprite = FailSprite;
             ClearScoreText.text = "";
         }
     }
