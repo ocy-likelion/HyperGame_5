@@ -592,8 +592,13 @@ Transform:
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 --- !u!114 &334041067
 MonoBehaviour:
+=======
+--- !u!1 &418563136
+GameObject:
+>>>>>>> Stashed changes
 =======
 --- !u!1 &418563136
 GameObject:
@@ -603,6 +608,7 @@ GameObject:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   m_GameObject: {fileID: 334041065}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -610,6 +616,8 @@ GameObject:
   m_Name: 
   m_EditorClassIdentifier: 
 =======
+=======
+>>>>>>> Stashed changes
   serializedVersion: 6
   m_Component:
   - component: {fileID: 418563137}
@@ -635,6 +643,9 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 --- !u!1 &615988350
 GameObject:
@@ -1369,7 +1380,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CurrentState: 0
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   gimmickManager: {fileID: 1977031368}
+=======
+  gimmickManager: {fileID: 0}
+>>>>>>> Stashed changes
 =======
   gimmickManager: {fileID: 0}
 >>>>>>> Stashed changes
@@ -3118,4 +3133,7 @@ SceneRoots:
   - {fileID: 194739726}
   - {fileID: 376655273}
   - {fileID: 418563137}
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
