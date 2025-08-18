@@ -1,20 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayManager : MonoBehaviour
 {
-    public Button DropButton;
+    // public Button DropButton;
 
+    [SerializeField]private Camera mainCamera;
     public GameObject BlockPrefab;
     List<GameObject> blockList = new List<GameObject>();
     List<GameObject> newBlockList = new List<GameObject>();
     GameObject highestBlock;
 
-    public GameObject blockSpawnPoint;
-    float blockSpawnPointFreqeuncy = 1.5f;
+    // public GameObject blockSpawnPoint;
+    // float blockSpawnPointFreqeuncy = 1.5f;
 
     public float currentTowerHeight;
     float goalTowerHeight = 2.0f; // 임시
@@ -22,27 +25,35 @@ public class PlayManager : MonoBehaviour
     public TMP_Text elapsedTimeText;
     float totalElapsedTime = 0.0f;
     float timeLimit = 15.0f;
+    bool gameEnded = false;
 
     void OnEnable()
     {
-        EventBus.Instance.Subscribe(Consts.BLOCKLANDED, AddBlock);
+        EventBus.Instance.Subscribe(Consts.END_GAME, EndGame);
+        EventBus.Instance.Subscribe(Consts.BLOCK_LANDED, AddBlock);
+        EventBus.Instance.Subscribe("RespawnBlock",RespawnBlock);
     }
 
     void OnDisable()
     {
-        EventBus.Instance.Unsubscribe(Consts.BLOCKLANDED, AddBlock);
+        EventBus.Instance.Unsubscribe(Consts.END_GAME, EndGame);
+        EventBus.Instance.Unsubscribe(Consts.BLOCK_LANDED, AddBlock);
+        EventBus.Instance.Unsubscribe("RespawnBlock",RespawnBlock);
     }
 
     void Start()
     {
         StartCoroutine(GameTimer());
+        CreateBlock();
     }
 
     void Update()
     {
         #region 임시 blockSpawnPoint 이동, 드래그 앤 드롭으로 고쳐야 함
-        blockSpawnPoint.transform.position = new Vector3(Mathf.Sin(Time.time * blockSpawnPointFreqeuncy), 4.0f, 0.0f);
+        // blockSpawnPoint.transform.position = new Vector3(Mathf.Sin(Time.time * blockSpawnPointFreqeuncy), 4.0f, 0.0f);
         #endregion
+
+        if (gameEnded == true) return;
 
         elapsedTimeText.text = ((int)totalElapsedTime).ToString();
 
@@ -60,7 +71,12 @@ public class PlayManager : MonoBehaviour
             yield return null;
         }
 
-        EventBus.Instance.Publish(Consts.GAMEOVER);
+        EventBus.Instance.Publish(Consts.GAME_OVER);
+    }
+
+    void EndGame()
+    {
+        gameEnded = true;
     }
 
     void CheckHighestBlock()
@@ -90,7 +106,9 @@ public class PlayManager : MonoBehaviour
         // 목표 위치에 도달하면 게임 클리어
         if (currentTowerHeight > goalTowerHeight)
         {
-            EventBus.Instance.Publish(Consts.GAMECLEAR);
+            GameManager gameManager = GameObject.FindFirstObjectByType<GameManager>();
+            gameManager.isWin = true;
+            EventBus.Instance.Publish(Consts.END_GAME);
         }
     }
 
@@ -109,24 +127,23 @@ public class PlayManager : MonoBehaviour
     #region 개발용
 
     [SerializeField] GameObject towerHeightLine;
-    float nextTurnTime = 0.5f;
+    float nextTurnTime = 2f;
 
     public void CreateBlock()
     {
         // 광물 생성 및 드롭
-        DropButton.gameObject.SetActive(false);
+        // DropButton.gameObject.SetActive(false);
 
         GameObject newBlock = Instantiate(BlockPrefab);
-
-        newBlock.transform.position = new Vector3(
-            blockSpawnPoint.transform.position.x,
-            blockSpawnPoint.transform.position.y,
-            blockSpawnPoint.transform.position.z
-            );
-
+        EventBus.Instance.Publish("SpawnBlock", newBlock);
         newBlockList.Add(newBlock);
+        // newBlock.transform.position = new Vector3(
+        //     blockSpawnPoint.transform.position.x,
+        //     blockSpawnPoint.transform.position.y,
+        //     blockSpawnPoint.transform.position.z
+        //     );
 
-        StartCoroutine(WaitAndShowButton());
+        // StartCoroutine(WaitAndShowButton());
     }
 
     void AddBlock()
@@ -138,11 +155,51 @@ public class PlayManager : MonoBehaviour
         }
     }
 
-    IEnumerator WaitAndShowButton()
+    // IEnumerator WaitAndShowButton()
+    // {
+    //     yield return new WaitForSeconds(nextTurnTime);
+    //
+    //     DropButton.gameObject.SetActive(true);
+    // }
+
+    void RespawnBlock()
+    {
+        StartCoroutine(WaitAndCreateBlock());
+    }
+    IEnumerator WaitAndCreateBlock()
     {
         yield return new WaitForSeconds(nextTurnTime);
+        
+        //쓰러지 고있는지 판단해서 쓰러지면 더 기다리게 함
+        while (CheckTowerIsNotSafe())
+        {
+            yield return new WaitForSeconds(nextTurnTime);
+        }
+        EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight());
+        yield return new WaitForSeconds(1f);    //카메라 움직이는 동안 생성 기다림
+        CreateBlock();
+    }
+    //타워가 안정한지 체크
+    bool CheckTowerIsNotSafe()
+    {
+        var velocityX = highestBlock.GetComponent<Rigidbody2D>().linearVelocityX;
+        var velocityY = highestBlock.GetComponent<Rigidbody2D>().linearVelocityY;
+        var isNotSafe = (velocityY <= -0.03f);
+        
+        return isNotSafe;
+    }
+    //카메라 높이값 계산
+    float CalculateSetCameraHeight()
+    {
+        //화면 중하단 좌표
+        Vector3 screenLowerCenter =
+            new Vector3(Screen.width * 0.5f, Screen.height * 0.2f, Consts.CAMERA_OFFSET);
+        Vector3 worldPos = mainCamera.ScreenToWorldPoint(screenLowerCenter);
 
-        DropButton.gameObject.SetActive(true);
+        var height = highestBlock.transform.position.y + Consts.HEIGHT_OFFSET;
+        //비용이 비싸다함 어떤것이 더 효율인 좋은지 모름
+        // mainCamera.GetComponent<CameraController>().SetCameraHeight(height);
+        return height;
     }
     #endregion 
 }
