@@ -9,6 +9,7 @@
     public static string RESUME_GAME = "ResumeGame";
 
     public static string BLOCK_LANDED = "BlockLanded";
+    public static string RESPAWN_BLOCK = "RespawnBlock";
 
     public static string GAME_SCENE = "GameScene";
     

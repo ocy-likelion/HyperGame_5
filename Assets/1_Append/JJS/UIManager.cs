@@ -1,4 +1,5 @@
 using TMPro;
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,12 +8,12 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
-    [Header("UI �������")]
+    [Header("Ul 팝업")]
     public GameObject TutorialUI;
     public GameObject PauseUI;
     public GameObject ResultUI;
 
-    [Header("Ÿ�̸� ����")]
+    [Header("타이머")]
     public Slider Timer;
     public Image TimerImage;
     [Range(0f, 1f)] public float shakeStartNormalized = 0.4f;
@@ -22,13 +23,13 @@ public class UIManager : MonoBehaviour
     public int maxVibrato = 40;
     public AnimationCurve intensityCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-    [Header("���� ����")]
+    [Header("사운드")]
     public Image SoundButton;
     public Sprite SoundButtonOn;
     public Sprite SoundButtonOff;
     public TextMeshProUGUI SoundText;
 
-    [Header("Ŭ������")]
+    [Header("클리어탭")]
     public Image ClearImage;
     public Sprite SuccessSprite;
     public Sprite FailSprite;
@@ -44,42 +45,71 @@ public class UIManager : MonoBehaviour
     private int currentTutorialIndex = 0;
     public TextMeshProUGUI IndexText;
 
-   
-    [Header("�˾� ȿ��")]
+    [Header("팝업 효과")]
     [Range(0.5f, 1f)] public float popStartScale = 0.85f;
-    public float popStep1 = 0.18f;     // 1.05����
-    public float popStep2 = 0.10f;     // 1.00����
+    public float popStep1 = 0.18f;
+    public float popStep2 = 0.10f;
     public float fadeIn = 0.15f;
-    public float closeStep1 = 0.08f;   // 1.00 -> 0.92
-    public float closeStep2 = 0.12f;   // 0.92 -> 0.75
+    public float closeStep1 = 0.08f;
+    public float closeStep2 = 0.12f;
     public float fadeOut = 0.12f;
     public float popOvershoot = 2.2f;
 
+    [Header("점수 계산 로직 및 효과")]
+    public TextMeshProUGUI ScoreText;
+    public int BasicScore;
+    public int StoneScore = 100;
+    public int BronzeScore = 200;
+    public int SilverScore = 300;
+    public int GoldScore = 500;
+
     public bool isPaused = false;
 
-    public TextMeshProUGUI ScoreText;
     public GameManager gameManager;
-    
+
     RectTransform timerRT;
     Vector2 basePos;
     Tween valueTw;
     Tween loopTw;
 
+    // 점수 애니 전용
+    RectTransform scoreRT;
+    Vector2 scoreBasePos;
+    Color scoreBaseColor;
+    bool isAnimatingScore = false;
+    DG.Tweening.Sequence scoreSeq;
+
     const string SHAKE_ID = "TimerShake";
+    const string SCORE_SEQ_ID = "ScoreSeq";
+    const string SCORE_SHAKE_ID = "ScoreShake";
 
     void Start()
     {
         timerRT = TimerImage.rectTransform;
         basePos = timerRT.anchoredPosition;
+
+        if (ScoreText != null)
+        {
+            scoreRT = ScoreText.rectTransform;
+            scoreBasePos = scoreRT.anchoredPosition;
+            scoreBaseColor = ScoreText.color;
+        }
+        
+        // 시작 점수 초기화
+        ScoreText.text = BasicScore.ToString();
+        if (gameManager) gameManager.score = BasicScore;
+
         StartTimer();
     }
 
-    void OnDisable() { KillTimerTweens(); }
-    void OnDestroy() { KillTimerTweens(); }
+    void OnDisable() { KillTimerTweens(); KillScoreTweens(); }
+    void OnDestroy() { KillTimerTweens(); KillScoreTweens(); }
 
     void Update()
     {
-        if (gameManager) ScoreText.text = gameManager.score.ToString();
+        // 점수 애니 중에는 UI 텍스트 덮어쓰지 않음
+        if (gameManager && !isAnimatingScore)
+            ScoreText.text = gameManager.score.ToString();
 
         if (!PlayedGame.hadPlayed)
         {
@@ -145,11 +175,10 @@ public class UIManager : MonoBehaviour
         HidePopup(TutorialUI); HidePopup(PauseUI); HidePopup(ResultUI);
     }
 
-
     void PauseGame()
     {
         isPaused = true;
-        Time.timeScale = 0f; 
+        Time.timeScale = 0f;
     }
 
     void ResumeGame()
@@ -177,7 +206,7 @@ public class UIManager : MonoBehaviour
     {
         if (success)
         {
-            ActivateEffectUnscaled(SuccessEffect); // ��� ����Ʈ�� unscaled�� ���
+            ActivateEffectUnscaled(SuccessEffect);
             ClearImage.sprite = SuccessSprite;
             ClearScoreText.text = gameManager ? gameManager.score.ToString() : "";
         }
@@ -191,16 +220,17 @@ public class UIManager : MonoBehaviour
 
     public void StartTimer()
     {
-        KillTimerTweens(); // ���� Ʈ�� ����
+        KillTimerTweens();
 
         Timer.minValue = 0;
         Timer.maxValue = 1;
         Timer.value = 1;
 
-     
+        if (gameManager == null) return;
+
         valueTw = Timer.DOValue(0f, gameManager.timerDuration)
             .SetEase(Ease.Linear)
-            .SetUpdate(false) 
+            .SetUpdate(false) // 타임스케일 영향 받음(일시정지 시 멈춤)
             .SetLink(Timer.gameObject, LinkBehaviour.KillOnDestroy | LinkBehaviour.PauseOnDisable)
             .OnComplete(() =>
             {
@@ -223,13 +253,13 @@ public class UIManager : MonoBehaviour
                 return;
             }
 
-            float norm = Timer.value;               // 1��0
+            float norm = Timer.value; // 1 → 0
             float t = Mathf.InverseLerp(shakeStartNormalized, 0f, norm);
             if (t <= 0f) { timerRT.anchoredPosition = basePos; return; }
 
             t = intensityCurve.Evaluate(t);
             float amp = Mathf.Lerp(minAmp, maxAmp, t);
-            Vector2 jitter = Random.insideUnitCircle * amp;
+            Vector2 jitter = UnityEngine.Random.insideUnitCircle * amp;
             timerRT.anchoredPosition = basePos + jitter;
 
         }).SetLoops(-1, LoopType.Restart)
@@ -239,6 +269,113 @@ public class UIManager : MonoBehaviour
           .OnKill(() => { if (this && timerRT) timerRT.anchoredPosition = basePos; });
     }
 
+    // === 점수 애니메이션 ===
+    public void AnimateScoreChange(int from, int to, Action onComplete = null)
+    {
+        if (ScoreText == null) { onComplete?.Invoke(); return; }
+
+        int start = Mathf.Max(0, from);
+        int end = Mathf.Max(0, to);
+        int delta = end - start;
+
+        // 강조색: 보너스(초록) / 패널티(빨강)
+        Color hiColor = delta >= 0 ? new Color(0.2f, 1f, 0.2f) : Color.red;
+
+        float absDelta = Mathf.Abs(delta);
+        float dur = Mathf.Clamp(absDelta / 1200f, 0.35f, 1.0f);
+        float shakeDur = Mathf.Clamp(dur * 0.65f, 0.25f, 0.8f);
+        float vibrato = Mathf.Lerp(12f, 28f, Mathf.Clamp01(absDelta / 1500f));
+        float strength = Mathf.Lerp(10f, 35f, Mathf.Clamp01(absDelta / 1500f));
+
+        // 이전 것 정리
+        KillScoreTweens();
+        isAnimatingScore = true;
+
+        scoreSeq = DOTween.Sequence().SetUpdate(true);
+
+        // 1) 강조색 전환 & 살짝 펀치 스케일
+        scoreSeq.Append(ScoreText.DOColor(hiColor, 0.08f));
+        scoreSeq.Join(scoreRT.DOPunchScale(Vector3.one * 0.12f, 0.18f, 8, 0.8f));
+
+        // 2) 숫자 카운트 & 흔들림
+        scoreSeq.Append(
+            DOVirtual.Int(start, end, dur, v => ScoreText.text = v.ToString()).SetUpdate(true)
+        );
+        scoreSeq.Join(
+            // DOTween 버전에 따라 strength는 Vector2 권장
+            scoreRT.DOShakeAnchorPos(shakeDur, new Vector2(strength, strength),
+                                     Mathf.RoundToInt(vibrato), 90, false, true)
+                   .SetId(SCORE_SHAKE_ID)
+                   .SetUpdate(true)
+        );
+
+        // 3) 원래 색상으로 복귀
+        scoreSeq.Append(ScoreText.DOColor(scoreBaseColor, 0.22f));
+
+        scoreSeq.OnComplete(() =>
+        {
+            if (scoreRT) { scoreRT.anchoredPosition = scoreBasePos; scoreRT.localScale = Vector3.one; }
+            isAnimatingScore = false;
+            onComplete?.Invoke();
+        });
+    }
+
+    // UIManager 내부에 추가
+    public void PlaySuccessBonus(int timeBonus, int from, int to, System.Action onComplete = null)
+    {
+        if (ScoreText == null || scoreRT == null)
+        {
+            // fallback: 그냥 숫자 애니만 하고 끝
+            AnimateScoreChange(from, to, onComplete);
+            return;
+        }
+
+        // 초록 보너스 플래시 + 플로팅 텍스트(+1234) → 숫자 애니 → 결과 콜백
+        var green = new Color(0.2f, 1f, 0.2f);
+
+        // 플로팅 TMPUGUI 생성 (프리팹 필요 없음)
+        var parentRT = scoreRT.parent as RectTransform;
+        var go = new GameObject("TimeBonusText", typeof(RectTransform));
+        go.transform.SetParent(parentRT != null ? parentRT : scoreRT, false);
+        var bonusRT = (RectTransform)go.transform;
+        bonusRT.anchoredPosition = scoreBasePos + new Vector2(0f, 36f);
+
+        var tmp = go.AddComponent<TMPro.TextMeshProUGUI>();
+        tmp.font = ScoreText.font;
+        tmp.fontSize = Mathf.Max(ScoreText.fontSize * 0.85f, 18f);
+        tmp.alignment = TMPro.TextAlignmentOptions.Center;
+        tmp.text = $"+{timeBonus}";
+        tmp.color = new Color(green.r, green.g, green.b, 0f);
+        tmp.raycastTarget = false;
+
+        // 시퀀스
+        var seq = DOTween.Sequence().SetUpdate(true);
+
+        // 1) 점수텍스트 초록 플래시 + 펀치 스케일
+        seq.Append(ScoreText.DOColor(green, 0.06f));
+        seq.Join(scoreRT.DOPunchScale(Vector3.one * 0.18f, 0.22f, 12, 0.9f));
+
+        // 2) 플로팅 보너스 텍스트: 위로 살짝 뜨면서 등장/소멸
+        seq.Join(tmp.DOFade(1f, 0.12f));
+        seq.Join(bonusRT.DOAnchorPosY(bonusRT.anchoredPosition.y + 32f, 0.45f).SetEase(Ease.OutCubic));
+        seq.AppendInterval(0.1f);
+        seq.Append(tmp.DOFade(0f, 0.22f));
+        seq.AppendCallback(() => Destroy(go));
+
+        // 3) 숫자 증가 애니 시작(기존 숫자 애니 메서드 재사용)
+        seq.AppendCallback(() =>
+        {
+            AnimateScoreChange(from, to, () =>
+            {
+                onComplete?.Invoke(); // 여기서 결과창 열어주면 됨
+            });
+        });
+
+        // 4) 점수텍스트 색 복귀(보너스 플래시만)
+        seq.Append(ScoreText.DOColor(scoreBaseColor, 0.18f));
+    }
+
+
     void KillTimerTweens()
     {
         valueTw?.Kill(); valueTw = null;
@@ -247,10 +384,20 @@ public class UIManager : MonoBehaviour
         DOTween.Kill(SHAKE_ID);
     }
 
+    void KillScoreTweens()
+    {
+        scoreSeq?.Kill(); scoreSeq = null;
+        DOTween.Kill(SCORE_SHAKE_ID);
+        if (this && scoreRT) scoreRT.anchoredPosition = scoreBasePos;
+        isAnimatingScore = false;
+    }
+
     void OnTimerEnd()
     {
-        Debug.Log("Ÿ�̸Ӱ� ����Ǿ����ϴ�.");
-       
+        Debug.Log("타이머 종료");
+        // 필요하면 실패 처리 연결:
+        // ShowResultUI();
+        // Result(false);
     }
 
     public void ShowTutorialImage()
@@ -289,13 +436,10 @@ public class UIManager : MonoBehaviour
 
     public void Reset()
     {
-        // ���� ���� ���� ����
         Time.timeScale = 1f;
-
-        KillTimerTweens(); // �� ���Ƴ���� ���� ���� ����
-        SceneManager.LoadScene("MainSceneTest");
+        KillTimerTweens();
+        SceneManager.LoadScene("MainScene");
     }
-
 
     void ActivateEffectUnscaled(GameObject fx)
     {
@@ -303,7 +447,7 @@ public class UIManager : MonoBehaviour
         if (!fx.TryGetComponent<UnscaledParticleDriver>(out _))
             fx.AddComponent<UnscaledParticleDriver>();
         fx.SetActive(false);
-        fx.SetActive(true); // ��� Ʈ����
+        fx.SetActive(true);
     }
 }
 

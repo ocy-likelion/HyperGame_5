@@ -8,16 +8,11 @@ using UnityEngine.UI;
 
 public class PlayManager : MonoBehaviour
 {
-    // public Button DropButton;
-
     [SerializeField]private Camera mainCamera;
     public GameObject BlockPrefab;
     public List<GameObject> blockList = new List<GameObject>();
     List<GameObject> newBlockList = new List<GameObject>();
     GameObject highestBlock;
-
-    // public GameObject blockSpawnPoint;
-    // float blockSpawnPointFreqeuncy = 1.5f;
 
     public float currentTowerHeight;
     float goalTowerHeight = 4.0f; // 임시
@@ -36,18 +31,32 @@ public class PlayManager : MonoBehaviour
         mineralDataManager = GetComponent<MineralDataManager>();
         TryGetComponent<SabotageEventManager>(out sabotageEventManager);
     }
+    public GameObject HighestBlock => highestBlock;
+
+    public Vector3 HighestTopPoint
+    {
+        get
+        {
+            if (highestBlock == null) return Vector3.zero;
+            var col = highestBlock.GetComponent<Collider2D>();
+            if (col == null) return highestBlock.transform.position;
+            var b = col.bounds;
+            return new Vector3(highestBlock.transform.position.x, b.max.y, highestBlock.transform.position.z);
+        }
+    }
+
     void OnEnable()
     {
         EventBus.Instance.Subscribe(Consts.END_GAME, EndGame);
         EventBus.Instance.Subscribe(Consts.BLOCK_LANDED, AddBlock);
-        EventBus.Instance.Subscribe("RespawnBlock",RespawnBlock);
+        EventBus.Instance.Subscribe(Consts.RESPAWN_BLOCK, RespawnBlock);
     }
 
     void OnDisable()
     {
         EventBus.Instance.Unsubscribe(Consts.END_GAME, EndGame);
         EventBus.Instance.Unsubscribe(Consts.BLOCK_LANDED, AddBlock);
-        EventBus.Instance.Unsubscribe("RespawnBlock",RespawnBlock);
+        EventBus.Instance.Unsubscribe(Consts.RESPAWN_BLOCK, RespawnBlock);
     }
 
     void Start()
@@ -110,8 +119,6 @@ public class PlayManager : MonoBehaviour
             {
                 currentTowerHeight = height;
                 highestBlock = block;
-                
-                //block.GetComponent<SpriteRenderer>().color = Color.blue; // 임시
             }
         }
     }
@@ -161,6 +168,10 @@ public class PlayManager : MonoBehaviour
         // StartCoroutine(WaitAndShowButton());
 
         mineralDataManager.GenerateRandomMineral();
+        // 광물 생성
+        GameObject newBlock = Instantiate(BlockPrefab);
+        EventBus.Instance.Publish("SpawnBlock", newBlock);
+        newBlockList.Add(newBlock);
     }
 
     void AddBlock()
@@ -171,13 +182,6 @@ public class PlayManager : MonoBehaviour
             newBlockList.RemoveAt(0);
         }
     }
-
-    // IEnumerator WaitAndShowButton()
-    // {
-    //     yield return new WaitForSeconds(nextTurnTime);
-    //
-    //     DropButton.gameObject.SetActive(true);
-    // }
 
     void RespawnBlock()
     {
