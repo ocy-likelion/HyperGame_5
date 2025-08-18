@@ -50,7 +50,7 @@ public class PlayManager : MonoBehaviour
 
         if (gameEnded == true) return;
 
-        elapsedTimeText.text = ((int)totalElapsedTime).ToString();
+        //elapsedTimeText.text = ((int)totalElapsedTime).ToString();
 
         CheckHighestBlock();
         CheckTowerHeight();

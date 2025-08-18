@@ -29,10 +29,9 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI SoundText;
 
     [Header("Ŭ������")]
-    public Image CliarImage;
+    public Image ClearImage;
     public Sprite SuccessSprite;
     public Sprite FailSprite;
-    public TextMeshProUGUI ClearScore;
     public GameObject SuccessEffect;
     public GameObject FailEffect;
     public TextMeshProUGUI ClearScoreText;
@@ -179,13 +178,13 @@ public class UIManager : MonoBehaviour
         if (success)
         {
             ActivateEffectUnscaled(SuccessEffect); // ��� ����Ʈ�� unscaled�� ���
-            CliarImage.sprite = SuccessSprite;
+            ClearImage.sprite = SuccessSprite;
             ClearScoreText.text = gameManager ? gameManager.score.ToString() : "";
         }
         else
         {
             ActivateEffectUnscaled(FailEffect);
-            CliarImage.sprite = FailSprite;
+            ClearImage.sprite = FailSprite;
             ClearScoreText.text = "";
         }
     }

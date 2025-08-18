@@ -27,6 +27,7 @@ public class CharacterClimb : MonoBehaviour
 
         float targetHeight = playManager.currentTowerHeight; // 직접 읽어오기
         UpdateLine(targetHeight);
+        Debug.Log("현재 높이 : " + targetHeight + ", 표시된 높이: " + displayedHeight);
     }
 
     private void UpdateLine(float targetHeight)
