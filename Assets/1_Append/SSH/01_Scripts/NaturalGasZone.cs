@@ -4,9 +4,15 @@ using UnityEngine;
 public class NaturalGasZone : MonoBehaviour
 {
     [SerializeField] Vector2 windDirection = Vector2.right; // 바람 방향
-    [SerializeField] float windStrength = 5f; // 바람 세기 (유닛/초)
+    [SerializeField] float windStrength = 2f; // 바람 세기 (유닛/초)
+    [SerializeField] ParticleSystem particle; // 바람 세기 (유닛/초)
 
     List<Transform> affectedObjects = new List<Transform>();
+
+    void OnEnable()
+    {
+        particle.Play();
+    }
 
     void FixedUpdate()
     {
@@ -15,7 +21,7 @@ public class NaturalGasZone : MonoBehaviour
         foreach (var obj in affectedObjects)
         {
             if (obj != null)
-                obj.position += move;
+                obj.position -= move;
         }
     }
 
@@ -24,7 +30,6 @@ public class NaturalGasZone : MonoBehaviour
         // Rigidbody가 없어도 Transform을 추가
         if (!affectedObjects.Contains(collision.transform))
         {
-            Debug.Log("들어옴");
             affectedObjects.Add(collision.transform);
         }
     }
