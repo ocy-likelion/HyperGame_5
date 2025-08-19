@@ -1886,7 +1886,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &495743686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3043,9 +3043,13 @@ MonoBehaviour:
   TutorialImage: {fileID: 1031396549}
   TutorialText: {fileID: 1681337678}
   TutorialImages:
-  - {fileID: 21300000, guid: 387f71a6cef817847a7ac3718b19702a, type: 3}
+  - {fileID: 21300028, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  - {fileID: 21300030, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  - {fileID: 21300032, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
   TutorialTexts:
-  - "\uC751\uC560"
+  - "\uBE14\uB7ED\uC744 \uC6C0\uC9C1\uC774\uB824\uBA74 \uC2A4\uD06C\uB864\uD558\uC138\uC694"
+  - "\uC190\uC744 \uB193\uC73C\uBA74 \uB5A8\uC5B4\uC9D1\uB2C8\uB2E4"
+  - "\uBAA9\uD45C \uC9C0\uC810\uAE4C\uC9C0 \uC313\uC73C\uBA74 \uC2B9\uB9AC!"
   IndexText: {fileID: 1518559837}
   popStartScale: 0.85
   popStep1: 0.18
@@ -3057,10 +3061,7 @@ MonoBehaviour:
   popOvershoot: 2.2
   ScoreText: {fileID: 481023188}
   BasicScore: 5000
-  StoneScore: 100
-  BronzeScore: 200
-  SilverScore: 300
-  GoldScore: 500
+  BlockScore: 200
   isPaused: 0
   gameManager: {fileID: 1839854907}
 --- !u!1 &742045833
@@ -6142,7 +6143,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1514357536
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7294,8 +7295,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 100}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: -0.0000076293945, y: 100}
+  m_SizeDelta: {x: 270, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1681337677
 CanvasRenderer:
@@ -7352,8 +7353,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -7390,7 +7391,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -0.31193542, y: 0, z: -0.02178953, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -8560,6 +8561,39 @@ MonoBehaviour:
     m_RotationOrder: 4
   midEffect: {fileID: 1574413682}
   midEffectTime: 1
+  buttons:
+  - {fileID: 676045152}
+  - {fileID: 1513802700}
+  btnStartDelay: 0.05
+  btnStagger: 0.06
+  btnFromYOffset: 140
+  btnMoveDuration: 0.35
+  btnEase:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  btnUseFade: 1
+  btnFadeDuration: 0.2
   playOnEnable: 1
   waitOneFrameBeforePlay: 1
   useUnscaledTime: 1
