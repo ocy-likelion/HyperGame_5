@@ -6,6 +6,7 @@ public class GimmickManager : MonoBehaviour
 {
     [Header("Refs")]
     [SerializeField] private TowerManager towerManager;
+    [SerializeField] CameraShaker camShaker;
 
     [Header("FX Prefabs (Optional)")]
     [Tooltip("바람 아이콘/이펙트 프리팹 (SpriteRenderer/Particle System 등)")]
@@ -202,5 +203,30 @@ public class GimmickManager : MonoBehaviour
         Vector3 world = Camera.main.ViewportToWorldPoint(new Vector3(viewportPos.x, viewportPos.y, 10f));
         var fx = Instantiate(prefab, world, Quaternion.identity);
         Destroy(fx, life);
+    }
+    
+    // 테스트 씬용
+    public void TriggerBaseShake(float intensity, float duration)
+    {
+        StartCoroutine(BaseShakeRoutine(intensity, duration));
+        if (camShaker) camShaker.Shake(0.3f, 0.5f); // 기반 흔들릴 때 화면도 덜컥
+    }
+
+    public void TriggerTopHit(int topCount, float force)
+    {
+        var topBlocks = towerManager.GetTopBlocks(topCount);
+        foreach (var block in topBlocks)
+        {
+            var rb = block.GetComponent<Rigidbody2D>();
+            if (rb != null)
+                rb.AddForce(Vector2.right * Random.Range(-1f, 1f) * force, ForceMode2D.Impulse);
+        }
+        if (camShaker) camShaker.Shake(0.25f, 0.3f); // 위에서 맞은 느낌
+    }
+
+    public void TriggerWind(float force, float duration)
+    {
+        StartCoroutine(WindRoutine(force, duration));
+        if (camShaker) camShaker.Shake(0.15f, 0.25f); // 바람 불 때 살짝 흔들
     }
 }
