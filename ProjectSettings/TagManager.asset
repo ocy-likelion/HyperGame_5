@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Block
   - Platform
+  - FxTemporaire
+  - BackGround
   layers:
   - Default
   - TransparentFX

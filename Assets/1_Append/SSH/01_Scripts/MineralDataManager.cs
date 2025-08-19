@@ -9,7 +9,8 @@ public class MineralDataManager : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private Transform topParent;
-    private SabotageEventManager sabotageEventManager;
+    //private SabotageEventManager sabotageEventManager;
+    private PlayManager playManager;
 
     [Header("Prefabs")]
     [SerializeField] private GameObject prefab_BlockDropProxy;
@@ -31,7 +32,8 @@ public class MineralDataManager : MonoBehaviour
     private void Awake()
     {
         mineralCount = 0;
-        sabotageEventManager = GetComponent<SabotageEventManager>();    
+        //sabotageEventManager = GetComponent<SabotageEventManager>();
+        playManager = GetComponent<PlayManager>();
     }
 
     public void GenerateRandomMineral()
@@ -59,7 +61,7 @@ public class MineralDataManager : MonoBehaviour
 
         GenerateMineralAsync(type);
         mineralCount++;
-        sabotageEventManager.EventCheckByMineralCount(mineralCount);
+        //sabotageEventManager.EventCheckByMineralCount(mineralCount);
     }
 
     private void GenerateMineralAsync(MineralTypeEnum type)
@@ -112,6 +114,8 @@ public class MineralDataManager : MonoBehaviour
             proxyBlock.transform.SetParent(topParent);
             proxyBlock.GetComponent<SpriteRenderer>().sprite = opHandle.Result;
             proxyBlock.GetComponent<SpriteOutlineCollider>().BuildCollider();
+            playManager.blockList.Add(proxyBlock.GetComponent<BlockDropProxy>().InstantiateTopObject()); // 탑 오브젝트를 바로 PlayManager의 BlockList에 넣기
+            EventBus.Instance.Publish("SpawnBlock", proxyBlock); // 프록시 오브젝트를 이벤트 버스로 퍼블리시
         }
     }
 
