@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using TMPro;
 using UnityEngine;
@@ -230,4 +231,9 @@ public class PlayManager : MonoBehaviour
         return height;
     }
     #endregion 
+
+    public bool HasActiveBlock() // 바닥에 떨어진 블럭이 있는지 확인하는 메서드
+    {
+        return blockList.Any(obj => obj.activeSelf);
+    }
 }

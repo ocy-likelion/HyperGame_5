@@ -80,7 +80,7 @@ public class SabotageEventManager : MonoBehaviour
             float t = Mathf.Clamp01(elapsed / LAVA_DURATION);
             lava.transform.position = Vector3.Lerp(LAVA_START_POS, LAVA_END_POS, t);
 
-            if (lava.transform.position.y + 5 > playManager.currentTowerHeight) // + 5는 오프셋값
+            if (lava.transform.position.y + 5 > playManager.currentTowerHeight && playManager.HasActiveBlock() && playManager.currentTowerHeight > -3) // + 5는 오프셋값
             {
                 Debug.Log("용암이 블럭을 따라잡음");
             }
