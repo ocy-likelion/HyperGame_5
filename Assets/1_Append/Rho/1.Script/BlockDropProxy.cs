@@ -24,7 +24,7 @@ public class BlockDropProxy : MonoBehaviour
     {
         blockTopInstance = Instantiate(blockTopObject, new Vector3(-10, -10, 0), Quaternion.Euler(Vector2.zero));
         blockTopInstance.GetComponent<BlockOnlyTop>().InstantiateProxyObject(mineralDataManager.GetParentTopObject(), GetComponent<SpriteRenderer>().sprite, effectObjectPool);
-        blockTopInstance.SetActive(false); // TODO : false로 수정 요
+        blockTopInstance.SetActive(false);
         return blockTopInstance;
     }
 
@@ -49,10 +49,12 @@ public class BlockDropProxy : MonoBehaviour
 
             blockTopInstance.SetActive(true);
             blockTopInstance.transform.position = transform.position;
+            blockTopInstance.transform.rotation = transform.rotation;
             effectObjectPool.Get(blockTopInstance.gameObject.transform);
 
             proxyObjectPool.Return(gameObject);
             mineralDataManager.AddLastBlock(blockTopInstance);
+            EventBus.Instance.Publish(Consts.BLOCK_LANDED);
         }
     }
 

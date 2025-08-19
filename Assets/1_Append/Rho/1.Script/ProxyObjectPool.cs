@@ -28,7 +28,7 @@ public class ProxyObjectPool : MonoBehaviour
 {
     [SerializeField] GameObject proxyGameObject;
     private Queue<GameObject> proxyQueue = new Queue<GameObject>();
-    private const int LOAD_COUNT = 6;
+    private const int LOAD_COUNT = 15;
 
     private void Awake()
     {

@@ -21,6 +21,7 @@ public class PlayManager : MonoBehaviour
     private float totalElapsedTime = 0.0f;
     private float timeLimit = 15.0f;
     private bool gameEnded = false;
+    bool isLatestBlockLanded = false;
 
     // dev UI
     [SerializeField] private GameObject towerHeightLine;
@@ -52,21 +53,21 @@ public class PlayManager : MonoBehaviour
     void OnEnable()
     {
         EventBus.Instance.Subscribe(Consts.END_GAME, EndGame);
-        EventBus.Instance.Subscribe(Consts.BLOCK_LANDED, AddBlock);
+        EventBus.Instance.Subscribe(Consts.BLOCK_LANDED, BlockLanded);
         EventBus.Instance.Subscribe("RespawnBlock", RespawnBlock);
     }
 
     void OnDisable()
     {
         EventBus.Instance.Unsubscribe(Consts.END_GAME, EndGame);
-        EventBus.Instance.Unsubscribe(Consts.BLOCK_LANDED, AddBlock);
+        EventBus.Instance.Unsubscribe(Consts.BLOCK_LANDED, BlockLanded);
         EventBus.Instance.Unsubscribe("RespawnBlock", RespawnBlock);
     }
 
     void Start()
     {
         StartCoroutine(GameTimer());
-        CreateBlock();
+        mineralDataManager.GenerateBlock();
     }
 
     void Update()
@@ -141,47 +142,40 @@ public class PlayManager : MonoBehaviour
     #endregion
 
     #region 개발용
-
-    public void CreateBlock()
+    void BlockLanded()
     {
-        // 광물 생성 및 드롭 (MineralDataManager 사용)
-        if (mineralDataManager != null)
-        {
-            mineralDataManager.GenerateRandomMineral();
-        }
-        else
-        {
-            Debug.LogWarning("[PlayManager] MineralDataManager가 없습니다.");
-        }
-    }
+        //if (newBlockList.Count > 0)
+        //{
+        //    blockList.Add(newBlockList[0]);
+        //    newBlockList.RemoveAt(0);
+        //}
 
-    void AddBlock()
-    {
-        if (newBlockList.Count > 0)
-        {
-            blockList.Add(newBlockList[0]);
-            newBlockList.RemoveAt(0);
-        }
+        isLatestBlockLanded = true;
     }
-
     void RespawnBlock()
     {
         StartCoroutine(WaitAndCreateBlock());
     }
-
     IEnumerator WaitAndCreateBlock()
     {
-        yield return new WaitForSeconds(nextTurnTime);
+        //yield return new WaitForSeconds(nextTurnTime);
 
-        // 쓰러지고 있는지 판단해서 쓰러지면 더 기다림
-        while (CheckTowerIsNotSafe())
+        //// 쓰러지고 있는지 판단해서 쓰러지면 더 기다림
+        //while (CheckTowerIsNotSafe())
+        //{
+        //    yield return new WaitForSeconds(nextTurnTime);
+        //}
+
+        //EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight());
+        //yield return new WaitForSeconds(1f);    // 카메라 움직이는 동안 생성 대기
+        //CreateBlock();
+
+        while (!isLatestBlockLanded) // 블럭이 어딘가에 닿을 때까지 대기
         {
-            yield return new WaitForSeconds(nextTurnTime);
+            yield return null;
         }
 
-        EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight());
-        yield return new WaitForSeconds(1f);    // 카메라 움직이는 동안 생성 대기
-        CreateBlock();
+        mineralDataManager.GenerateBlock(); // 블럭 생성
     }
 
     // 타워가 안정한지 체크

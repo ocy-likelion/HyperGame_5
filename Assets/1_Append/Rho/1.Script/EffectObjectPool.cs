@@ -7,7 +7,7 @@ public class EffectObjectPool : MonoBehaviour
 {
     [SerializeField] GameObject effectGameObject;
     private Queue<GameObject> effectQueue = new Queue<GameObject>();
-    private const int LOAD_COUNT = 6;
+    private const int LOAD_COUNT = 15;
 
     private void Awake()
     {

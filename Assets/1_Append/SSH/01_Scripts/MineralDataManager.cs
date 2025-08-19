@@ -9,7 +9,7 @@ public class MineralDataManager : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private Transform topParent;
-    //private SabotageEventManager sabotageEventManager;
+    private SabotageEventManager sabotageEventManager;
     private PlayManager playManager;
 
     [Header("Prefabs")]
@@ -32,11 +32,11 @@ public class MineralDataManager : MonoBehaviour
     private void Awake()
     {
         mineralCount = 0;
-        //sabotageEventManager = GetComponent<SabotageEventManager>();
+        sabotageEventManager = GetComponent<SabotageEventManager>();
         playManager = GetComponent<PlayManager>();
     }
 
-    public void GenerateRandomMineral()
+    public void GenerateBlock()
     {
         float n = Random.Range(0f, 1f);
         MineralTypeEnum type;
