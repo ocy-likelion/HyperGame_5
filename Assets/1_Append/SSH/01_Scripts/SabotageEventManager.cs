@@ -18,7 +18,7 @@ public class SabotageEventManager : MonoBehaviour
 
     [Header("주요 프로퍼티")]
     // 싱크홀 관련
-    readonly Vector2 SINKHOLE_POS = new Vector2(0, -1f);
+    readonly Vector2 SINKHOLE_POS = new Vector2(0, -0.5f);
     const float SINKHOLE_DURATION = 0.25f;
     const float SHAKE_CAMERA_AMOUNT = 1.2f;
     bool isTriggeredSinkHole;
@@ -27,7 +27,7 @@ public class SabotageEventManager : MonoBehaviour
     readonly Vector2 FEATHER_GEN_POS = new Vector2(0, 6.5f);
     bool isTriggeredMole;
     // 용암 관련
-    readonly Vector3 LAVA_START_POS = new Vector3(0, -15f, -0.1f);
+    readonly Vector3 LAVA_START_POS = new Vector3(0, -15f, -0.1f); // 용암 시작 높이(적정 : -9)
     Vector3 LAVA_END_POS;
     const float LAVA_DURATION = 30f;
 
@@ -60,8 +60,12 @@ public class SabotageEventManager : MonoBehaviour
     {
         if (isTriggeredMole) return;
 
-        GameObject go = Instantiate(prefab_Mole);
-        go.transform.position = blockController.GetBlockSpawnPos() + new Vector3(Random.Range(-2f, 2f), 0, 0);
+        for (int i = 0; i < 3; i++)
+        {
+            GameObject go = Instantiate(prefab_Mole);
+            go.transform.position = blockController.GetBlockSpawnPos() + new Vector3(Random.Range(-2f, 2f), Random.Range(1f, 3f), 0);
+        }
+
         isTriggeredMole = true;
     }
     public void ShakeCamera(float duration, float strength) // 카메라 쉐이킹 메서드
@@ -80,7 +84,7 @@ public class SabotageEventManager : MonoBehaviour
             float t = Mathf.Clamp01(elapsed / LAVA_DURATION);
             lava.transform.position = Vector3.Lerp(LAVA_START_POS, LAVA_END_POS, t);
 
-            if (lava.transform.position.y + 5 > playManager.currentTowerHeight && playManager.HasActiveBlock() && playManager.currentTowerHeight > -3) // + 5는 오프셋값
+            if (lava.transform.position.y + 5 > playManager.currentTowerHeight && playManager.HasActiveBlock() && playManager.currentTowerHeight > -3) // + 5는 오프셋값, -3은 ground
             {
                 Debug.Log("용암이 블럭을 따라잡음");
             }

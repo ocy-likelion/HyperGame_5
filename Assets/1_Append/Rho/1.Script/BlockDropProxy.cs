@@ -47,6 +47,7 @@ public class BlockDropProxy : MonoBehaviour
 
             blockTopInstance.SetActive(true);
             blockTopInstance.transform.position = transform.position;
+            blockTopInstance.transform.rotation = transform.rotation;
             effectObjectPool.Get(blockTopInstance.gameObject.transform);
 
             proxyObjectPool.Return(gameObject);

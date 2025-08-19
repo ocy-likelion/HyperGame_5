@@ -82,9 +82,9 @@ public class PlayManager : MonoBehaviour
 
         towerHeightLine.transform.position = new Vector3(0.0f, currentTowerHeight, 0.0f);
 
-        if (currentTowerHeight > 1.5f) sabotageEventManager.TriggerMoleEvent();
+        if (currentTowerHeight > 1f) sabotageEventManager.TriggerMoleEvent();
 
-        if (currentTowerHeight > 2.5f) sabotageEventManager.TriggerSinkHoleEvent();
+        if (currentTowerHeight > 2f) sabotageEventManager.TriggerSinkHoleEvent();
     }
 
     IEnumerator GameTimer()
