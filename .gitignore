@@ -99,6 +99,7 @@ InitTestScene*.unity*
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 
-# Ignore TextMesh Pro auto-generated files
+# Ignore TextMesh Pro auto-generated files, but keep Resources
 /[Aa]ssets/TextMesh Pro/*
-!/[Aa]ssets/TextMesh Pro/Fonts & Materials/
+!/[Aa]ssets/TextMesh Pro/Resources/**
+!/[Aa]ssets/TextMesh Pro/Shaders/Sprite/*.shader
