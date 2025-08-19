@@ -15,7 +15,7 @@ public class PlayManager : MonoBehaviour
     private GameObject highestBlock;
 
     public float currentTowerHeight;
-    private float goalTowerHeight = 2.0f; // 임시
+    public float goalTowerHeight = 3.0f; // 임시
 
     public TMP_Text elapsedTimeText;
     private float totalElapsedTime = 0.0f;
