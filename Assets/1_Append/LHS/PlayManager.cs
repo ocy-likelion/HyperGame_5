@@ -154,14 +154,15 @@ public class PlayManager : MonoBehaviour
             Debug.LogWarning("[PlayManager] MineralDataManager가 없습니다.");
         }
     }
-
+    bool isBlockLanded;
     void AddBlock()
     {
-        if (newBlockList.Count > 0)
-        {
-            blockList.Add(newBlockList[0]);
-            newBlockList.RemoveAt(0);
-        }
+        //if (newBlockList.Count > 0)
+        //{
+        //    blockList.Add(newBlockList[0]);
+        //    newBlockList.RemoveAt(0);
+        //}
+        isBlockLanded = true;
     }
 
     void RespawnBlock()
@@ -171,16 +172,22 @@ public class PlayManager : MonoBehaviour
 
     IEnumerator WaitAndCreateBlock()
     {
-        yield return new WaitForSeconds(nextTurnTime);
+        //yield return new WaitForSeconds(nextTurnTime);
 
-        // 쓰러지고 있는지 판단해서 쓰러지면 더 기다림
-        while (CheckTowerIsNotSafe())
+        //// 쓰러지고 있는지 판단해서 쓰러지면 더 기다림
+        //while (CheckTowerIsNotSafe())
+        //{
+        //    yield return new WaitForSeconds(nextTurnTime);
+        //}
+
+        //EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight());
+        //yield return new WaitForSeconds(1f);    // 카메라 움직이는 동안 생성 대기
+
+        while (!isBlockLanded)
         {
-            yield return new WaitForSeconds(nextTurnTime);
+            yield return null;
         }
-
-        EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight());
-        yield return new WaitForSeconds(1f);    // 카메라 움직이는 동안 생성 대기
+        isBlockLanded = false;
         CreateBlock();
     }
 

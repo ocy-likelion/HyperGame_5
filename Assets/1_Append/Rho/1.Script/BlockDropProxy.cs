@@ -53,6 +53,7 @@ public class BlockDropProxy : MonoBehaviour
 
             proxyObjectPool.Return(gameObject);
             mineralDataManager.AddLastBlock(blockTopInstance);
+            EventBus.Instance.Publish(Consts.BLOCK_LANDED); // 블럭이 떨어졌음을 알리기
         }
     }
 
