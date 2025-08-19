@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class BlockDropProxy : MonoBehaviour
 {
@@ -18,13 +17,13 @@ public class BlockDropProxy : MonoBehaviour
         mineralDataManager = _mineralDataManager;
         proxyObjectPool = _proxyObjectPool;
         effectObjectPool = _effectObjectPool;
+        StartCoroutine(BlockOpacityCoroutine());
     }
     public GameObject InstantiateTopObject() // 프록시 생성 시 탑 오브젝트도 미리 생성하는 메서드
     {
         blockTopInstance = Instantiate(blockTopObject, new Vector3(-10, -10, 0), Quaternion.Euler(Vector2.zero));
         blockTopInstance.GetComponent<BlockOnlyTop>().InstantiateProxyObject(mineralDataManager.GetParentTopObject(), GetComponent<SpriteRenderer>().sprite, effectObjectPool);
         blockTopInstance.SetActive(false); // TODO : false로 수정 요
-
         return blockTopInstance;
     }
 
@@ -34,6 +33,7 @@ public class BlockDropProxy : MonoBehaviour
         {
             Vector3 targetPosition = transform.position;
             transform.position = targetPosition + Vector3.down * Time.fixedDeltaTime * 10f;
+
         }
     }
 
@@ -51,5 +51,53 @@ public class BlockDropProxy : MonoBehaviour
             proxyObjectPool.Return(gameObject);
             mineralDataManager.AddLastBlock(blockTopInstance);
         }
+    }
+
+    IEnumerator BlockOpacityCoroutine()
+    {
+        var spriteRenderer = GetComponent<SpriteRenderer>();
+        float time = 0f;
+        float fixTime = 1f;
+        bool isUpper = false;
+        bool isLower = true;
+        Color originColor = spriteRenderer.color;
+
+        while (IsEnd)
+        {
+            if (isLower)
+            {
+                time += Time.deltaTime;
+                float percent = Mathf.Clamp01(time / fixTime);
+
+                Color tempcolor = spriteRenderer.color;
+                tempcolor.a = percent;
+                spriteRenderer.color = tempcolor;
+
+                if (time >= fixTime)
+                {
+                    isLower = false;
+                    isUpper = true;
+                }
+            }
+            else if (isUpper)
+            {
+                time -= Time.deltaTime;
+                float percent = Mathf.Clamp01(time / fixTime);
+
+                var c = spriteRenderer.color;
+                c.a = percent;
+                spriteRenderer.color = c;
+
+                if (time <= 0f)
+                {
+                    isLower = true;
+                    isUpper = false;
+                }
+            }
+
+            yield return null;
+        }
+
+        spriteRenderer.color = originColor;
     }
 }
