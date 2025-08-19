@@ -52,14 +52,6 @@ public class PlayManager : MonoBehaviour
         }
     }
 
-    // ==== 컴포넌트(dev/block_fin5) ====
-    private MineralDataManager mineralDataManager;
-
-    void Awake()
-    {
-        mineralDataManager = GetComponent<MineralDataManager>();
-    }
-
     void OnEnable()
     {
         EventBus.Instance.Subscribe(Consts.END_GAME, EndGame);
@@ -90,13 +82,9 @@ public class PlayManager : MonoBehaviour
         CheckHighestBlock();
         CheckTowerHeight();
 
-        towerHeightLine.transform.position = new Vector3(0.0f, currentTowerHeight, 0.0f);
-
         if (currentTowerHeight > 1f) sabotageEventManager.TriggerMoleEvent();
 
         if (currentTowerHeight > 2f) sabotageEventManager.TriggerSinkHoleEvent();
-        if (towerHeightLine != null)
-            towerHeightLine.transform.position = new Vector3(0.0f, currentTowerHeight, 0.0f);
     }
 
     IEnumerator GameTimer()
@@ -162,9 +150,6 @@ public class PlayManager : MonoBehaviour
     #endregion
 
     #region 개발용
-
-    [SerializeField] GameObject towerHeightLine;
-    float nextTurnTime = 0.1f;
 
     public void CreateBlock()
     {
