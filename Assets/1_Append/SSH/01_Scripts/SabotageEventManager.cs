@@ -27,7 +27,7 @@ public class SabotageEventManager : MonoBehaviour
     readonly Vector2 FEATHER_GEN_POS = new Vector2(0, 6.5f);
     bool isTriggeredMole;
     // 용암 관련
-    readonly Vector3 LAVA_START_POS = new Vector3(0, -12f, -0.1f);
+    readonly Vector3 LAVA_START_POS = new Vector3(0, -15f, -0.1f);
     Vector3 LAVA_END_POS;
     const float LAVA_DURATION = 30f;
 
