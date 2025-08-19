@@ -159,7 +159,6 @@ public class PlayManager : MonoBehaviour
         //GameObject newBlock = Instantiate(BlockPrefab);
         //EventBus.Instance.Publish("SpawnBlock", newBlock);
         //newBlockList.Add(newBlock);
-
         // newBlock.transform.position = new Vector3(
         //     blockSpawnPoint.transform.position.x,
         //     blockSpawnPoint.transform.position.y,
@@ -167,6 +166,12 @@ public class PlayManager : MonoBehaviour
         //     );
 
         // StartCoroutine(WaitAndShowButton());
+
+        mineralDataManager.GenerateRandomMineral();
+        //// 광물 생성
+        //GameObject newBlock = Instantiate(BlockPrefab);
+        //EventBus.Instance.Publish("SpawnBlock", newBlock);
+        //newBlockList.Add(newBlock);
     }
     bool isLanded = false;
     void AddBlock()
@@ -209,8 +214,6 @@ public class PlayManager : MonoBehaviour
     //타워가 안정한지 체크
     bool CheckTowerIsNotSafe()
     {
-        if (highestBlock == null) return false; // 첫 번째 블럭이 떨어진 경우
-
         var velocityX = highestBlock.GetComponent<Rigidbody2D>().linearVelocityX;
         var velocityY = highestBlock.GetComponent<Rigidbody2D>().linearVelocityY;
         var isNotSafe = (velocityY <= -0.03f);
