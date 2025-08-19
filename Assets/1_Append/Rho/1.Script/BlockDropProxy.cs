@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using DG.Tweening;
 
 public class BlockDropProxy : MonoBehaviour
 {
@@ -33,7 +34,6 @@ public class BlockDropProxy : MonoBehaviour
         {
             Vector3 targetPosition = transform.position;
             transform.position = targetPosition + Vector3.down * Time.fixedDeltaTime * 10f;
-
         }
     }
 
@@ -42,6 +42,9 @@ public class BlockDropProxy : MonoBehaviour
         if (IsEnd) return;
         if (collision.gameObject.CompareTag("Block") || collision.gameObject.CompareTag("Platform"))
         {
+            GameObject backGroundObject = GameObject.FindWithTag("BackGround");
+            backGroundObject.transform.DOShakePosition(1f, new Vector3(5f, 5f, 0f), 10, 90f);
+
             IsEnd = true;
 
             blockTopInstance.SetActive(true);
