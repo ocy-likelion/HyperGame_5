@@ -36,7 +36,7 @@ public class MineralDataManager : MonoBehaviour
         playManager = GetComponent<PlayManager>();
     }
 
-    public void GenerateRandomMineral()
+    public void GenerateBlock()
     {
         float n = Random.Range(0f, 1f);
         MineralTypeEnum type;

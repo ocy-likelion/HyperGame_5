@@ -167,7 +167,7 @@ public class PlayManager : MonoBehaviour
 
         // StartCoroutine(WaitAndShowButton());
 
-        mineralDataManager.GenerateRandomMineral();
+        mineralDataManager.GenerateBlock();
         //// 광물 생성
         //GameObject newBlock = Instantiate(BlockPrefab);
         //EventBus.Instance.Publish("SpawnBlock", newBlock);
