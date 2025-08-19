@@ -9,7 +9,7 @@ public class SabotageEventManager : MonoBehaviour
     //[SerializeField] GameObject prefab_Feather;
 
     [Header("씬 오브젝트")]
-    [SerializeField] GameObject platform;
+    [SerializeField] GameObject ground;
     [SerializeField] GameObject lava;
 
     [Header("주요 프로퍼티")]
@@ -57,7 +57,7 @@ public class SabotageEventManager : MonoBehaviour
     //}
     void TriggerSinkHoleEvent() // 싱크홀 이벤트 메서드
     {
-        platform.transform.DOMove((Vector2)platform.transform.position + SINKHOLE_POS, SINKHOLE_DURATION);
+        ground.transform.DOMove((Vector2)ground.transform.position + SINKHOLE_POS, SINKHOLE_DURATION);
         ShakeCamera(SINKHOLE_DURATION, SHAKE_CAMERA_AMOUNT);
     }
     void ShakeCamera(float duration, float strength) // 카메라 쉐이킹 메서드

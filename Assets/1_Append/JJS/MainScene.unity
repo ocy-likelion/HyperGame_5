@@ -377,6 +377,7 @@ GameObject:
   - component: {fileID: 161776130}
   - component: {fileID: 161776129}
   - component: {fileID: 161776131}
+  - component: {fileID: 161776132}
   m_Layer: 0
   m_Name: PlayManager
   m_TagString: Untagged
@@ -433,6 +434,20 @@ MonoBehaviour:
   prefab_BlockDropProxy: {fileID: 5202448632294348487, guid: 4ce01d19bc5e67441b38280376ff5f46, type: 3}
   blockDropProxyPool: {fileID: 1468015189}
   effectObjectPool: {fileID: 1372612548}
+--- !u!114 &161776132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161776128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 083f12aa2f3085547a8c4a6621204dee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ground: {fileID: 1635174783}
+  lava: {fileID: 0}
 --- !u!1 &251976600
 GameObject:
   m_ObjectHideFlags: 0
@@ -1886,7 +1901,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &495743686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1900,6 +1915,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiManager: {fileID: 732051078}
+  playManager: {fileID: 161776129}
 --- !u!61 &495743687
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1956,7 +1972,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -10, z: 0}
-  m_LocalScale: {x: 50, y: 10, z: 1}
+  m_LocalScale: {x: 40, y: 5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -3057,6 +3073,7 @@ MonoBehaviour:
   popOvershoot: 2.2
   ScoreText: {fileID: 481023188}
   BasicScore: 5000
+  BlockDropScore: -100
   StoneScore: 100
   BronzeScore: 200
   SilverScore: 300
@@ -8863,8 +8880,8 @@ SceneRoots:
   - {fileID: 307270520}
   - {fileID: 161776130}
   - {fileID: 1635174787}
-  - {fileID: 1448341900}
   - {fileID: 495743688}
+  - {fileID: 1448341900}
   - {fileID: 1468015190}
   - {fileID: 1372612549}
   - {fileID: 357424832}

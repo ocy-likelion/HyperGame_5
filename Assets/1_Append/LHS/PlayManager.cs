@@ -12,7 +12,7 @@ public class PlayManager : MonoBehaviour
     public List<GameObject> blockList = new List<GameObject>();
     private readonly List<GameObject> newBlockList = new List<GameObject>();
 
-    private GameObject highestBlock;
+    public GameObject highestBlock { get; private set; }
 
     public float currentTowerHeight;
     private float goalTowerHeight = 2.0f; // 임시
@@ -26,9 +26,6 @@ public class PlayManager : MonoBehaviour
     // dev UI
     [SerializeField] private GameObject towerHeightLine;
     private float nextTurnTime = 2f;
-
-    // ==== 추가된 프로퍼티(HEAD) ====
-    public GameObject HighestBlock => highestBlock;
 
     public Vector3 HighestTopPoint
     {
