@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class SabotageEventManager : MonoBehaviour
 {
+    [Header("컴포넌트")]
+    PlayManager playManager;
+
     [Header("프리팹")]
     [SerializeField] GameObject prefab_Mole;
 
@@ -24,16 +27,22 @@ public class SabotageEventManager : MonoBehaviour
     readonly Vector2 FEATHER_GEN_POS = new Vector2(0, 6.5f);
     bool isTriggeredMole;
     // 용암 관련
-    readonly Vector3 LAVA_START_POS = new Vector3(0, -4f, -0.1f);
-    readonly Vector3 LAVA_END_POS = new Vector3(0, 0, -0.1f);
-    const float LAVA_DURATION = 60f;
+    readonly Vector3 LAVA_START_POS = new Vector3(0, -12f, -0.1f);
+    Vector3 LAVA_END_POS;
+    const float LAVA_DURATION = 30f;
 
+    void Awake()
+    {
+        TryGetComponent<PlayManager>(out playManager);
+    }
     void Start()
     {
-        //StartCoroutine(SurgeLavaCoroutine());
+        LAVA_END_POS = new Vector3(0, playManager.GOAL_TOWER_HEIGHT - 5, -0.1f); // -5를 하는 이유 : 용암 경계선을 맞추기 위한 오프셋 값
+
+        StartCoroutine(SurgeLavaCoroutine());
     }
 
-    public void ResetAllProperties()
+    public void ResetAllProperties() // 모든 방해 이벤트 트리거 불리언을 초기화
     {
         isTriggeredSinkHole = false;
         isTriggeredMole = false;
@@ -70,6 +79,11 @@ public class SabotageEventManager : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / LAVA_DURATION);
             lava.transform.position = Vector3.Lerp(LAVA_START_POS, LAVA_END_POS, t);
+
+            if (lava.transform.position.y + 5 > playManager.currentTowerHeight) // + 5는 오프셋값
+            {
+                Debug.Log("용암이 블럭을 따라잡음");
+            }
             yield return null;
         }
 

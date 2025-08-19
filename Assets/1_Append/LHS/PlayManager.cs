@@ -14,8 +14,8 @@ public class PlayManager : MonoBehaviour
     List<GameObject> newBlockList = new List<GameObject>();
     GameObject highestBlock;
 
-    public float currentTowerHeight;
-    float goalTowerHeight = 4.0f; // 임시
+    [HideInInspector] public float currentTowerHeight; // Vector.y의 값
+    [HideInInspector] public float GOAL_TOWER_HEIGHT = 3.0f; // Vector.y의 값
 
     public TMP_Text elapsedTimeText;
     float totalElapsedTime = 0.0f;
@@ -28,7 +28,7 @@ public class PlayManager : MonoBehaviour
 
     void Awake()
     {
-        mineralDataManager = GetComponent<MineralDataManager>();
+        TryGetComponent<MineralDataManager>(out mineralDataManager);
         TryGetComponent<SabotageEventManager>(out sabotageEventManager);
     }
     public GameObject HighestBlock => highestBlock;
@@ -63,7 +63,7 @@ public class PlayManager : MonoBehaviour
     {
         StartCoroutine(GameTimer());
         //CreateBlock();
-        mineralDataManager.GenerateBlock();
+        mineralDataManager.GenerateBlock(); // 기존 CreateBlock 메서드 대신
     }
 
     void Update()
@@ -127,20 +127,18 @@ public class PlayManager : MonoBehaviour
     void CheckTowerHeight()
     {
         // 목표 위치에 도달하면 게임 클리어
-        if (currentTowerHeight > goalTowerHeight)
+        if (currentTowerHeight > GOAL_TOWER_HEIGHT)
         {
             GameManager gameManager = GameObject.FindFirstObjectByType<GameManager>();
             gameManager.isWin = true;
             EventBus.Instance.Publish(Consts.END_GAME);
         }
     }
-
     #region gimmicks
     void Wind()
     {
         Debug.Log("휭");
     }
-
     void Mole()
     {
         Debug.Log("두더지");
@@ -150,7 +148,7 @@ public class PlayManager : MonoBehaviour
     #region 개발용
 
     [SerializeField] GameObject towerHeightLine;
-    float nextTurnTime = 2f;
+    float nextTurnTime = 0.1f;
 
     public void CreateBlock()
     {
@@ -186,16 +184,17 @@ public class PlayManager : MonoBehaviour
     IEnumerator WaitAndCreateBlock()
     {
         yield return new WaitForSeconds(nextTurnTime);
-        
-        //쓰러지 고있는지 판단해서 쓰러지면 더 기다리게 함
-        while (CheckTowerIsNotSafe())
-        {
-            yield return new WaitForSeconds(nextTurnTime);
-        }
-        EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight());
-        yield return new WaitForSeconds(1f);    // 카메라 움직이는 동안 생성 기다림
+
+        ////쓰러지 고있는지 판단해서 쓰러지면 더 기다리게 함
+        //while (CheckTowerIsNotSafe())
+        //{
+        //    yield return new WaitForSeconds(nextTurnTime);
+        //}
+        //EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight());
+        //yield return new WaitForSeconds(1f);    // 카메라 움직이는 동안 생성 기다림
         //CreateBlock();
-        mineralDataManager.GenerateBlock();
+
+        mineralDataManager.GenerateBlock(); // 기존 CreateBlock 메서드 대신
     }
     //타워가 안정한지 체크
     bool CheckTowerIsNotSafe()
