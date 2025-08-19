@@ -219,4 +219,14 @@ public class PlayManager : MonoBehaviour
         return height;
     }
     #endregion
+
+    public bool HasActiveBlock() // 현재 땅에 블럭이 있는지 검사하는 로직
+    {
+        foreach (var obj in blockList)
+        {
+            if (obj.activeSelf)
+                return true;
+        }
+        return false;
+    }
 }

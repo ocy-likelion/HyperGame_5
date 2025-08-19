@@ -24,8 +24,8 @@ public class SabotageEventManager : MonoBehaviour
     readonly Vector2 FEATHER_GEN_POS = new Vector2(0, 6.5f);
     // 용암 관련
     readonly Vector3 LAVA_START_POS = new Vector3(0, -12f, 0);
-    Vector3 LAVA_END_POS = new Vector3(0, 30, -0.1f);
-    const float LAVA_DURATION = 60f;
+    Vector3 LAVA_END_POS;
+    const float LAVA_DURATION = 30f;
     const int LAVA_OFFSET = 5; // 용암 위치 오프셋 값
 
     void Awake()
@@ -33,6 +33,10 @@ public class SabotageEventManager : MonoBehaviour
         TryGetComponent<PlayManager>(out playManager);
 
         LAVA_END_POS = new Vector3(0, playManager.goalTowerHeight - LAVA_OFFSET, 0);
+    }
+    void Start()
+    {
+        StartSurgeLava();
     }
 
     void TriggerMoleEvent() // 두더지 이벤트 메서드
@@ -60,6 +64,12 @@ public class SabotageEventManager : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / LAVA_DURATION);
             lava.transform.position = Vector3.Lerp(LAVA_START_POS, LAVA_END_POS, t);
+
+            if (lava.transform.position.y + 5 > playManager.currentTowerHeight && playManager.currentTowerHeight > -3 && playManager.HasActiveBlock())
+            {
+                Debug.Log("용암이 따라잡음!!");
+            }
+
             yield return null;
         }
 
