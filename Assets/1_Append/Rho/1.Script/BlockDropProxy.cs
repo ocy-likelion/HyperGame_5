@@ -9,6 +9,7 @@ public class BlockDropProxy : MonoBehaviour
     private EffectObjectPool effectObjectPool;
     public bool IsEnd = true;
     [SerializeField] GameObject blockTopObject;
+    const float DROP_SPEED = 8f;
 
     GameObject blockTopInstance; // 프록시 생성 시 만들어지는 인스턴스
     
@@ -33,7 +34,7 @@ public class BlockDropProxy : MonoBehaviour
         if (!IsEnd)
         {
             Vector3 targetPosition = transform.position;
-            transform.position = targetPosition + Vector3.down * Time.fixedDeltaTime * 10f;
+            transform.position = targetPosition + Vector3.down * Time.fixedDeltaTime * DROP_SPEED;
         }
     }
 
@@ -50,6 +51,7 @@ public class BlockDropProxy : MonoBehaviour
 
             proxyObjectPool.Return(gameObject);
             mineralDataManager.AddLastBlock(blockTopInstance);
+            EventBus.Instance.Publish(Consts.BLOCK_LANDED);
         }
     }
 }

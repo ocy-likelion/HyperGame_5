@@ -167,14 +167,16 @@ public class PlayManager : MonoBehaviour
 
         // StartCoroutine(WaitAndShowButton());
     }
-
+    bool isLanded = false;
     void AddBlock()
     {
-        if (newBlockList.Count > 0)
-        {
-            blockList.Add(newBlockList[0]);
-            newBlockList.RemoveAt(0);
-        }
+        //if (newBlockList.Count > 0)
+        //{
+        //    blockList.Add(newBlockList[0]);
+        //    newBlockList.RemoveAt(0);
+        //}
+
+        isLanded = true;
     }
 
     void RespawnBlock()
@@ -183,7 +185,7 @@ public class PlayManager : MonoBehaviour
     }
     IEnumerator WaitAndCreateBlock()
     {
-        yield return new WaitForSeconds(nextTurnTime);
+        //yield return new WaitForSeconds(nextTurnTime);
 
         ////쓰러지 고있는지 판단해서 쓰러지면 더 기다리게 함
         //while (CheckTowerIsNotSafe())
@@ -193,6 +195,13 @@ public class PlayManager : MonoBehaviour
         //EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight());
         //yield return new WaitForSeconds(1f);    // 카메라 움직이는 동안 생성 기다림
         //CreateBlock();
+
+        while (!isLanded)
+        {
+            yield return null;
+        }
+
+        isLanded = false;
 
         mineralDataManager.GenerateBlock(); // 기존 CreateBlock 메서드 대신
     }
