@@ -8,6 +8,11 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("타이틀")]
+    public GameObject TitlePanel;
+    // 게임이 한 번이라도 시작되었는지(리셋 후에도 유지) — 앱 재실행 시 초기화됨
+    private static bool sGameStarted = false;
+
     [Header("Ul 팝업")]
     public GameObject TutorialUI;
     public GameObject PauseUI;
@@ -37,7 +42,7 @@ public class UIManager : MonoBehaviour
     public GameObject FailEffect;
     public TextMeshProUGUI ClearScoreText;
 
-    [Header("Ʃ�丮��")]
+    [Header("튜토리얼")]
     public Image TutorialImage;
     public TextMeshProUGUI TutorialText;
     public Sprite[] TutorialImages;
@@ -94,12 +99,23 @@ public class UIManager : MonoBehaviour
             scoreBasePos = scoreRT.anchoredPosition;
             scoreBaseColor = ScoreText.color;
         }
-        
+
         // 시작 점수 초기화
         ScoreText.text = BasicScore.ToString();
         if (gameManager) gameManager.score = BasicScore;
 
-        StartTimer();
+        if (!sGameStarted)
+        {
+            // 아직 Start 버튼을 누른 적이 없으면 타이틀 먼저
+            PauseGame();
+            ShowOnlyTitle();
+        }
+        else
+        {
+            HideTitleInstant();  
+            ResumeGame();
+            StartTimer();
+        }
     }
 
     void OnDisable() { KillTimerTweens(); KillScoreTweens(); }
@@ -111,12 +127,54 @@ public class UIManager : MonoBehaviour
         if (gameManager && !isAnimatingScore)
             ScoreText.text = gameManager.score.ToString();
 
+        // 시작 후에만 튜토리얼 자동 오픈
+        if (sGameStarted && !PlayedGame.hadPlayed)
+        {
+            ShowTutorialUI();
+            PlayedGame.hadPlayed = true;
+        }
+    }
+
+  
+    void HideTitleInstant()
+    {
+        if (!TitlePanel) return;
+        var cg = TitlePanel.GetComponent<CanvasGroup>();
+        if (cg != null)
+        {
+            cg.alpha = 0f;
+            cg.interactable = false;
+            cg.blocksRaycasts = false;
+        }
+        TitlePanel.SetActive(false);
+    }
+
+    // 타이틀만 켜고 다른 팝업은 끄는 헬퍼
+    void ShowOnlyTitle()
+    {
+        if (TitlePanel) ShowPopup(TitlePanel);
+        HidePopup(TutorialUI);
+        HidePopup(PauseUI);
+        HidePopup(ResultUI);
+    }
+
+    // 타이틀 Start 버튼에 연결
+    public void OnPressStartGame()
+    {
+        if (sGameStarted) return;
+        sGameStarted = true;
+
+        HidePopup(TitlePanel);
+        ResumeGame();
+        StartTimer();
+
         if (!PlayedGame.hadPlayed)
         {
             ShowTutorialUI();
             PlayedGame.hadPlayed = true;
         }
     }
+
 
     void ShowPopup(GameObject panel)
     {
@@ -193,12 +251,12 @@ public class UIManager : MonoBehaviour
         if (soundOn)
         {
             SoundButton.sprite = SoundButtonOn;
-            SoundText.text = "���Ұ�";
+            SoundText.text = "사운드 ON";
         }
         else
         {
             SoundButton.sprite = SoundButtonOff;
-            SoundText.text = "�Ҹ� �ѱ�";
+            SoundText.text = "사운드 OFF";
         }
     }
 
@@ -278,7 +336,7 @@ public class UIManager : MonoBehaviour
         int end = Mathf.Max(0, to);
         int delta = end - start;
 
-        // 강조색: 보너스(초록) / 패널티(빨강)
+        // 강조색
         Color hiColor = delta >= 0 ? new Color(0.2f, 1f, 0.2f) : Color.red;
 
         float absDelta = Mathf.Abs(delta);
@@ -302,7 +360,6 @@ public class UIManager : MonoBehaviour
             DOVirtual.Int(start, end, dur, v => ScoreText.text = v.ToString()).SetUpdate(true)
         );
         scoreSeq.Join(
-            // DOTween 버전에 따라 strength는 Vector2 권장
             scoreRT.DOShakeAnchorPos(shakeDur, new Vector2(strength, strength),
                                      Mathf.RoundToInt(vibrato), 90, false, true)
                    .SetId(SCORE_SHAKE_ID)
@@ -320,20 +377,17 @@ public class UIManager : MonoBehaviour
         });
     }
 
-    // UIManager 내부에 추가
+    // 보너스 연출
     public void PlaySuccessBonus(int timeBonus, int from, int to, System.Action onComplete = null)
     {
         if (ScoreText == null || scoreRT == null)
         {
-            // fallback: 그냥 숫자 애니만 하고 끝
             AnimateScoreChange(from, to, onComplete);
             return;
         }
 
-        // 초록 보너스 플래시 + 플로팅 텍스트(+1234) → 숫자 애니 → 결과 콜백
         var green = new Color(0.2f, 1f, 0.2f);
 
-        // 플로팅 TMPUGUI 생성 (프리팹 필요 없음)
         var parentRT = scoreRT.parent as RectTransform;
         var go = new GameObject("TimeBonusText", typeof(RectTransform));
         go.transform.SetParent(parentRT != null ? parentRT : scoreRT, false);
@@ -348,33 +402,27 @@ public class UIManager : MonoBehaviour
         tmp.color = new Color(green.r, green.g, green.b, 0f);
         tmp.raycastTarget = false;
 
-        // 시퀀스
         var seq = DOTween.Sequence().SetUpdate(true);
 
-        // 1) 점수텍스트 초록 플래시 + 펀치 스케일
         seq.Append(ScoreText.DOColor(green, 0.06f));
         seq.Join(scoreRT.DOPunchScale(Vector3.one * 0.18f, 0.22f, 12, 0.9f));
 
-        // 2) 플로팅 보너스 텍스트: 위로 살짝 뜨면서 등장/소멸
         seq.Join(tmp.DOFade(1f, 0.12f));
         seq.Join(bonusRT.DOAnchorPosY(bonusRT.anchoredPosition.y + 32f, 0.45f).SetEase(Ease.OutCubic));
         seq.AppendInterval(0.1f);
         seq.Append(tmp.DOFade(0f, 0.22f));
         seq.AppendCallback(() => Destroy(go));
 
-        // 3) 숫자 증가 애니 시작(기존 숫자 애니 메서드 재사용)
         seq.AppendCallback(() =>
         {
             AnimateScoreChange(from, to, () =>
             {
-                onComplete?.Invoke(); // 여기서 결과창 열어주면 됨
+                onComplete?.Invoke();
             });
         });
 
-        // 4) 점수텍스트 색 복귀(보너스 플래시만)
         seq.Append(ScoreText.DOColor(scoreBaseColor, 0.18f));
     }
-
 
     void KillTimerTweens()
     {
@@ -405,6 +453,7 @@ public class UIManager : MonoBehaviour
         if (TutorialImages.Length > 0) TutorialImage.sprite = TutorialImages[0];
         if (TutorialTexts.Length > 0) TutorialText.text = TutorialTexts[0];
         currentTutorialIndex = 0;
+        UpdateTutorialIndexText();
     }
 
     public void NextTutorialImage()
@@ -441,6 +490,7 @@ public class UIManager : MonoBehaviour
         SceneManager.LoadScene("MainScene");
     }
 
+
     void ActivateEffectUnscaled(GameObject fx)
     {
         if (!fx) return;
@@ -449,7 +499,10 @@ public class UIManager : MonoBehaviour
         fx.SetActive(false);
         fx.SetActive(true);
     }
+
 }
+
+
 
 [DisallowMultipleComponent]
 public class UnscaledParticleDriver : MonoBehaviour

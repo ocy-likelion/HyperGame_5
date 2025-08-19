@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,19 +8,21 @@ using UnityEngine.UI;
 
 public class PlayManager : MonoBehaviour
 {
-    [SerializeField]private Camera mainCamera;
+    [SerializeField] private Camera mainCamera;
+
     public GameObject BlockPrefab;
     public List<GameObject> blockList = new List<GameObject>();
-    List<GameObject> newBlockList = new List<GameObject>();
-    GameObject highestBlock;
+    private readonly List<GameObject> newBlockList = new List<GameObject>();
+
+    private GameObject highestBlock;
 
     [HideInInspector] public float currentTowerHeight; // Vector.y의 값
     [HideInInspector] public float GOAL_TOWER_HEIGHT = 3.0f; // Vector.y의 값
 
     public TMP_Text elapsedTimeText;
-    float totalElapsedTime = 0.0f;
-    float timeLimit = 15.0f;
-    bool gameEnded = false;
+    private float totalElapsedTime = 0.0f;
+    private float timeLimit = 15.0f;
+    private bool gameEnded = false;
 
     // 컴포넌트
     MineralDataManager mineralDataManager;
@@ -32,6 +33,11 @@ public class PlayManager : MonoBehaviour
         TryGetComponent<MineralDataManager>(out mineralDataManager);
         TryGetComponent<SabotageEventManager>(out sabotageEventManager);
     }
+    // dev UI
+    [SerializeField] private GameObject towerHeightLine;
+    private float nextTurnTime = 2f;
+
+    // ==== 추가된 프로퍼티(HEAD) ====
     public GameObject HighestBlock => highestBlock;
 
     public Vector3 HighestTopPoint
@@ -46,18 +52,26 @@ public class PlayManager : MonoBehaviour
         }
     }
 
+    // ==== 컴포넌트(dev/block_fin5) ====
+    private MineralDataManager mineralDataManager;
+
+    void Awake()
+    {
+        mineralDataManager = GetComponent<MineralDataManager>();
+    }
+
     void OnEnable()
     {
         EventBus.Instance.Subscribe(Consts.END_GAME, EndGame);
         EventBus.Instance.Subscribe(Consts.BLOCK_LANDED, AddBlock);
-        EventBus.Instance.Subscribe(Consts.RESPAWN_BLOCK, RespawnBlock);
+        EventBus.Instance.Subscribe("RespawnBlock", RespawnBlock);
     }
 
     void OnDisable()
     {
         EventBus.Instance.Unsubscribe(Consts.END_GAME, EndGame);
         EventBus.Instance.Unsubscribe(Consts.BLOCK_LANDED, AddBlock);
-        EventBus.Instance.Unsubscribe(Consts.RESPAWN_BLOCK, RespawnBlock);
+        EventBus.Instance.Unsubscribe("RespawnBlock", RespawnBlock);
     }
 
     void Start()
@@ -69,11 +83,7 @@ public class PlayManager : MonoBehaviour
 
     void Update()
     {
-        #region 임시 blockSpawnPoint 이동, 드래그 앤 드롭으로 고쳐야 함
-        // blockSpawnPoint.transform.position = new Vector3(Mathf.Sin(Time.time * blockSpawnPointFreqeuncy), 4.0f, 0.0f);
-        #endregion
-
-        if (gameEnded == true) return;
+        if (gameEnded) return;
 
         //elapsedTimeText.text = ((int)totalElapsedTime).ToString();
 
@@ -85,6 +95,8 @@ public class PlayManager : MonoBehaviour
         if (currentTowerHeight > 1f) sabotageEventManager.TriggerMoleEvent();
 
         if (currentTowerHeight > 2f) sabotageEventManager.TriggerSinkHoleEvent();
+        if (towerHeightLine != null)
+            towerHeightLine.transform.position = new Vector3(0.0f, currentTowerHeight, 0.0f);
     }
 
     IEnumerator GameTimer()
@@ -105,10 +117,10 @@ public class PlayManager : MonoBehaviour
 
     void CheckHighestBlock()
     {
-        // 타워 높이 갱신
-        // 기믹 활용을 위한 최상단 블럭 갱신
-        currentTowerHeight = -9999.0f;
-        
+        // 타워 높이 갱신 & 최상단 블럭 갱신
+        currentTowerHeight = float.NegativeInfinity;
+        highestBlock = null;
+
         foreach (var block in blockList)
         {
             float height = block.GetComponent<Collider2D>().bounds.max.y;
@@ -123,6 +135,9 @@ public class PlayManager : MonoBehaviour
                 highestBlock = block;
             }
         }
+
+        if (float.IsNegativeInfinity(currentTowerHeight))
+            currentTowerHeight = 0f;
     }
 
     void CheckTowerHeight()
@@ -130,8 +145,8 @@ public class PlayManager : MonoBehaviour
         // 목표 위치에 도달하면 게임 클리어
         if (currentTowerHeight > GOAL_TOWER_HEIGHT)
         {
-            GameManager gameManager = GameObject.FindFirstObjectByType<GameManager>();
-            gameManager.isWin = true;
+            var gameManager = GameObject.FindFirstObjectByType<GameManager>();
+            if (gameManager != null) gameManager.isWin = true;
             EventBus.Instance.Publish(Consts.END_GAME);
         }
     }
@@ -184,6 +199,7 @@ public class PlayManager : MonoBehaviour
     {
         StartCoroutine(WaitAndCreateBlock());
     }
+
     IEnumerator WaitAndCreateBlock()
     {
         //yield return new WaitForSeconds(nextTurnTime);
@@ -206,7 +222,8 @@ public class PlayManager : MonoBehaviour
 
         mineralDataManager.GenerateBlock(); // 기존 CreateBlock 메서드 대신
     }
-    //타워가 안정한지 체크
+
+    // 타워가 안정한지 체크
     bool CheckTowerIsNotSafe()
     {
         if (highestBlock == null) return false; // 첫 번째 블럭이 떨어진 경우
@@ -217,17 +234,18 @@ public class PlayManager : MonoBehaviour
         
         return isNotSafe;
     }
-    //카메라 높이값 계산
+
+    // 카메라 높이값 계산
     float CalculateSetCameraHeight()
     {
-        //화면 중하단 좌표
+        if (highestBlock == null) return 0f;
+
+        // 화면 중하단 좌표 (미사용이지만 남겨둠)
         Vector3 screenLowerCenter =
             new Vector3(Screen.width * 0.5f, Screen.height * 0.2f, Consts.CAMERA_OFFSET);
         Vector3 worldPos = mainCamera.ScreenToWorldPoint(screenLowerCenter);
 
-        var height = highestBlock.transform.position.y + Consts.HEIGHT_OFFSET;
-        //비용이 비싸다함 어떤것이 더 효율인 좋은지 모름
-        // mainCamera.GetComponent<CameraController>().SetCameraHeight(height);
+        float height = highestBlock.transform.position.y + Consts.HEIGHT_OFFSET;
         return height;
     }
     #endregion 
