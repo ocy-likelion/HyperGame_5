@@ -180,12 +180,14 @@ public class UIManager : MonoBehaviour
             ActivateEffectUnscaled(SuccessEffect); // ��� ����Ʈ�� unscaled�� ���
             ClearImage.sprite = SuccessSprite;
             ClearScoreText.text = gameManager ? gameManager.score.ToString() : "";
+            RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.Win);
         }
         else
         {
             ActivateEffectUnscaled(FailEffect);
             ClearImage.sprite = FailSprite;
             ClearScoreText.text = "";
+            RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.Lose);
         }
     }
 
