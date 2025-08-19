@@ -17,11 +17,8 @@ public class BottomCollider : MonoBehaviour
 
         int penalty = 0;
 
-        if (collision.gameObject.CompareTag("Gold")) penalty = uiManager.GoldScore;
-        else if (collision.gameObject.CompareTag("Silver")) penalty = uiManager.SilverScore;
-        else if (collision.gameObject.CompareTag("Bronze")) penalty = uiManager.BronzeScore;
-        else if (collision.gameObject.CompareTag("Stone")) penalty = uiManager.StoneScore;
-
+        if (collision.gameObject.CompareTag("Block")) penalty = uiManager.BlockScore;
+     
         if (penalty > 0)
         {
             int from = gameManager.score;

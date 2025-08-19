@@ -63,10 +63,7 @@ public class UIManager : MonoBehaviour
     [Header("점수 계산 로직 및 효과")]
     public TextMeshProUGUI ScoreText;
     public int BasicScore;
-    public int StoneScore = 100;
-    public int BronzeScore = 200;
-    public int SilverScore = 300;
-    public int GoldScore = 500;
+    public int BlockScore = 200;
 
     public bool isPaused = false;
 
