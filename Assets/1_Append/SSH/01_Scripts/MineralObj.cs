@@ -40,7 +40,10 @@ public class MineralObj : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        Vector2 dir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
-        rb.AddForce(dir.normalized * HIT_FORCE, ForceMode2D.Impulse);
+        if (collision.CompareTag("Block"))
+        {
+            Vector2 dir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+            rb.AddForce(dir.normalized * HIT_FORCE, ForceMode2D.Impulse);
+        }
     }
 }

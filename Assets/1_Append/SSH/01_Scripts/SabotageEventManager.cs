@@ -69,6 +69,7 @@ public class SabotageEventManager : MonoBehaviour
     {
         if (!isTriggeredMole)
         {
+            int molePos = -1;
             isTriggeredMole = true;
 
             TMP_Text sabotageText = Text_SabotageAlarm.GetComponent<TMP_Text>();
@@ -89,9 +90,9 @@ public class SabotageEventManager : MonoBehaviour
                 for (int i = 0; i < 3; i++)
                 {
                     GameObject go = Instantiate(prefab_Mole);
-                    go.transform.position = blockController.GetBlockSpawnPoint()
-                                            + new Vector3(Random.Range(-2f, 2f), Random.Range(1f, 3f), 0);
+                    go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(molePos, Random.Range(1f, 3f), 0);
                     go.transform.eulerAngles = new Vector3(0, 0, Random.Range(0f, 180f));
+                    molePos++;
                 }
             });
         }
