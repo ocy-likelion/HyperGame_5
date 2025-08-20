@@ -478,10 +478,10 @@ MonoBehaviour:
   blockList: []
   currentTowerHeight: 0
   goalTowerHeight: 2
-  uiManager: {fileID: 732051078}
+  uiManager: {fileID: 0}
   clearHoldSeconds: 3
   NotSafeVel: 0.03
-  towerHeightLine: {fileID: 1448341898}
+  towerHeightLine: {fileID: 0}
 --- !u!4 &161776130
 Transform:
   m_ObjectHideFlags: 0
@@ -3296,7 +3296,7 @@ MonoBehaviour:
   SoundButtonOn: {fileID: 21300000, guid: 16125d12d27538348b104007aaad04df, type: 3}
   SoundButtonOff: {fileID: 21300000, guid: ceecab61d4834fd4494634fc89e5a052, type: 3}
   SoundText: {fileID: 344106063}
-  ClearImage: {fileID: 1755705257}
+  ClearImage: {fileID: 0}
   SuccessSprite: {fileID: 21300000, guid: eda300ab70f16e04d9dbe31e11ab2ab8, type: 3}
   FailSprite: {fileID: 21300000, guid: b51b4bf8977cc984b9b1e7dcc1f8050b, type: 3}
   SuccessEffect: {fileID: 1712754886}
@@ -8469,7 +8469,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c79718770f893c429ad764f68612099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiManager: {fileID: 732051078}
+  uiManager: {fileID: 0}
   isWin: 0
   timerDuration: 30
   score: 5000
