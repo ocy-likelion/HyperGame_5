@@ -187,6 +187,8 @@ public class PlayManager : MonoBehaviour
         {
             yield return null;
         }
+        EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight());
+
         isBlockLanded = false;
         CreateBlock();
     }
