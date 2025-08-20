@@ -231,4 +231,9 @@ public class PlayManager : MonoBehaviour
         }
         return false;
     }
+
+    public float GetElaspedTime()
+    {
+        return totalElapsedTime;
+    }
 }

@@ -11,6 +11,7 @@ public class SabotageEventManager : MonoBehaviour
     [SerializeField] GameObject prefab_Mole;
 
     [Header("씬 오브젝트")]
+    [SerializeField] Camera mainCam;
     [SerializeField] GameObject ground;
     [SerializeField] GameObject lava;
 
@@ -19,9 +20,13 @@ public class SabotageEventManager : MonoBehaviour
     readonly Vector2 SINKHOLE_POS = new Vector2(0, -1f);
     const float SINKHOLE_DURATION = 0.25f;
     const float SHAKE_CAMERA_AMOUNT = 1.2f;
-    // 특수 블럭 관련
+    const float SINKHOLE_TIMING = 20f;
+    bool isTriggeredSinkHole = false;
+    // 두더지 관련
     readonly Vector2 MOLE_GEN_POS = new Vector2(0, 6f);
     readonly Vector2 FEATHER_GEN_POS = new Vector2(0, 6.5f);
+    const float MOLE_TIMING = 10f;
+    bool isTriggeredMole = false;
     // 용암 관련
     readonly Vector3 LAVA_START_POS = new Vector3(0, -12f, 0);
     Vector3 LAVA_END_POS;
@@ -36,22 +41,48 @@ public class SabotageEventManager : MonoBehaviour
     }
     void Start()
     {
+        ResetEventBoolean();
         StartSurgeLava();
+    }
+    void Update()
+    {
+        if (!isTriggeredMole && playManager.GetElaspedTime() > MOLE_TIMING)
+        {
+            TriggerMoleEvent();
+        }
+
+        if (!isTriggeredSinkHole && playManager.GetElaspedTime() > SINKHOLE_TIMING)
+        {
+            TriggerSinkHoleEvent();
+        }
+    }
+    void ResetEventBoolean()
+    {
+        isTriggeredMole = false;
+        isTriggeredSinkHole = false;
     }
 
     void TriggerMoleEvent() // 두더지 이벤트 메서드
     {
-        GameObject go = Instantiate(prefab_Mole);
-        go.transform.position = MOLE_GEN_POS + new Vector2(Random.Range(-3f, 3f), 0);
+        if (!isTriggeredMole)
+        {
+            isTriggeredMole = true;
+            GameObject go = Instantiate(prefab_Mole);
+            go.transform.position = MOLE_GEN_POS + new Vector2(Random.Range(-3f, 3f), 0);
+        }
     }
     void TriggerSinkHoleEvent() // 싱크홀 이벤트 메서드
     {
-        ground.transform.DOMove((Vector2)ground.transform.position + SINKHOLE_POS, SINKHOLE_DURATION);
-        ShakeCamera(SINKHOLE_DURATION, SHAKE_CAMERA_AMOUNT);
+        if (!isTriggeredSinkHole)
+        {
+            isTriggeredSinkHole = true;
+            ground.transform.DOMove((Vector2)ground.transform.position + SINKHOLE_POS, SINKHOLE_DURATION);
+            ShakeCamera(SINKHOLE_DURATION, SHAKE_CAMERA_AMOUNT);
+        }
     }
     void ShakeCamera(float duration, float strength) // 카메라 쉐이킹 메서드
     {
-        Camera.main.transform.DOShakePosition(duration, strength, 10, 90f, false, true);
+        mainCam.transform.DOShakePosition(duration, strength, 10, 90f, false, true);
     }
     IEnumerator SurgeLavaCoroutine() // 용암이 차오르는 메서드
     {

@@ -523,6 +523,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab_Mole: {fileID: 7869635054863380352, guid: 66707e7c659c8624d86edf462d743ceb, type: 3}
+  mainCam: {fileID: 1378813127}
   ground: {fileID: 1635174783}
   lava: {fileID: 1255144649}
 --- !u!1 &251976600
