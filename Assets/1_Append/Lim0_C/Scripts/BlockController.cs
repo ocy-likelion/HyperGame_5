@@ -110,9 +110,14 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     //예측선 그리는 기능
     private void DrawPredictionLine()
     {
-        RaycastHit2D hit = Physics2D.Raycast(_currentBlock.transform.position, Vector2.down, 10);
+        Collider2D blockCollider = _currentBlock.GetComponent<Collider2D>();
+        var blockBottom = _currentBlock.transform.position;
+        blockBottom.y = blockCollider.bounds.min.y;
+
+        RaycastHit2D hit = Physics2D.Raycast(blockBottom, Vector2.down, 10);
         var predictLineRender = _predictionLine.GetComponent<LineRenderer>();
-        predictLineRender.SetPosition(0, _currentBlock.transform.position);
+        predictLineRender.SetPosition(0, blockBottom);
+
         var line2Y = hit.collider ? hit.point.y : -3;   //-3 지면 높이
         var linePoint2 = new Vector3(_currentBlock.transform.position.x, line2Y, 0);
         predictLineRender.SetPosition(1, linePoint2);
