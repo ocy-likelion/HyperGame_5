@@ -8796,6 +8796,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4711f01c19b91b24694642b181bab426, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  titleObject: {fileID: 1514357535}
   target: {fileID: 1975279096}
   dropHeight: 600
   dropDuration: 1.5
