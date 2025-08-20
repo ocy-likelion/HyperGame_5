@@ -60,6 +60,16 @@ public class UIManager : MonoBehaviour
     public float fadeOut = 0.12f;
     public float popOvershoot = 2.2f;
 
+    [Header("클리어 카운트다운")]
+    public TextMeshProUGUI HoldCountdownText;
+    public float countPunch = 0.22f;       // 튀어나오는 강도
+    public int countVibrato = 10;        // 진동
+    public float countScaleUp = 1.25f;     // 기본 1 대비 최대 스케일
+    public float countScaleDown = 0.95f;   // 마무리 축소
+    public float countFadeIn = 0.06f;
+    public float countFadeOut = 0.10f;
+
+
     [Header("점수 계산 로직 및 효과")]
     public TextMeshProUGUI ScoreText;
     public int BasicScore;
@@ -81,9 +91,25 @@ public class UIManager : MonoBehaviour
     bool isAnimatingScore = false;
     DG.Tweening.Sequence scoreSeq;
 
+    int lastShownCount = -1;
+    Tween countSeq;
+    CanvasGroup holdCountCG;
+
     const string SHAKE_ID = "TimerShake";
     const string SCORE_SEQ_ID = "ScoreSeq";
     const string SCORE_SHAKE_ID = "ScoreShake";
+
+    void Awake()
+    {
+        if (HoldCountdownText != null)
+        {
+            holdCountCG = HoldCountdownText.GetComponent<CanvasGroup>();
+            if (holdCountCG == null) holdCountCG = HoldCountdownText.gameObject.AddComponent<CanvasGroup>();
+            HoldCountdownText.rectTransform.localScale = Vector3.one;
+            holdCountCG.alpha = 0f;
+            HoldCountdownText.gameObject.SetActive(false);
+        }
+    }
 
     void Start()
     {
@@ -421,7 +447,7 @@ public class UIManager : MonoBehaviour
         seq.Append(ScoreText.DOColor(scoreBaseColor, 0.18f));
     }
 
-    void KillTimerTweens()
+    public void KillTimerTweens()
     {
         valueTw?.Kill(); valueTw = null;
         loopTw?.Kill(); loopTw = null;
@@ -429,7 +455,7 @@ public class UIManager : MonoBehaviour
         DOTween.Kill(SHAKE_ID);
     }
 
-    void KillScoreTweens()
+   public void KillScoreTweens()
     {
         scoreSeq?.Kill(); scoreSeq = null;
         DOTween.Kill(SCORE_SHAKE_ID);
@@ -497,6 +523,75 @@ public class UIManager : MonoBehaviour
         fx.SetActive(true);
     }
 
+    public void ShowHoldCountdownUI()
+    {
+        if (HoldCountdownText == null) return;
+        DOTween.Kill(HoldCountdownText);
+        HoldCountdownText.gameObject.SetActive(true);
+        HoldCountdownText.rectTransform.localScale = Vector3.one;
+        holdCountCG.alpha = 0f;
+        holdCountCG.DOFade(1f, countFadeIn).SetUpdate(false).SetLink(HoldCountdownText.gameObject);
+    }
+
+    public void HideHoldCountdownUI()
+    {
+        if (HoldCountdownText == null) return;
+        lastShownCount = -1;
+        DOTween.Kill(HoldCountdownText);
+        holdCountCG.DOFade(0f, countFadeOut)
+            .OnComplete(() =>
+            {
+                if (HoldCountdownText != null)
+                {
+                    HoldCountdownText.gameObject.SetActive(false);
+                    HoldCountdownText.rectTransform.localScale = Vector3.one;
+                }
+            })
+            .SetUpdate(false).SetLink(HoldCountdownText.gameObject);
+    }
+
+    public void ResetHoldCountdown()
+    {
+        // 도중 취소될 때 숫자/트윈 초기화용
+        HideHoldCountdownUI();
+    }
+
+
+    public void UpdateHoldCountdown(float secondsLeft)
+    {
+        if (HoldCountdownText == null) return;
+
+        // 3.0~2.01 -> 3, 2.0~1.01 -> 2, 1.0~0.01 -> 1
+        int display = Mathf.Clamp(Mathf.CeilToInt(secondsLeft), 1, 3);
+
+        // 처음 진입 시 UI 표시
+        if (!HoldCountdownText.gameObject.activeSelf) ShowHoldCountdownUI();
+
+        // 같은 숫자면 애니 재생 X
+        if (display == lastShownCount) return;
+        lastShownCount = display;
+
+        HoldCountdownText.text = display.ToString();
+
+        var rt = HoldCountdownText.rectTransform;
+        DOTween.Kill(HoldCountdownText);
+
+        // scale 1 -> 1.25(빵) -> 0.95 -> 1.0 느낌
+        DG.Tweening.Sequence s = DOTween.Sequence().SetUpdate(false).SetLink(HoldCountdownText.gameObject);
+
+        // 스타트 순간 살짝 줄였다가 크게 빵
+        rt.localScale = Vector3.one * 0.9f;
+
+        s.Append(rt.DOScale(countScaleUp, 0.14f).SetEase(Ease.OutBack, 2.0f));
+        s.Append(rt.DOScale(countScaleDown, 0.10f).SetEase(Ease.InOutSine));
+        s.Append(rt.DOScale(1f, 0.08f).SetEase(Ease.OutSine));
+
+        // 동시에 약한 펀치(선호에 따라 삭제 가능)
+        s.Join(rt.DOPunchScale(Vector3.one * countPunch, 0.22f, countVibrato, 0.9f));
+        countSeq = s;
+    }
+
+
 }
 
 
@@ -531,4 +626,5 @@ public class UnscaledParticleDriver : MonoBehaviour
             if (ps != null) ps.Simulate(dt, true, false);
         }
     }
+
 }
