@@ -287,6 +287,7 @@ public class UIManager : MonoBehaviour
 
     public void Result(bool success)
     {
+        RealSoundManager.Instance.GameEndFade();
         if (success)
         {
             ActivateEffectUnscaled(SuccessEffect);

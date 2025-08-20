@@ -1,4 +1,6 @@
+using DG.Tweening;
 using System;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -55,6 +57,24 @@ public class RealSoundManager : MonoBehaviour
     public void PlayOneShot(Enums.SfxClips sfxClip)
     {
         _sfxAudioSource.PlayOneShot(sfxClips[(int)sfxClip]);
+    }
+
+    public void GameEndFade()
+    {
+        StartCoroutine(FadeAudio(_bgmAudioSource.volume, 0.3f, 0.5f));
+    }
+    private IEnumerator FadeAudio(float startVolume, float targetVolume, float duration)
+    {
+        float time = 0f;
+
+        while (time < duration)
+        {   
+            time += Time.unscaledDeltaTime;
+            _bgmAudioSource.volume = Mathf.Lerp(startVolume, targetVolume, time / duration);
+            yield return null;
+        }
+
+        _bgmAudioSource.volume = targetVolume;
     }
 
     public void OnClickButton()
