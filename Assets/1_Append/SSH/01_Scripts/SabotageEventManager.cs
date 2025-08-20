@@ -11,6 +11,7 @@ public class SabotageEventManager : MonoBehaviour
     [SerializeField] GameObject prefab_Mole;
 
     [Header("씬 오브젝트")]
+    [SerializeField] BlockController blockController;
     [SerializeField] Camera mainCam;
     [SerializeField] GameObject ground;
     [SerializeField] GameObject lava;
@@ -67,8 +68,12 @@ public class SabotageEventManager : MonoBehaviour
         if (!isTriggeredMole)
         {
             isTriggeredMole = true;
-            GameObject go = Instantiate(prefab_Mole);
-            go.transform.position = MOLE_GEN_POS + new Vector2(Random.Range(-3f, 3f), 0);
+
+            for (int i = 0; i < 3; i++)
+            {
+                GameObject go = Instantiate(prefab_Mole);
+                go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(Random.Range(-2f, 2f), Random.Range(1f, 3f), 0);
+            }
         }
     }
     void TriggerSinkHoleEvent() // 싱크홀 이벤트 메서드
