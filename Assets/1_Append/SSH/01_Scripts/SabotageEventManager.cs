@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class SabotageEventManager : MonoBehaviour
@@ -11,6 +12,7 @@ public class SabotageEventManager : MonoBehaviour
     [SerializeField] GameObject prefab_Mole;
 
     [Header("씬 오브젝트")]
+    [SerializeField] GameObject Text_SabotageAlarm;
     [SerializeField] BlockController blockController;
     [SerializeField] Camera mainCam;
     [SerializeField] GameObject ground;
@@ -21,12 +23,12 @@ public class SabotageEventManager : MonoBehaviour
     readonly Vector2 SINKHOLE_POS = new Vector2(0, -1f);
     const float SINKHOLE_DURATION = 0.25f;
     const float SHAKE_CAMERA_AMOUNT = 1.2f;
-    const float SINKHOLE_TIMING = 20f;
+    const float SINKHOLE_TIMING = 17f;
     bool isTriggeredSinkHole = false;
     // 두더지 관련
     readonly Vector2 MOLE_GEN_POS = new Vector2(0, 6f);
     readonly Vector2 FEATHER_GEN_POS = new Vector2(0, 6.5f);
-    const float MOLE_TIMING = 10f;
+    const float MOLE_TIMING = 7f;
     bool isTriggeredMole = false;
     // 용암 관련
     readonly Vector3 LAVA_START_POS = new Vector3(0, -12f, 0);
@@ -69,11 +71,28 @@ public class SabotageEventManager : MonoBehaviour
         {
             isTriggeredMole = true;
 
-            for (int i = 0; i < 3; i++)
+            TMP_Text sabotageText = Text_SabotageAlarm.GetComponent<TMP_Text>();
+            sabotageText.text = "두더지 떼가 몰려옵니다..";
+            Text_SabotageAlarm.SetActive(true);
+
+            Sequence seq = DOTween.Sequence();
+
+            seq.Append(sabotageText.DOFade(1f, 0.5f));
+
+            seq.AppendInterval(2.5f);
+
+            seq.Append(sabotageText.DOFade(0f, 0.5f)
+                .OnComplete(() => Text_SabotageAlarm.SetActive(false)));
+
+            seq.AppendCallback(() =>
             {
-                GameObject go = Instantiate(prefab_Mole);
-                go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(Random.Range(-2f, 2f), Random.Range(1f, 3f), 0);
-            }
+                for (int i = 0; i < 3; i++)
+                {
+                    GameObject go = Instantiate(prefab_Mole);
+                    go.transform.position = blockController.GetBlockSpawnPoint()
+                                            + new Vector3(Random.Range(-2f, 2f), Random.Range(1f, 3f), 0);
+                }
+            });
         }
     }
     void TriggerSinkHoleEvent() // 싱크홀 이벤트 메서드
