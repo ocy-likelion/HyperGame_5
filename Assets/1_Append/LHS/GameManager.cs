@@ -32,34 +32,41 @@ public class GameManager : MonoBehaviour
 
         if (currentTime <= 0f || isWin)
         {
-            gameEnd = true;
+            gameEnd = true;     // 재진입 방지
             EndGame();
         }
     }
 
     private void EndGame()
     {
+        uiManager?.HideHoldCountdownUI();
+        if (gameEnd == false) gameEnd = true; 
+        Time.timeScale = 0f; 
+
         if (isWin)
         {
             int timeBonus = Mathf.Max(0, Mathf.FloorToInt(currentTime) * 100);
             int from = score;
             int to = from + timeBonus;
 
+           
+            uiManager.KillTimerTweens();
+
             uiManager.PlaySuccessBonus(timeBonus, from, to, onComplete: () =>
             {
-                score = to;                 // ← 애니 끝난 뒤 실제 점수 커밋
-                uiManager.ShowResultUI();   // 결과창 오픈
+                score = to;                 // 합산 끝난 뒤 커밋
+                uiManager.ShowResultUI();   // 결과창
                 uiManager.Result(true);
             });
         }
         else
         {
+            uiManager.KillTimerTweens();    // 안전장치
             uiManager.ShowResultUI();
             uiManager.Result(false);
         }
     }
 
-
-
+  
     public void Test() { isWin = true; }
 }
