@@ -24,10 +24,10 @@ public class MineralDataManager : MonoBehaviour
     private List<GameObject> ingameBlockList = new List<GameObject>(); // List of active blocks
 
     // Mineral appearance probabilities
-    private const float STONE_PROB = 0.75f;
-    private const float COPPER_PROB = 0.20f;
-    private const float SILVER_PROB = 0.10f;
-    private const float GOLD_PROB = 0.05f;
+    private const float STONE_PROB = 0.05f;
+    private const float COPPER_PROB = 0.45f;
+    private const float SILVER_PROB = 0.35f;
+    private const float GOLD_PROB = 0.15f;
 
     private void Awake()
     {
