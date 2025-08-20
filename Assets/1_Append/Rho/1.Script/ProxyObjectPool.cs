@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Build.Content;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor.Build.Content;
+#endif
 public enum EJewelType
 {
     easy,
@@ -28,7 +30,7 @@ public class ProxyObjectPool : MonoBehaviour
 {
     [SerializeField] GameObject proxyGameObject;
     private Queue<GameObject> proxyQueue = new Queue<GameObject>();
-    private const int LOAD_COUNT = 6;
+    private const int LOAD_COUNT = 15;
 
     private void Awake()
     {
