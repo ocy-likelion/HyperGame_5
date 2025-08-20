@@ -1,11 +1,14 @@
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class RealSoundManager : MonoBehaviour
 {
-    [SerializeField]private AudioSource bgmAudioSource;
-    [SerializeField]private AudioSource sfxAudioSource;
+    private AudioSource _bgmAudioSource;
+    private AudioSource _sfxAudioSource;
+    
+    private bool _isMuted = false;
     
     [SerializeField]private AudioClip bgmClip;
     [SerializeField]private AudioClip[] sfxClips;
@@ -17,24 +20,45 @@ public class RealSoundManager : MonoBehaviour
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += OnSceneLoad;
     }
 
-    private void Start()
+    private void OnSceneLoad(Scene scene, LoadSceneMode mode)
     {
-        bgmAudioSource.clip = bgmClip;
-        bgmAudioSource.loop = true;
-        bgmAudioSource.volume = 0.6f;
-        sfxAudioSource.loop = false;
-        bgmAudioSource.Play();
+        Init();
+    }
+
+    public void OnClickMute()
+    {
+        _isMuted = !_isMuted;
+        UpdateMute();
+    }
+
+    void UpdateMute()
+    {
+        _bgmAudioSource.mute = _isMuted;
+        _sfxAudioSource.mute = _isMuted;
+    }
+
+    private void Init()
+    {
+        _bgmAudioSource = FindObjectsByType<AudioSource>(FindObjectsSortMode.None)[0];
+        _sfxAudioSource = FindObjectsByType<AudioSource>(FindObjectsSortMode.None)[1];
+        _bgmAudioSource.clip = bgmClip;
+        _bgmAudioSource.loop = true;
+        _bgmAudioSource.volume = 0.6f;
+        _sfxAudioSource.loop = false;
+        _bgmAudioSource.Play();
+        UpdateMute();
     }
 
     public void PlayOneShot(Enums.SfxClips sfxClip)
     {
-        sfxAudioSource.PlayOneShot(sfxClips[(int)sfxClip]);
+        _sfxAudioSource.PlayOneShot(sfxClips[(int)sfxClip]);
     }
 
     public void OnClickButton()
     {
-        sfxAudioSource.PlayOneShot(sfxClips[(int)Enums.SfxClips.Click]);
+        _sfxAudioSource.PlayOneShot(sfxClips[(int)Enums.SfxClips.Click]);
     }
 }

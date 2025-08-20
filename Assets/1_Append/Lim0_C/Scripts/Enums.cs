@@ -11,5 +11,6 @@ public class Enums
         Gimmick3,
         Win,
         Lose,
+        HitBlock
     }
 }

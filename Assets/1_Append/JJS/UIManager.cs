@@ -255,6 +255,8 @@ public class UIManager : MonoBehaviour
             SoundButton.sprite = SoundButtonOff;
             SoundText.text = "사운드 OFF";
         }
+
+        RealSoundManager.Instance.OnClickMute();
     }
 
     public void Result(bool success)
