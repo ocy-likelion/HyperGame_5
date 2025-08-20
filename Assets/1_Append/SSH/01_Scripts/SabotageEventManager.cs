@@ -120,6 +120,18 @@ public class SabotageEventManager : MonoBehaviour
                     .OnComplete(() => ground.transform.position = originalPos);
                 ShakeCamera(SINKHOLE_DURATION, SHAKE_CAMERA_AMOUNT);
             });
+            seq.AppendInterval(SINKHOLE_DURATION);
+
+            // 여진
+            seq.AppendCallback(() =>
+            {
+                float aftershockDuration = SINKHOLE_DURATION * 2f;
+                float aftershockAmount = SINKHOLE_AMOUNT / 3f;
+
+                ground.transform.DOShakePosition(aftershockDuration, aftershockAmount, 10, 90, false, true)
+                    .OnComplete(() => ground.transform.position = originalPos);
+                ShakeCamera(aftershockDuration, SHAKE_CAMERA_AMOUNT / 3f);
+            });
         }
     }
     void ShakeCamera(float duration, float strength) // 카메라 쉐이킹 메서드

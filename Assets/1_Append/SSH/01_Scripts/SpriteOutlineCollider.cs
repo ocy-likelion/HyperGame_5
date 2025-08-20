@@ -7,7 +7,7 @@ public class SpriteOutlineCollider : MonoBehaviour
     [Header("주요 프로퍼티")]
     float alphaThreshold = 0.1f;
     public float simplifyTolerancePixels = 1f;
-    [Range(0f, 0.05f)] public float shrinkAmount = 0.02f;
+    [Range(0f, 0.1f)] public float shrinkAmount = 0.02f;
     public bool drawGizmos = true;
 
     [Header("부가 프로퍼티")]
