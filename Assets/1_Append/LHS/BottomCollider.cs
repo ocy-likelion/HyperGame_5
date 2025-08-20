@@ -3,7 +3,6 @@ using UnityEngine;
 public class BottomCollider : MonoBehaviour
 {
     [SerializeField] UIManager uiManager; // 인스펙터에서 연결 권장
-    [SerializeField] PlayManager playManager;
     GameManager gameManager;
 
     void Start()
@@ -32,7 +31,6 @@ public class BottomCollider : MonoBehaviour
             uiManager.AnimateScoreChange(from, to);
         }
 
-        playManager.blockList.Remove(collision.gameObject);
         Destroy(collision.gameObject);
     }
 }

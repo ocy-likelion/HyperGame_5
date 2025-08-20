@@ -15,7 +15,7 @@ public class PlayManager : MonoBehaviour
     private GameObject highestBlock;
 
     public float currentTowerHeight;
-    public float goalTowerHeight = 3.0f; // 임시
+    private float goalTowerHeight = 2.0f; // 임시
 
     public TMP_Text elapsedTimeText;
     private float totalElapsedTime = 0.0f;
@@ -154,15 +154,14 @@ public class PlayManager : MonoBehaviour
             Debug.LogWarning("[PlayManager] MineralDataManager가 없습니다.");
         }
     }
-    bool isBlockLanded;
+
     void AddBlock()
     {
-        //if (newBlockList.Count > 0)
-        //{
-        //    blockList.Add(newBlockList[0]);
-        //    newBlockList.RemoveAt(0);
-        //}
-        isBlockLanded = true;
+        if (newBlockList.Count > 0)
+        {
+            blockList.Add(newBlockList[0]);
+            newBlockList.RemoveAt(0);
+        }
     }
 
     void RespawnBlock()
@@ -172,22 +171,16 @@ public class PlayManager : MonoBehaviour
 
     IEnumerator WaitAndCreateBlock()
     {
-        //yield return new WaitForSeconds(nextTurnTime);
+        yield return new WaitForSeconds(nextTurnTime);
 
-        //// 쓰러지고 있는지 판단해서 쓰러지면 더 기다림
-        //while (CheckTowerIsNotSafe())
-        //{
-        //    yield return new WaitForSeconds(nextTurnTime);
-        //}
-
-        //EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight());
-        //yield return new WaitForSeconds(1f);    // 카메라 움직이는 동안 생성 대기
-
-        while (!isBlockLanded)
+        // 쓰러지고 있는지 판단해서 쓰러지면 더 기다림
+        while (CheckTowerIsNotSafe())
         {
-            yield return null;
+            yield return new WaitForSeconds(nextTurnTime);
         }
-        isBlockLanded = false;
+
+        EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight());
+        yield return new WaitForSeconds(1f);    // 카메라 움직이는 동안 생성 대기
         CreateBlock();
     }
 
@@ -219,14 +212,4 @@ public class PlayManager : MonoBehaviour
         return height;
     }
     #endregion
-
-    public bool HasActiveBlock() // 현재 땅에 블럭이 있는지 검사하는 로직
-    {
-        foreach (var obj in blockList)
-        {
-            if (obj.activeSelf)
-                return true;
-        }
-        return false;
-    }
 }

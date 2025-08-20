@@ -6,9 +6,6 @@ using DG.Tweening;
 [RequireComponent(typeof(RectTransform))]
 public class TitleLogoDropper : MonoBehaviour
 {
-    [Header("타이틀 배경이미지")]
-    public GameObject titleObject;
-
     [Header("Target (생략 시 본인)")]
     public RectTransform target;
 
@@ -107,15 +104,6 @@ public class TitleLogoDropper : MonoBehaviour
         // 2) 착지 스쿼시
         seq.AppendCallback(() =>
         {
-            if (titleObject != null)
-            {
-                titleObject.transform.DOShakePosition(
-                    1f,                          // duration
-                    new Vector3(3f, 3f, 0f),    // strength
-                    10,                          // vibrato
-                    45f                          // randomness
-                ).SetUpdate(useUnscaledTime);
-            }
             target.localScale = new Vector3(impactScaleX, impactScaleY, 1f);
         });
 
@@ -164,8 +152,6 @@ public class TitleLogoDropper : MonoBehaviour
     // --- 버튼 등장 시퀀스 생성 ---
     Sequence PlayButtonsEnter()
     {
-        
-
         var s = DOTween.Sequence().SetUpdate(useUnscaledTime);
 
         if (buttons == null || buttons.Length == 0) return s;
@@ -208,7 +194,6 @@ public class TitleLogoDropper : MonoBehaviour
 
     CanvasGroup GetOrAddCanvasGroup(GameObject go)
     {
-        
         var cg = go.GetComponent<CanvasGroup>();
         if (cg == null) cg = go.AddComponent<CanvasGroup>();
         return cg;
@@ -217,7 +202,6 @@ public class TitleLogoDropper : MonoBehaviour
     // 파티클을 timeScale=0에서도 바로 재생
     void ActivateEffectUnscaled(GameObject fx)
     {
-        
         if (!fx) return;
 
         if (!fx.activeSelf) fx.SetActive(true);

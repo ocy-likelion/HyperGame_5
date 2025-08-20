@@ -400,7 +400,6 @@ MonoBehaviour:
   BlockPrefab: {fileID: 3379757770753386161, guid: e240743fae46402499f5c9a07ffc6c9a, type: 3}
   blockList: []
   currentTowerHeight: 0
-  goalTowerHeight: 3
   elapsedTimeText: {fileID: 0}
   towerHeightLine: {fileID: 1448341898}
 --- !u!4 &161776130
@@ -1901,7 +1900,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiManager: {fileID: 732051078}
-  playManager: {fileID: 0}
 --- !u!61 &495743687
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3059,7 +3057,10 @@ MonoBehaviour:
   popOvershoot: 2.2
   ScoreText: {fileID: 481023188}
   BasicScore: 5000
-  BlockScore: 200
+  StoneScore: 100
+  BronzeScore: 200
+  SilverScore: 300
+  GoldScore: 500
   isPaused: 0
   gameManager: {fileID: 1839854907}
 --- !u!1 &742045833
@@ -8503,7 +8504,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4711f01c19b91b24694642b181bab426, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  titleObject: {fileID: 1514357535}
   target: {fileID: 1975279096}
   dropHeight: 600
   dropDuration: 1.5
@@ -8560,19 +8560,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   midEffect: {fileID: 1574413682}
   midEffectTime: 1
-  buttons: []
-  btnStartDelay: 0.05
-  btnStagger: 0.06
-  btnFromYOffset: 140
-  btnMoveDuration: 0.35
-  btnEase:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  btnUseFade: 1
-  btnFadeDuration: 0.2
   playOnEnable: 1
   waitOneFrameBeforePlay: 1
   useUnscaledTime: 1
