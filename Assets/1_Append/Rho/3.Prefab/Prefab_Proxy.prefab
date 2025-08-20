@@ -157,7 +157,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   simplifyTolerancePixels: 1
-  shrinkAmount: 0
+  shrinkAmount: 0.02
   drawGizmos: 1
 --- !u!114 &1967482421517775761
 MonoBehaviour:

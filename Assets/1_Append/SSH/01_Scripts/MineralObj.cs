@@ -21,6 +21,10 @@ public class MineralObj : MonoBehaviour
 
         rb.linearVelocity = Vector2.down * TERMINAL_SPEED;
     }
+    void Start()
+    {
+        GetComponent<SpriteOutlineCollider>().BuildCollider();
+    }
     void Update()
     {
         if (transform.position.y < DEAD_LINE_POS)
