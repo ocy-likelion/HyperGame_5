@@ -12,7 +12,7 @@ public class MineralObj : MonoBehaviour
     const float TERMINAL_SPEED = 5f;
     const float MASS = 10;
     const float DEAD_LINE_POS = -6f;
-
+    const float HIT_FORCE = 5f;
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -35,6 +35,15 @@ public class MineralObj : MonoBehaviour
         if (vel.magnitude > TERMINAL_SPEED)
         {
             rb.linearVelocity = vel.normalized * TERMINAL_SPEED;
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Block"))
+        {
+            Vector2 dir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+            rb.AddForce(dir.normalized * HIT_FORCE, ForceMode2D.Impulse);
         }
     }
 }

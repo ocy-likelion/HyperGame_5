@@ -15,10 +15,10 @@ public class PlayManager : MonoBehaviour
     private GameObject highestBlock;
 
     public float currentTowerHeight;
-    public float goalTowerHeight = 3.0f; // 임시
+    public float goalTowerHeight = 2.25f; // 임시
 
     private float totalElapsedTime = 0.0f;
-    private float timeLimit = 15.0f;
+    private float timeLimit = 30.0f; // 왜 15였지
     private bool gameEnded = false;
 
     [SerializeField] private UIManager uiManager;
