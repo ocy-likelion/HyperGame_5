@@ -51,11 +51,16 @@ public class BlockDropProxy : MonoBehaviour
 
             blockTopInstance.SetActive(true);
             blockTopInstance.transform.position = transform.position;
-            effectObjectPool.Get(blockTopInstance.gameObject.transform);
+            blockTopInstance.transform.rotation = transform.rotation;
+
+            Rigidbody2D rb = blockTopInstance.GetComponent<Rigidbody2D>();
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
 
             proxyObjectPool.Return(gameObject);
             mineralDataManager.AddLastBlock(blockTopInstance);
             EventBus.Instance.Publish(Consts.BLOCK_LANDED); // 블럭이 떨어졌음을 알리기
+            blockTopInstance = null;
         }
     }
 
