@@ -4158,6 +4158,14 @@ PrefabInstance:
       propertyPath: sfxAudioSource
       value: 
       objectReference: {fileID: 785043879}
+    - target: {fileID: 997108185108635276, guid: 690aeb81935965a4197eaf19b0a1adc2, type: 3}
+      propertyPath: sfxClips.Array.size
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 997108185108635276, guid: 690aeb81935965a4197eaf19b0a1adc2, type: 3}
+      propertyPath: 'sfxClips.Array.data[9]'
+      value: 
+      objectReference: {fileID: 8300000, guid: e7a4cf927ba60d1488365e88e3cf2082, type: 3}
     - target: {fileID: 3430303586305512654, guid: 690aeb81935965a4197eaf19b0a1adc2, type: 3}
       propertyPath: m_Name
       value: RealSoundManager
