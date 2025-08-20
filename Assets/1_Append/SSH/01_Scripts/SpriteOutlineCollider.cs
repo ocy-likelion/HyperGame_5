@@ -16,11 +16,6 @@ public class SpriteOutlineCollider : MonoBehaviour
     [Header("최적화")]
     const int DOWNSCALE_AMOUNT = 2; // 2~4 정도가 적당
 
-    void Start()
-    {
-        BuildCollider();
-    }
-
     public void BuildCollider()
     {
         contours.Clear();
