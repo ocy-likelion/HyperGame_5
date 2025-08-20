@@ -434,6 +434,7 @@ RectTransform:
   - {fileID: 1254686039}
   - {fileID: 481023187}
   - {fileID: 427658437}
+  - {fileID: 789487601}
   m_Father: {fileID: 1589490518}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -8468,7 +8469,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c79718770f893c429ad764f68612099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiManager: {fileID: 0}
+  uiManager: {fileID: 732051078}
   isWin: 0
   timerDuration: 30
   score: 5000

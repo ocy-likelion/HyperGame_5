@@ -19,17 +19,18 @@ public class SabotageEventManager : MonoBehaviour
     [SerializeField] GameObject lava;
 
     [Header("주요 프로퍼티")]
-    // 싱크홀 관련
-    readonly Vector2 SINKHOLE_POS = new Vector2(0, -1f);
-    const float SINKHOLE_DURATION = 0.25f;
-    const float SHAKE_CAMERA_AMOUNT = 1.2f;
-    const float SINKHOLE_TIMING = 17f;
-    bool isTriggeredSinkHole = false;
     // 두더지 관련
     readonly Vector2 MOLE_GEN_POS = new Vector2(0, 6f);
     readonly Vector2 FEATHER_GEN_POS = new Vector2(0, 6.5f);
     const float MOLE_TIMING = 7f;
     bool isTriggeredMole = false;
+    // 싱크홀 관련
+    readonly Vector2 SINKHOLE_POS = new Vector2(0, -1f);
+    const float SINKHOLE_DURATION = 0.25f;
+    const float SINKHOLE_AMOUNT = 0.8f;
+    const float SHAKE_CAMERA_AMOUNT = 1.2f;
+    const float SINKHOLE_TIMING = 17f;
+    bool isTriggeredSinkHole = false;
     // 용암 관련
     readonly Vector3 LAVA_START_POS = new Vector3(0, -12f, 0);
     Vector3 LAVA_END_POS;
@@ -53,7 +54,6 @@ public class SabotageEventManager : MonoBehaviour
         {
             TriggerMoleEvent();
         }
-
         if (!isTriggeredSinkHole && playManager.GetElaspedTime() > SINKHOLE_TIMING)
         {
             TriggerSinkHoleEvent();
@@ -91,6 +91,7 @@ public class SabotageEventManager : MonoBehaviour
                     GameObject go = Instantiate(prefab_Mole);
                     go.transform.position = blockController.GetBlockSpawnPoint()
                                             + new Vector3(Random.Range(-2f, 2f), Random.Range(1f, 3f), 0);
+                    go.transform.eulerAngles = new Vector3(0, 0, Random.Range(0f, 180f));
                 }
             });
         }
@@ -100,8 +101,24 @@ public class SabotageEventManager : MonoBehaviour
         if (!isTriggeredSinkHole)
         {
             isTriggeredSinkHole = true;
-            ground.transform.DOMove((Vector2)ground.transform.position + SINKHOLE_POS, SINKHOLE_DURATION);
-            ShakeCamera(SINKHOLE_DURATION, SHAKE_CAMERA_AMOUNT);
+
+            TMP_Text sabotageText = Text_SabotageAlarm.GetComponent<TMP_Text>();
+            sabotageText.text = "곧 지진이 일어날 것 같습니다..!!!";
+            Text_SabotageAlarm.SetActive(true);
+
+            Vector3 originalPos = ground.transform.position;
+
+            Sequence seq = DOTween.Sequence();
+            seq.Append(sabotageText.DOFade(1f, 0.5f));
+            seq.AppendInterval(2.5f);
+            seq.Append(sabotageText.DOFade(0f, 0.5f).OnComplete(() => Text_SabotageAlarm.SetActive(false)));
+
+            seq.AppendCallback(() =>
+            {
+                ground.transform.DOShakePosition(SINKHOLE_DURATION, SINKHOLE_AMOUNT, 10, 90, false, true)
+                    .OnComplete(() => ground.transform.position = originalPos);
+                ShakeCamera(SINKHOLE_DURATION, SHAKE_CAMERA_AMOUNT);
+            });
         }
     }
     void ShakeCamera(float duration, float strength) // 카메라 쉐이킹 메서드
@@ -111,7 +128,7 @@ public class SabotageEventManager : MonoBehaviour
     IEnumerator SurgeLavaCoroutine() // 용암이 차오르는 메서드
     {
         // 경과한 시간
-        float elapsed = 0f; 
+        float elapsed = 0f;
 
         // 용암이 움직이는 메서드
         while (elapsed < LAVA_DURATION)

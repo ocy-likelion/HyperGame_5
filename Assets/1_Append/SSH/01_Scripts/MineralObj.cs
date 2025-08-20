@@ -37,4 +37,9 @@ public class MineralObj : MonoBehaviour
             rb.linearVelocity = vel.normalized * TERMINAL_SPEED;
         }
     }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        
+    }
 }
