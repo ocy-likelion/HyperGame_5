@@ -84,7 +84,7 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         _currentBlock = null;
         _predictionLine.gameObject.SetActive(false);
         EventBus.Instance.Publish("RespawnBlock");
-
+        RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.DropBlock);
     }
     
     //드래그 입력 이벤트 핸들

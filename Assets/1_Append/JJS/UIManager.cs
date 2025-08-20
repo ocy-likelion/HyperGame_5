@@ -281,6 +281,8 @@ public class UIManager : MonoBehaviour
             SoundButton.sprite = SoundButtonOff;
             SoundText.text = "사운드 OFF";
         }
+
+        RealSoundManager.Instance.OnClickMute();
     }
 
     public void Result(bool success)
@@ -290,12 +292,14 @@ public class UIManager : MonoBehaviour
             ActivateEffectUnscaled(SuccessEffect);
             ClearImage.sprite = SuccessSprite;
             ClearScoreText.text = gameManager ? gameManager.score.ToString() : "";
+            RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.Win);
         }
         else
         {
             ActivateEffectUnscaled(FailEffect);
             ClearImage.sprite = FailSprite;
             ClearScoreText.text = "";
+            RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.Lose);
         }
     }
 

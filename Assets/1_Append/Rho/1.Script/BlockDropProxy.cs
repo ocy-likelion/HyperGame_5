@@ -44,6 +44,7 @@ public class BlockDropProxy : MonoBehaviour
         if (IsEnd) return;
         if (collision.gameObject.CompareTag("Block") || collision.gameObject.CompareTag("Platform"))
         {
+            RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.HitBlock);
             GameObject backGroundObject = GameObject.FindWithTag("BackGround");
             backGroundObject.transform.DOShakePosition(1f, new Vector3(5f, 5f, 0f), 10, 90f);
 
