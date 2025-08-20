@@ -1218,7 +1218,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 10
+  m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!1 &391256694
 GameObject:
@@ -3257,7 +3257,7 @@ MonoBehaviour:
   SoundButtonOn: {fileID: 21300000, guid: 16125d12d27538348b104007aaad04df, type: 3}
   SoundButtonOff: {fileID: 21300000, guid: ceecab61d4834fd4494634fc89e5a052, type: 3}
   SoundText: {fileID: 344106063}
-  ClearImage: {fileID: 0}
+  ClearImage: {fileID: 1755705257}
   SuccessSprite: {fileID: 21300000, guid: eda300ab70f16e04d9dbe31e11ab2ab8, type: 3}
   FailSprite: {fileID: 21300000, guid: b51b4bf8977cc984b9b1e7dcc1f8050b, type: 3}
   SuccessEffect: {fileID: 1712754886}
@@ -3721,6 +3721,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: msVFX_Stylized Smoke 3
       objectReference: {fileID: 0}
+    - target: {fileID: 5797428246745224015, guid: 24fa55c4f1386e04ea2800527f88c4e1, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5800350169276503837, guid: 24fa55c4f1386e04ea2800527f88c4e1, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.25
@@ -3787,7 +3791,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5959315613782194469, guid: 24fa55c4f1386e04ea2800527f88c4e1, type: 3}
       propertyPath: m_SortingOrder
-      value: 1000
+      value: 150
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4255,6 +4259,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 997108185108635276, guid: 690aeb81935965a4197eaf19b0a1adc2, type: 3}
+      propertyPath: bgmClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 5782ce7eb92ae34449d8b266b56955ce, type: 3}
+    - target: {fileID: 997108185108635276, guid: 690aeb81935965a4197eaf19b0a1adc2, type: 3}
       propertyPath: bgmAudioSource
       value: 
       objectReference: {fileID: 590282340}
@@ -4269,7 +4277,7 @@ PrefabInstance:
     - target: {fileID: 997108185108635276, guid: 690aeb81935965a4197eaf19b0a1adc2, type: 3}
       propertyPath: 'sfxClips.Array.data[9]'
       value: 
-      objectReference: {fileID: 8300000, guid: e7a4cf927ba60d1488365e88e3cf2082, type: 3}
+      objectReference: {fileID: 8300000, guid: d2704075b588a114ba2d1079850ad8c4, type: 3}
     - target: {fileID: 3430303586305512654, guid: 690aeb81935965a4197eaf19b0a1adc2, type: 3}
       propertyPath: m_Name
       value: RealSoundManager
