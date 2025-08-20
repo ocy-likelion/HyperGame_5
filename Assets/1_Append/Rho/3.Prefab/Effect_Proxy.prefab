@@ -98,6 +98,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CFXR3 Hit Misc F Smoke
       objectReference: {fileID: 0}
+    - target: {fileID: 8547932227743831032, guid: 6c576eacb57582949b4204e1423255d5, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

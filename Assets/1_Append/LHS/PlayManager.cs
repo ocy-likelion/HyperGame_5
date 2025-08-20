@@ -17,10 +17,15 @@ public class PlayManager : MonoBehaviour
     public float currentTowerHeight;
     public float goalTowerHeight = 3.0f; // 임시
 
-    public TMP_Text elapsedTimeText;
     private float totalElapsedTime = 0.0f;
     private float timeLimit = 15.0f;
     private bool gameEnded = false;
+
+    [SerializeField] private UIManager uiManager;
+    [SerializeField] private float clearHoldSeconds = 3f;
+    private float clearHoldTimer = 0f;
+    private bool clearTriggered = false;
+    public float NotSafeVel = 0.03f;
 
     // dev UI
     [SerializeField] private GameObject towerHeightLine;
@@ -126,14 +131,43 @@ public class PlayManager : MonoBehaviour
 
     void CheckTowerHeight()
     {
-        // 목표 위치에 도달하면 게임 클리어
-        if (currentTowerHeight > goalTowerHeight)
+        if (clearTriggered) return;
+
+        bool reached = currentTowerHeight >= goalTowerHeight;
+
+        if (!reached)
         {
+            clearHoldTimer = 0f;
+            uiManager?.ResetHoldCountdown();  // ↓로 떨어지면 카운트 UI 리셋
+            return;
+        }
+
+        // 도달했지만 불안정하면 리셋
+        if (CheckTowerIsNotSafe())
+        {
+            clearHoldTimer = 0f;
+            uiManager?.ResetHoldCountdown();
+            return;
+        }
+
+        // 안정 상태 누적
+        clearHoldTimer += Time.deltaTime;
+
+        float remaining = Mathf.Max(0f, clearHoldSeconds - clearHoldTimer);
+        uiManager?.UpdateHoldCountdown(remaining); // ★ 숫자 튀어나오는 효과 갱신
+
+        if (clearHoldTimer >= clearHoldSeconds)
+        {
+            clearTriggered = true;
+            uiManager?.HideHoldCountdownUI(); // ★ 확정 시 숨김
+
             var gameManager = GameObject.FindFirstObjectByType<GameManager>();
             if (gameManager != null) gameManager.isWin = true;
             EventBus.Instance.Publish(Consts.END_GAME);
         }
     }
+
+
 
     #region gimmicks
     void Wind() { Debug.Log("휭"); }
@@ -203,7 +237,7 @@ public class PlayManager : MonoBehaviour
 
         // 표준 Rigidbody2D 속도 사용
         var velocityY = rb.linearVelocity.y;
-        bool isNotSafe = (velocityY <= -0.03f);
+        bool isNotSafe = (velocityY <= -NotSafeVel);
         return isNotSafe;
     }
 
