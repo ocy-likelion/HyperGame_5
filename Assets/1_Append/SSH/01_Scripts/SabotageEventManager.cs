@@ -26,7 +26,7 @@ public class SabotageEventManager : MonoBehaviour
     bool isTriggeredMole = false;
     // 싱크홀 관련
     readonly Vector2 SINKHOLE_POS = new Vector2(0, -1f);
-    const float SINKHOLE_DURATION = 0.25f;
+    const float SINKHOLE_DURATION = 0.95f;
     const float SINKHOLE_AMOUNT = 0.8f;
     const float SHAKE_CAMERA_AMOUNT = 1.2f;
     const float SINKHOLE_TIMING = 17f;
