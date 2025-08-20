@@ -7,29 +7,34 @@ public class SoundManager : MonoBehaviour
     public static SoundManager Instance { get; private set; }
 
     [Header("Mixer")]
-    public AudioMixer mixer;                  // (¿É¼Ç) Master/BGM/SFX ±×·ì »ç¿ë
+    public AudioMixer mixer;                  // (ï¿½É¼ï¿½) Master/BGM/SFX ï¿½×·ï¿½ ï¿½ï¿½ï¿½
     public AudioMixerGroup musicGroup;
     public AudioMixerGroup sfxGroup;
 
     [Header("Music Sources")]
     public AudioSource bgmMain;               // loop ON
-    public AudioSource bgmTimer;              // loop ON, ½ÃÀÛ º¼·ý 0
+    public AudioSource bgmTimer;              // loop ON, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 0
     [Range(0f, 1f)] public float bgmMainDefaultVol = 0.7f;
     [Range(0f, 1f)] public float bgmTimerDefaultVol = 0.7f;
 
     [Header("SFX Sources")]
-    public AudioSource sfx;                   // 2D, PlayOneShot ¿ë
-    public AudioSource uiSfx;                 // ¹öÆ° Å¬¸¯ µî UI Àü¿ë
+    public AudioSource sfx;                   // 2D, PlayOneShot ï¿½ï¿½
+    public AudioSource uiSfx;                 // ï¿½ï¿½Æ° Å¬ï¿½ï¿½ ï¿½ï¿½ UI ï¿½ï¿½ï¿½ï¿½
 
-    [Header("Win/Lose SFX (µàÅ·)")]
+    [Header("Win/Lose SFX (ï¿½ï¿½Å·)")]
     public AudioClip winClip;
     public AudioClip loseClip;
-    public float duckTo = 0.25f;              // µàÅ·½Ã BGM ºñÀ²
+    public float duckTo = 0.25f;              // ï¿½ï¿½Å·ï¿½ï¿½ BGM ï¿½ï¿½ï¿½ï¿½
     public float duckAttack = 0.12f;
     public float duckRelease = 0.35f;
 
+    [Header("Audio Clips")]
+    public AudioClip bgmClip;
+    public AudioClip[] sfxClip;
+    public AudioClip[] uiClip;
+    
     [Header("Timer Layer Fade")]
-    [Range(0f, 1f)] public float timerFadeStart = 0.35f; // ³²ÀººñÀ² ¡Â ½ÃÀÛ
+    [Range(0f, 1f)] public float timerFadeStart = 0.35f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     public float timerFadeTime = 0.5f;
 
     bool musicMuted = false, sfxMuted = false;
@@ -42,7 +47,7 @@ public class SoundManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // ¶ó¿ìÆÃ & ÃÊ±âÈ­
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ & ï¿½Ê±ï¿½È­
         foreach (var a in new[] { bgmMain, bgmTimer })
         {
             a.outputAudioMixerGroup = musicGroup; a.spatialBlend = 0f; a.loop = true;
@@ -52,7 +57,7 @@ public class SoundManager : MonoBehaviour
             a.outputAudioMixerGroup = sfxGroup; a.spatialBlend = 0f;
         }
         _bgmMainVol = bgmMainDefaultVol;
-        _bgmTimerVol = 0f;                    // Å¸ÀÌ¸Ó ·¹ÀÌ¾î´Â ½ÃÀÛ 0
+        _bgmTimerVol = 0f;                    // Å¸ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 0
         ApplyVolumes();
     }
 
@@ -63,6 +68,11 @@ public class SoundManager : MonoBehaviour
         sfx.mute = sfxMuted; uiSfx.mute = sfxMuted;
     }
 
+    void Start()
+    {
+        bgmMain.clip = bgmClip; bgmMain.Play();
+    }
+    
     // ====== Public API ======
     public void PlayBgm(AudioClip clip, float fade = 0.3f)
     {
@@ -74,13 +84,13 @@ public class SoundManager : MonoBehaviour
     public void StartTimerLayer() { bgmTimer.Play(); }
     public void StopTimerLayer(float fade = 0.25f) { StartCoroutine(Fade(bgmTimer, 0f, fade)); }
 
-    // ³²Àº ½Ã°£ ºñÀ²(1¡æ0)À» ¿ÜºÎ¿¡¼­ °è¼Ó ³Ñ°ÜÁà
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½(1ï¿½ï¿½0)ï¿½ï¿½ ï¿½ÜºÎ¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ñ°ï¿½ï¿½ï¿½
     public void UpdateTimerNormalized(float norm)
     {
         if (!bgmTimer.clip) return;
         if (!bgmTimer.isPlaying) bgmTimer.Play();
 
-        // pause Áß¿£ Å¸ÀÌ¸Ó ·¹ÀÌ¾î´Â ¾È µé¸®°Ô(¿ä±¸»çÇ×)
+        // pause ï¿½ß¿ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ ï¿½é¸®ï¿½ï¿½(ï¿½ä±¸ï¿½ï¿½ï¿½ï¿½)
         if (_paused) { if (bgmTimer.volume > 0f) bgmTimer.Pause(); return; }
         else if (bgmTimer.clip && !bgmTimer.isPlaying) bgmTimer.UnPause();
 
@@ -103,13 +113,13 @@ public class SoundManager : MonoBehaviour
     public void OnGamePaused(bool paused)
     {
         _paused = paused;
-        // Å¸ÀÌ¸Ó¸¸ ¸ØÃß±â, ³ª¸ÓÁö´Â ±×´ë·Î
+        // Å¸ï¿½Ì¸Ó¸ï¿½ ï¿½ï¿½ï¿½ß±ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×´ï¿½ï¿½
         if (paused && bgmTimer.isPlaying) bgmTimer.Pause();
         if (!paused && bgmTimer.clip) bgmTimer.UnPause();
     }
 
     public void ResetAll()
-    {                   // ¡°Ã³À½À¸·Î µÇµ¹¸®±â¡±
+    {                   // ï¿½ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Çµï¿½ï¿½ï¿½ï¿½â¡±
         StopAllCoroutines();
         _bgmMainVol = bgmMainDefaultVol;
         _bgmTimerVol = 0f;
@@ -123,12 +133,12 @@ public class SoundManager : MonoBehaviour
     IEnumerator DuckAndPlay(AudioClip clip)
     {
         if (!clip) yield break;
-        // Attack: BGM º¼·ý ³»¸®±â (unscaled)
+        // Attack: BGM ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (unscaled)
         yield return FadeTwo(bgmMain, bgmTimer, duckTo, duckAttack);
         sfx.PlayOneShot(clip);
-        // Å¬¸³ ±æÀÌ¸¸Å­ ´ë±â(Å¸ÀÓ½ºÄÉÀÏ°ú ¹«°ü)
+        // Å¬ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½Å­ ï¿½ï¿½ï¿½(Å¸ï¿½Ó½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½)
         float t = 0f; while (t < clip.length) { t += Time.unscaledDeltaTime; yield return null; }
-        // Release: ¿øº¹
+        // Release: ï¿½ï¿½ï¿½ï¿½
         yield return FadeTwo(bgmMain, bgmTimer, 1f, duckRelease, true);
     }
 
@@ -160,5 +170,5 @@ public class SoundManager : MonoBehaviour
         _bgmMainVol = targetVol;
         yield return Fade(src, musicMuted ? 0f : targetVol, time);
     }
-    void Update() { ApplyVolumes(); } // ¿ÜºÎ º¯°æ ¹Ý¿µ
+    void Update() { ApplyVolumes(); } // ï¿½Üºï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¿ï¿½
 }
