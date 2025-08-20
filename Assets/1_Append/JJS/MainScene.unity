@@ -490,7 +490,7 @@ MonoBehaviour:
   blockList: []
   currentTowerHeight: 0
   goalTowerHeight: 2
-  uiManager: {fileID: 0}
+  uiManager: {fileID: 732051078}
   clearHoldSeconds: 3
   NotSafeVel: 0.03
   towerHeightLine: {fileID: 0}
