@@ -1,4 +1,4 @@
-var BrigdePlugin = {
+var BridgePlugin = {
     ExecuteJavaScriptMethod: function (method) {
         var jsMethod = UTF8ToString(method);
         try {
@@ -9,4 +9,4 @@ var BrigdePlugin = {
     }
 };
 
-mergeInto(LivraryManager.library, BrigdePlugin);
+mergeInto(LibraryManager.library, BridgePlugin);
