@@ -133,7 +133,7 @@ public class SabotageEventManager : MonoBehaviour
             isTriggeredEarthQuake = true;
 
             TMP_Text sabotageText = Text_SabotageAlarm.GetComponent<TMP_Text>();
-            sabotageText.text = "곧 지진이 일어날 것 같습니다..!!!";
+            sabotageText.text = "곧 지진이 일어날 것 " + System.Environment.NewLine + "같습니다..!!!";
             Text_SabotageAlarm.SetActive(true);
 
             Vector3 originalPos = ground.transform.position;

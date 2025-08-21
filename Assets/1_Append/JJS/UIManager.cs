@@ -308,6 +308,7 @@ public class UIManager : MonoBehaviour
             ActivateEffectUnscaled(SuccessEffect);
             ClearImage.sprite = SuccessSprite;
             ClearScoreText.text = gameManager ? gameManager.score.ToString() : "";
+            Bridge.SubmitScore(gameManager.score);
             RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.Win);
         }
         else
@@ -642,6 +643,11 @@ public class UIManager : MonoBehaviour
                 c => colorAdj.colorFilter.value = c,
                 offColor, oneBlink).SetEase(Ease.InOutSine));
         }
+    }
+    
+    public void GoToLeaderBoard()
+    {
+        Bridge.OpenLeaderBoard();
     }
 }
 
