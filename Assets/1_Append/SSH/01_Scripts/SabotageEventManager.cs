@@ -125,18 +125,20 @@ public class SabotageEventManager : MonoBehaviour
             // 여진
             seq.AppendCallback(() =>
             {
-                float aftershockDuration = SINKHOLE_DURATION * 2f;
+                float aftershockDuration = SINKHOLE_DURATION * 1.5f;
                 float aftershockAmount = SINKHOLE_AMOUNT / 3f;
 
                 ground.transform.DOShakePosition(aftershockDuration, aftershockAmount, 10, 90, false, true)
                     .OnComplete(() => ground.transform.position = originalPos);
-                ShakeCamera(aftershockDuration, SHAKE_CAMERA_AMOUNT / 3f);
+                ShakeCamera(aftershockDuration, aftershockAmount / 3f);
             });
         }
     }
     void ShakeCamera(float duration, float strength) // 카메라 쉐이킹 메서드
     {
-        mainCam.transform.DOShakePosition(duration, strength, 10, 90f, false, true);
+        Vector3 originPos = mainCam.transform.position;
+        mainCam.transform.DOShakePosition(duration, strength, 10, 90f, false, true)
+            .OnComplete(() => mainCam.transform.position =  originPos);
     }
     IEnumerator SurgeLavaCoroutine() // 용암이 차오르는 메서드
     {

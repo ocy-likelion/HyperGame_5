@@ -46,6 +46,7 @@ public class MineralObj : MonoBehaviour
     {
         if (collision.CompareTag("Block"))
         {
+            Debug.Log("두더지와 블럭이 만남");
             Vector2 dir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
             rb.AddForce(dir.normalized * HIT_FORCE, ForceMode2D.Impulse);
         }
