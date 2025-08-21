@@ -12,7 +12,7 @@ public class UIManager : MonoBehaviour
 {
     [Header("포스트프로세싱")]
     public Volume volume;
-    public ColorAdjustments colorAdj;
+    private ColorAdjustments colorAdj;
     const string FILTER_BLINK_ID = "FILTER_BLINK";
 
     [Header("타이틀")]
