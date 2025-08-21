@@ -49,6 +49,7 @@ public class SabotageEventManager : MonoBehaviour
 
     void Awake()
     {
+        DOTween.KillAll();
         TryGetComponent<PlayManager>(out playManager);
 
         LAVA_END_POS = new Vector3(0, playManager.goalTowerHeight - LAVA_OFFSET, 0);
