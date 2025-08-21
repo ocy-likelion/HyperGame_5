@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1720022197518935586}
   - component: {fileID: 8959742380816257675}
   - component: {fileID: 2149585147520040931}
-  - component: {fileID: 4306277938866643329}
+  - component: {fileID: 1092203900604189966}
   m_Layer: 0
   m_Name: Prefab_Mineral
   m_TagString: Untagged
@@ -185,7 +185,7 @@ MonoBehaviour:
   simplifyTolerancePixels: 1
   shrinkAmount: 0.01
   drawGizmos: 1
---- !u!114 &4306277938866643329
+--- !u!114 &1092203900604189966
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -194,7 +194,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 6032233432903053141}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76dd3746c8804ec4dbd2898cc70faba1, type: 3}
+  m_Script: {fileID: 11500000, guid: fedcfecd254fe2b4d8b69b21bca7bc21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  so_Mineral: {fileID: 0}
