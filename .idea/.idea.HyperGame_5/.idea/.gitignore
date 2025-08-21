@@ -3,9 +3,9 @@
 /workspace.xml
 # Rider에서 무시된 파일
 /contentModel.xml
-/.idea.HyperGame_5.iml
 /modules.xml
 /projectSettingsUpdater.xml
+/.idea.HyperGame_5.iml
 # 에디터 기반 HTTP 클라이언트 요청
 /httpRequests/
 # Datasource local storage ignored files

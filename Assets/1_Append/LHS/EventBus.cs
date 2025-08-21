@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -59,11 +59,14 @@ public class EventBus : MonoBehaviour
 
     public void Unsubscribe(string eventName, Action listener)
     {
-        eventDictionary[eventName] -= listener;
-
-        if (eventDictionary[eventName] == null)
+        if (eventDictionary.ContainsKey(eventName)) 
         {
-            eventDictionary.Remove(eventName);
+            eventDictionary[eventName] -= listener;
+            
+            if (eventDictionary[eventName] == null)
+            {
+                eventDictionary.Remove(eventName);
+            }
         }
     }
 
@@ -72,6 +75,38 @@ public class EventBus : MonoBehaviour
         if (eventDictionary.ContainsKey(eventName))
         {
             eventDictionary[eventName].Invoke();
+        }
+    }
+    
+    // events using generic
+    private Dictionary<string, Delegate> eventDictionaryT = new Dictionary<string, Delegate>();
+
+    public void Subscribe<T>(string eventName, Action<T> listener)
+    {
+        if (eventDictionaryT.ContainsKey(eventName))
+        {
+            eventDictionaryT[eventName] = (Action<T>)eventDictionaryT[eventName] + listener;
+        }
+        else
+        {
+            eventDictionaryT[eventName] = listener;
+        }
+    }
+
+    public void Unsubscribe<T>(string eventName, Action<T> listener)
+    {
+        if (eventDictionaryT.ContainsKey(eventName))
+        {
+            eventDictionaryT[eventName] = (Action<T>)eventDictionaryT[eventName] - listener;
+        }
+    }
+
+    public void Publish<T>(string eventName, T param)
+    {
+        if (eventDictionaryT.ContainsKey(eventName))
+        {
+            var action = eventDictionaryT[eventName] as Action<T>;
+            action?.Invoke(param);
         }
     }
 }

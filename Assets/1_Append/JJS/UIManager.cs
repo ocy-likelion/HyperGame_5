@@ -1,184 +1,513 @@
 using TMPro;
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering;
 
 public class UIManager : MonoBehaviour
 {
-    [Header("UI ±¸¼º¿ä¼Ò")]
+    [Header("í¬ìŠ¤íŠ¸í”„ë¡œì„¸ì‹±")]
+    public Volume volume;
+    private ColorAdjustments colorAdj;
+    const string FILTER_BLINK_ID = "FILTER_BLINK";
+
+    [Header("íƒ€ì´í‹€")]
+    public GameObject TitlePanel;
+    // ê²Œì„ì´ í•œ ë²ˆì´ë¼ë„ ì‹œì‘ë˜ì—ˆëŠ”ì§€(ë¦¬ì…‹ í›„ì—ë„ ìœ ì§€) â€” ì•± ì¬ì‹¤í–‰ ì‹œ ì´ˆê¸°í™”ë¨
+    private static bool sGameStarted = false;
+
+    [Header("Ul íŒì—…")]
     public GameObject TutorialUI;
     public GameObject PauseUI;
     public GameObject ResultUI;
 
-    [Header("Å¸ÀÌ¸Ó °ü·Ã")]
-    public float timerDuration = 30f;
+    [Header("íƒ€ì´ë¨¸")]
     public Slider Timer;
     public Image TimerImage;
-    [Range(0f, 1f)] public float shakeStartNormalized = 0.4f; // ³²ÀººñÀ²ÀÌ ÀÌ °ª ÀÌÇÏºÎÅÍ Èçµé±â
-    public float minAmp = 0f;   // ÃÖ¼Ò ÁøÆø(px)
-    public float maxAmp = 18f;  // ÃÖ´ë ÁøÆø(px)
+    [Range(0f, 1f)] public float shakeStartNormalized = 0.4f;
+    public float minAmp = 0f;
+    public float maxAmp = 18f;
     public int minVibrato = 10;
     public int maxVibrato = 40;
     public AnimationCurve intensityCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-
-    [Header("»ç¿îµå °ü·Ã")]
+    [Header("ì‚¬ìš´ë“œ")]
     public Image SoundButton;
     public Sprite SoundButtonOn;
     public Sprite SoundButtonOff;
+    public TextMeshProUGUI SoundText;
 
-    [Header("Å¬¸®¾îÅÇ")]
-    public Image CliarImage;
+    [Header("í´ë¦¬ì–´íƒ­")]
+    public Image ClearImage;
     public Sprite SuccessSprite;
     public Sprite FailSprite;
-    public TextMeshProUGUI ClearScore;
+    public GameObject SuccessEffect;
+    public GameObject FailEffect;
+    public TextMeshProUGUI ClearScoreText;
 
-    [Header("Æ©Åä¸®¾ó")]
+    [Header("íŠœí† ë¦¬ì–¼")]
     public Image TutorialImage;
     public TextMeshProUGUI TutorialText;
     public Sprite[] TutorialImages;
-    public Text[] TutorialTexts;
+    public string[] TutorialTexts;
     private int currentTutorialIndex = 0;
+    public TextMeshProUGUI IndexText;
 
-    bool SoundOn = true;
-    bool Success = true; // ¼º°ø ¿©ºÎ
+    [Header("íŒì—… íš¨ê³¼")]
+    [Range(0.5f, 1f)] public float popStartScale = 0.85f;
+    public float popStep1 = 0.18f;
+    public float popStep2 = 0.10f;
+    public float fadeIn = 0.15f;
+    public float closeStep1 = 0.08f;
+    public float closeStep2 = 0.12f;
+    public float fadeOut = 0.12f;
+    public float popOvershoot = 2.2f;
+
+    [Header("í´ë¦¬ì–´ ì¹´ìš´íŠ¸ë‹¤ìš´")]
+    public TextMeshProUGUI HoldCountdownText;
+    public float countPunch = 0.22f;       // íŠ€ì–´ë‚˜ì˜¤ëŠ” ê°•ë„
+    public int countVibrato = 10;        // ì§„ë™
+    public float countScaleUp = 1.25f;     // ê¸°ë³¸ 1 ëŒ€ë¹„ ìµœëŒ€ ìŠ¤ì¼€ì¼
+    public float countScaleDown = 0.95f;   // ë§ˆë¬´ë¦¬ ì¶•ì†Œ
+    public float countFadeIn = 0.06f;
+    public float countFadeOut = 0.10f;
+
+
+    [Header("ì ìˆ˜ ê³„ì‚° ë¡œì§ ë° íš¨ê³¼")]
+    public TextMeshProUGUI ScoreText;
+    public int BasicScore;
+    public int BlockScore = 200;
+
+    public bool isPaused = false;
+
+    public GameManager gameManager;
+
     RectTransform timerRT;
     Vector2 basePos;
     Tween valueTw;
     Tween loopTw;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    // ì ìˆ˜ ì• ë‹ˆ ì „ìš©
+    RectTransform scoreRT;
+    Vector2 scoreBasePos;
+    Color scoreBaseColor;
+    bool isAnimatingScore = false;
+    DG.Tweening.Sequence scoreSeq;
+
+    int lastShownCount = -1;
+    Tween countSeq;
+    CanvasGroup holdCountCG;
+
+    const string SHAKE_ID = "TimerShake";
+    const string SCORE_SEQ_ID = "ScoreSeq";
+    const string SCORE_SHAKE_ID = "ScoreShake";
+
+    void Awake()
+    {
+        if (!volume.profile.TryGet(out colorAdj))
+            colorAdj = volume.profile.Add<ColorAdjustments>(true);
+
+        // override í™œì„±í™”
+        colorAdj.colorFilter.overrideState = true;
+        colorAdj.postExposure.overrideState = true;
+
+        if (HoldCountdownText != null)
+        {
+            holdCountCG = HoldCountdownText.GetComponent<CanvasGroup>();
+            if (holdCountCG == null) holdCountCG = HoldCountdownText.gameObject.AddComponent<CanvasGroup>();
+            HoldCountdownText.rectTransform.localScale = Vector3.one;
+            holdCountCG.alpha = 0f;
+            HoldCountdownText.gameObject.SetActive(false);
+        }
+    }
+
     void Start()
     {
         timerRT = TimerImage.rectTransform;
         basePos = timerRT.anchoredPosition;
+
+        if (ScoreText != null)
+        {
+            scoreRT = ScoreText.rectTransform;
+            scoreBasePos = scoreRT.anchoredPosition;
+            scoreBaseColor = ScoreText.color;
+        }
+
+        // ì‹œì‘ ì ìˆ˜ ì´ˆê¸°í™”
+        ScoreText.text = BasicScore.ToString();
+        if (gameManager) gameManager.score = BasicScore;
+
+        if (!sGameStarted)
+        {
+            // ì•„ì§ Start ë²„íŠ¼ì„ ëˆ„ë¥¸ ì ì´ ì—†ìœ¼ë©´ íƒ€ì´í‹€ ë¨¼ì €
+            PauseGame();
+            ShowOnlyTitle();
+        }
+        else
+        {
+            HideTitleInstant();  
+            ResumeGame();
+            StartTimer();
+        }
+    }
+
+    void OnDisable() { KillTimerTweens(); KillScoreTweens(); }
+    void OnDestroy() { KillTimerTweens(); KillScoreTweens(); }
+
+    void Update()
+    {
+        // ì ìˆ˜ ì• ë‹ˆ ì¤‘ì—ëŠ” UI í…ìŠ¤íŠ¸ ë®ì–´ì“°ì§€ ì•ŠìŒ
+        if (gameManager && !isAnimatingScore)
+            ScoreText.text = gameManager.score.ToString();
+
+        // ì‹œì‘ í›„ì—ë§Œ íŠœí† ë¦¬ì–¼ ìë™ ì˜¤í”ˆ
+        if (sGameStarted && !PlayedGame.hadPlayed)
+        {
+            ShowTutorialUI();
+            PlayedGame.hadPlayed = true;
+        }
+    }
+
+  
+    void HideTitleInstant()
+    {
+        if (!TitlePanel) return;
+        var cg = TitlePanel.GetComponent<CanvasGroup>();
+        if (cg != null)
+        {
+            cg.alpha = 0f;
+            cg.interactable = false;
+            cg.blocksRaycasts = false;
+        }
+        TitlePanel.SetActive(false);
+    }
+
+    // íƒ€ì´í‹€ë§Œ ì¼œê³  ë‹¤ë¥¸ íŒì—…ì€ ë„ëŠ” í—¬í¼
+    void ShowOnlyTitle()
+    {
+        if (TitlePanel) ShowPopup(TitlePanel);
+        HidePopup(TutorialUI);
+        HidePopup(PauseUI);
+        HidePopup(ResultUI);
+    }
+
+    // íƒ€ì´í‹€ Start ë²„íŠ¼ì— ì—°ê²°
+    public void OnPressStartGame()
+    {
+        if (sGameStarted) return;
+        sGameStarted = true;
+
+        HidePopup(TitlePanel);
+        ResumeGame();
         StartTimer();
+
+        if (!PlayedGame.hadPlayed)
+        {
+            ShowTutorialUI();
+            PlayedGame.hadPlayed = true;
+        }
     }
 
 
-    // Update is called once per frame
-    void Update()
+    void ShowPopup(GameObject panel)
     {
+        if (!panel) return;
+        var rt = panel.GetComponent<RectTransform>();
+        var cg = panel.GetComponent<CanvasGroup>() ?? panel.AddComponent<CanvasGroup>();
+        cg.interactable = true; cg.blocksRaycasts = true;
 
+        DOTween.Kill(panel);
+        panel.SetActive(true);
+        rt.localScale = Vector3.one * popStartScale;
+        cg.alpha = 0f;
+
+        DOTween.Sequence().SetUpdate(true).SetLink(panel)
+            .Append(cg.DOFade(1f, fadeIn))
+            .Join(rt.DOScale(1.05f, popStep1).SetEase(Ease.OutCubic))
+            .Append(rt.DOScale(1.00f, popStep2).SetEase(Ease.OutBack, popOvershoot));
+    }
+
+    void HidePopup(GameObject panel)
+    {
+        if (!panel) return;
+        var rt = panel.GetComponent<RectTransform>();
+        var cg = panel.GetComponent<CanvasGroup>() ?? panel.AddComponent<CanvasGroup>();
+
+        DOTween.Kill(panel);
+        DOTween.Sequence().SetUpdate(true).SetLink(panel)
+            .Append(rt.DOScale(0.92f, closeStep1).SetEase(Ease.InCubic))
+            .Append(rt.DOScale(0.75f, closeStep2).SetEase(Ease.InBack, 1.5f))
+            .Join(cg.DOFade(0f, fadeOut))
+            .OnComplete(() => { panel.SetActive(false); rt.localScale = Vector3.one; });
     }
 
     public void ShowTutorialUI()
     {
-        TutorialUI.SetActive(true);
-        PauseUI.SetActive(false);
-        ResultUI.SetActive(false);
+        PauseGame();
+        ShowPopup(TutorialUI); HidePopup(PauseUI); HidePopup(ResultUI);
         ShowTutorialImage();
     }
 
     public void ShowPauseUI()
     {
-        PauseUI.SetActive(true);
-        TutorialUI.SetActive(false);
-        ResultUI.SetActive(false);
+        PauseGame();
+        ShowPopup(PauseUI); HidePopup(TutorialUI); HidePopup(ResultUI);
     }
+
     public void ShowResultUI()
     {
-        ResultUI.SetActive(true);
-        PauseUI.SetActive(false);
-        TutorialUI.SetActive(false);
+        PauseGame();
+        ShowPopup(ResultUI); HidePopup(PauseUI); HidePopup(TutorialUI);
     }
 
     public void CloseUI()
     {
-        TutorialUI.SetActive(false);
-        PauseUI.SetActive(false);
-        ResultUI.SetActive(false);
+        ResumeGame();
+        HidePopup(TutorialUI); HidePopup(PauseUI); HidePopup(ResultUI);
+    }
+
+    void PauseGame()
+    {
+        isPaused = true;
+        Time.timeScale = 0f;
+    }
+
+    void ResumeGame()
+    {
+        
+        isPaused = false;
+        Time.timeScale = 1f;
     }
 
     public void Sound()
     {
-        SoundOn = !SoundOn;
-        if (SoundOn)
+        bool soundOn = SoundButton.sprite != SoundButtonOn;
+        if (soundOn)
         {
             SoundButton.sprite = SoundButtonOn;
+            SoundText.text = "ì‚¬ìš´ë“œ ON";
         }
         else
         {
             SoundButton.sprite = SoundButtonOff;
+            SoundText.text = "ì‚¬ìš´ë“œ OFF";
         }
+
+        RealSoundManager.Instance.OnClickMute();
     }
 
-    public void Result()
+    public void Result(bool success)
     {
-        if (Success) CliarImage.sprite = SuccessSprite;
-        else CliarImage.sprite = FailSprite;
-
-        //ClearScore.text = "Score: " + Score.ToString();
+        RealSoundManager.Instance.GameEndFade();
+        if (success)
+        {
+            ActivateEffectUnscaled(SuccessEffect);
+            ClearImage.sprite = SuccessSprite;
+            ClearScoreText.text = gameManager ? gameManager.score.ToString() : "";
+            //Bridge.SubmitScore(gameManager.score);
+            RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.Win);
+        }
+        else
+        {
+            ActivateEffectUnscaled(FailEffect);
+            ClearImage.sprite = FailSprite;
+            ClearScoreText.text = "";
+            RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.Lose);
+        }
     }
 
     public void StartTimer()
     {
-        // ±âÁ¸ Æ®À© Á¤¸®
-        DOTween.Kill(Timer); DOTween.Kill("ShakeLoop");
+        KillTimerTweens();
 
-        Timer.minValue = 0; Timer.maxValue = 1; Timer.value = 1;
+        Timer.minValue = 0;
+        Timer.maxValue = 1;
+        Timer.value = 1;
 
-        // 1) °ª 1¡æ0
-        valueTw = Timer.DOValue(0f, timerDuration)
+        if (gameManager == null) return;
+
+        valueTw = Timer.DOValue(0f, gameManager.timerDuration)
             .SetEase(Ease.Linear)
-            .SetUpdate(true)
+            .SetUpdate(false) // íƒ€ì„ìŠ¤ì¼€ì¼ ì˜í–¥ ë°›ìŒ(ì¼ì‹œì •ì§€ ì‹œ ë©ˆì¶¤)
+            .SetLink(Timer.gameObject, LinkBehaviour.KillOnDestroy | LinkBehaviour.PauseOnDisable)
             .OnComplete(() =>
             {
-                DOTween.Kill("ShakeLoop");
-                timerRT.anchoredPosition = basePos;
+                DOTween.Kill(SHAKE_ID);
+                if (this && timerRT) timerRT.anchoredPosition = basePos;
                 OnTimerEnd();
             });
 
-        // 2) Èçµé¸² ·çÇÁ ½ÃÀÛ
-        RunShakeLoop(); // ¾Æ·¡ ÇÔ¼ö
+        RunShakeLoop();
     }
 
     void RunShakeLoop()
     {
-        // duration µ¿¾È 0¡æ1·Î Èê·¯°¡´Â °¡»ó Å¸ÀÌ¸Ó¸¦ ÀÌ¿ëÇØ ¸Å ÇÁ·¹ÀÓ ¾ŞÄ¿¸¦ °»½Å
         loopTw = DOVirtual.Float(0f, 1f, 0.05f, _ =>
         {
-            if (!valueTw.IsActive() || !valueTw.IsPlaying()) return;
-
-            float norm = Timer.value; // 1¡æ0
-            float t = Mathf.InverseLerp(shakeStartNormalized, 0f, norm);
-            if (t <= 0f)
+            if (!this || timerRT == null) return;
+            if (valueTw == null || !valueTw.IsActive() || !valueTw.IsPlaying())
             {
                 timerRT.anchoredPosition = basePos;
                 return;
             }
 
+            float norm = Timer.value; // 1 â†’ 0
+            float t = Mathf.InverseLerp(shakeStartNormalized, 0f, norm);
+            if (t <= 0f) { timerRT.anchoredPosition = basePos; return; }
+
             t = intensityCurve.Evaluate(t);
             float amp = Mathf.Lerp(minAmp, maxAmp, t);
-            // ·£´ı Èçµé¸²
-            Vector2 jitter = Random.insideUnitCircle * amp;
+            Vector2 jitter = UnityEngine.Random.insideUnitCircle * amp;
             timerRT.anchoredPosition = basePos + jitter;
 
         }).SetLoops(-1, LoopType.Restart)
-          .SetId("ShakeLoop")
-          .SetUpdate(true);
+          .SetId(SHAKE_ID)
+          .SetUpdate(false)
+          .SetLink(gameObject, LinkBehaviour.KillOnDestroy | LinkBehaviour.PauseOnDisable)
+          .OnKill(() => { if (this && timerRT) timerRT.anchoredPosition = basePos; });
     }
+
+    // === ì ìˆ˜ ì• ë‹ˆë©”ì´ì…˜ ===
+    public void AnimateScoreChange(int from, int to, Action onComplete = null)
+    {
+        if (ScoreText == null) { onComplete?.Invoke(); return; }
+
+        int start = Mathf.Max(0, from);
+        int end = Mathf.Max(0, to);
+        int delta = end - start;
+
+        // ê°•ì¡°ìƒ‰
+        Color hiColor = delta >= 0 ? new Color(0.2f, 1f, 0.2f) : Color.red;
+
+        float absDelta = Mathf.Abs(delta);
+        float dur = Mathf.Clamp(absDelta / 1200f, 0.35f, 1.0f);
+        float shakeDur = Mathf.Clamp(dur * 0.65f, 0.25f, 0.8f);
+        float vibrato = Mathf.Lerp(12f, 28f, Mathf.Clamp01(absDelta / 1500f));
+        float strength = Mathf.Lerp(10f, 35f, Mathf.Clamp01(absDelta / 1500f));
+
+        // ì´ì „ ê²ƒ ì •ë¦¬
+        KillScoreTweens();
+        isAnimatingScore = true;
+
+        scoreSeq = DOTween.Sequence().SetUpdate(true);
+
+        // 1) ê°•ì¡°ìƒ‰ ì „í™˜ & ì‚´ì§ í€ì¹˜ ìŠ¤ì¼€ì¼
+        scoreSeq.Append(ScoreText.DOColor(hiColor, 0.08f));
+        scoreSeq.Join(scoreRT.DOPunchScale(Vector3.one * 0.12f, 0.18f, 8, 0.8f));
+
+        // 2) ìˆ«ì ì¹´ìš´íŠ¸ & í”ë“¤ë¦¼
+        scoreSeq.Append(
+            DOVirtual.Int(start, end, dur, v => ScoreText.text = v.ToString()).SetUpdate(true)
+        );
+        scoreSeq.Join(
+            scoreRT.DOShakeAnchorPos(shakeDur, new Vector2(strength, strength),
+                                     Mathf.RoundToInt(vibrato), 90, false, true)
+                   .SetId(SCORE_SHAKE_ID)
+                   .SetUpdate(true)
+        );
+
+        // 3) ì›ë˜ ìƒ‰ìƒìœ¼ë¡œ ë³µê·€
+        scoreSeq.Append(ScoreText.DOColor(scoreBaseColor, 0.22f));
+
+        scoreSeq.OnComplete(() =>
+        {
+            if (scoreRT) { scoreRT.anchoredPosition = scoreBasePos; scoreRT.localScale = Vector3.one; }
+            isAnimatingScore = false;
+            onComplete?.Invoke();
+        });
+    }
+
+    // ë³´ë„ˆìŠ¤ ì—°ì¶œ
+    public void PlaySuccessBonus(int timeBonus, int from, int to, System.Action onComplete = null)
+    {
+        if (ScoreText == null || scoreRT == null)
+        {
+            AnimateScoreChange(from, to, onComplete);
+            return;
+        }
+
+        var green = new Color(0.2f, 1f, 0.2f);
+
+        var parentRT = scoreRT.parent as RectTransform;
+        var go = new GameObject("TimeBonusText", typeof(RectTransform));
+        go.transform.SetParent(parentRT != null ? parentRT : scoreRT, false);
+        var bonusRT = (RectTransform)go.transform;
+        bonusRT.anchoredPosition = scoreBasePos + new Vector2(0f, 36f);
+
+        var tmp = go.AddComponent<TMPro.TextMeshProUGUI>();
+        tmp.font = ScoreText.font;
+        tmp.fontSize = Mathf.Max(ScoreText.fontSize * 0.85f, 18f);
+        tmp.alignment = TMPro.TextAlignmentOptions.Center;
+        tmp.text = $"+{timeBonus}";
+        tmp.color = new Color(green.r, green.g, green.b, 0f);
+        tmp.raycastTarget = false;
+
+        var seq = DOTween.Sequence().SetUpdate(true);
+
+        seq.Append(ScoreText.DOColor(green, 0.06f));
+        seq.Join(scoreRT.DOPunchScale(Vector3.one * 0.18f, 0.22f, 12, 0.9f));
+
+        seq.Join(tmp.DOFade(1f, 0.12f));
+        seq.Join(bonusRT.DOAnchorPosY(bonusRT.anchoredPosition.y + 32f, 0.45f).SetEase(Ease.OutCubic));
+        seq.AppendInterval(0.1f);
+        seq.Append(tmp.DOFade(0f, 0.22f));
+        seq.AppendCallback(() => Destroy(go));
+
+        seq.AppendCallback(() =>
+        {
+            AnimateScoreChange(from, to, () =>
+            {
+                onComplete?.Invoke();
+            });
+        });
+
+        seq.Append(ScoreText.DOColor(scoreBaseColor, 0.18f));
+    }
+
+    public void KillTimerTweens()
+    {
+        valueTw?.Kill(); valueTw = null;
+        loopTw?.Kill(); loopTw = null;
+        if (Timer) DOTween.Kill(Timer);
+        DOTween.Kill(SHAKE_ID);
+    }
+
+   public void KillScoreTweens()
+    {
+        scoreSeq?.Kill(); scoreSeq = null;
+        DOTween.Kill(SCORE_SHAKE_ID);
+        if (this && scoreRT) scoreRT.anchoredPosition = scoreBasePos;
+        isAnimatingScore = false;
+    }
+
     void OnTimerEnd()
     {
-        // Å¸ÀÌ¸Ó Á¾·á ½Ã Ã³¸®ÇÒ ·ÎÁ÷
-        Debug.Log("Å¸ÀÌ¸Ó°¡ Á¾·áµÇ¾ú½À´Ï´Ù.");
-        // ¿¹: °ÔÀÓ ¿À¹ö Ã³¸®, UI ¾÷µ¥ÀÌÆ® µî
+        Debug.Log("íƒ€ì´ë¨¸ ì¢…ë£Œ");
+        // í•„ìš”í•˜ë©´ ì‹¤íŒ¨ ì²˜ë¦¬ ì—°ê²°:
+        // ShowResultUI();
+        // Result(false);
     }
 
     public void ShowTutorialImage()
     {
-        TutorialImage.sprite = TutorialImages[0];
-        TutorialText.text = TutorialTexts[0].text;
+        if (TutorialImages.Length > 0) TutorialImage.sprite = TutorialImages[0];
+        if (TutorialTexts.Length > 0) TutorialText.text = TutorialTexts[0];
+        currentTutorialIndex = 0;
+        UpdateTutorialIndexText();
     }
 
     public void NextTutorialImage()
     {
-        if (currentTutorialIndex < TutorialImages.Length - 1) 
-        { 
-            currentTutorialIndex += 1;
+        if (currentTutorialIndex < TutorialImages.Length - 1)
+        {
+            currentTutorialIndex++;
             TutorialImage.sprite = TutorialImages[currentTutorialIndex];
-            TutorialText.text = TutorialTexts[currentTutorialIndex].text;
+            TutorialText.text = TutorialTexts[currentTutorialIndex];
+            UpdateTutorialIndexText();
         }
     }
 
@@ -186,9 +515,173 @@ public class UIManager : MonoBehaviour
     {
         if (currentTutorialIndex > 0)
         {
-            currentTutorialIndex -= 1;
+            currentTutorialIndex--;
             TutorialImage.sprite = TutorialImages[currentTutorialIndex];
-            TutorialText.text = TutorialTexts[currentTutorialIndex].text;
+            TutorialText.text = TutorialTexts[currentTutorialIndex];
+            UpdateTutorialIndexText();
         }
     }
+
+    public void UpdateTutorialIndexText()
+    {
+        IndexText.text = $"{currentTutorialIndex + 1}/{TutorialImages.Length}";
+    }
+
+    public void Reset()
+    {
+        Time.timeScale = 1f;
+        KillTimerTweens();
+        SceneManager.LoadScene("MainScene");
+    }
+
+
+    void ActivateEffectUnscaled(GameObject fx)
+    {
+        if (!fx) return;
+        if (!fx.TryGetComponent<UnscaledParticleDriver>(out _))
+            fx.AddComponent<UnscaledParticleDriver>();
+        fx.SetActive(false);
+        fx.SetActive(true);
+    }
+
+    public void ShowHoldCountdownUI()
+    {
+        if (HoldCountdownText == null) return;
+        DOTween.Kill(HoldCountdownText);
+        HoldCountdownText.gameObject.SetActive(true);
+        HoldCountdownText.rectTransform.localScale = Vector3.one;
+        holdCountCG.alpha = 0f;
+        holdCountCG.DOFade(1f, countFadeIn).SetUpdate(false).SetLink(HoldCountdownText.gameObject);
+    }
+
+    public void HideHoldCountdownUI()
+    {
+        if (HoldCountdownText == null) return;
+        lastShownCount = -1;
+        DOTween.Kill(HoldCountdownText);
+        holdCountCG.DOFade(0f, countFadeOut)
+            .OnComplete(() =>
+            {
+                if (HoldCountdownText != null)
+                {
+                    HoldCountdownText.gameObject.SetActive(false);
+                    HoldCountdownText.rectTransform.localScale = Vector3.one;
+                }
+            })
+            .SetUpdate(false).SetLink(HoldCountdownText.gameObject);
+    }
+
+    public void ResetHoldCountdown()
+    {
+        // ë„ì¤‘ ì·¨ì†Œë  ë•Œ ìˆ«ì/íŠ¸ìœˆ ì´ˆê¸°í™”ìš©
+        HideHoldCountdownUI();
+    }
+
+
+    public void UpdateHoldCountdown(float secondsLeft)
+    {
+        if (HoldCountdownText == null) return;
+
+        // 3.0~2.01 -> 3, 2.0~1.01 -> 2, 1.0~0.01 -> 1
+        int display = Mathf.Clamp(Mathf.CeilToInt(secondsLeft), 1, 3);
+
+        // ì²˜ìŒ ì§„ì… ì‹œ UI í‘œì‹œ
+        if (!HoldCountdownText.gameObject.activeSelf) ShowHoldCountdownUI();
+
+        // ê°™ì€ ìˆ«ìë©´ ì• ë‹ˆ ì¬ìƒ X
+        if (display == lastShownCount) return;
+        lastShownCount = display;
+
+        HoldCountdownText.text = display.ToString();
+
+        var rt = HoldCountdownText.rectTransform;
+        DOTween.Kill(HoldCountdownText);
+
+        // scale 1 -> 1.25(ë¹µ) -> 0.95 -> 1.0 ëŠë‚Œ
+        DG.Tweening.Sequence s = DOTween.Sequence().SetUpdate(false).SetLink(HoldCountdownText.gameObject);
+
+        // ìŠ¤íƒ€íŠ¸ ìˆœê°„ ì‚´ì§ ì¤„ì˜€ë‹¤ê°€ í¬ê²Œ ë¹µ
+        rt.localScale = Vector3.one * 0.9f;
+
+        s.Append(rt.DOScale(countScaleUp, 0.14f).SetEase(Ease.OutBack, 2.0f));
+        s.Append(rt.DOScale(countScaleDown, 0.10f).SetEase(Ease.InOutSine));
+        s.Append(rt.DOScale(1f, 0.08f).SetEase(Ease.OutSine));
+
+        // ë™ì‹œì— ì•½í•œ í€ì¹˜(ì„ í˜¸ì— ë”°ë¼ ì‚­ì œ ê°€ëŠ¥)
+        s.Join(rt.DOPunchScale(Vector3.one * countPunch, 0.22f, countVibrato, 0.9f));
+        countSeq = s;
+    }
+
+    public void BlinkColorFilter1Hz(Color onColor, float total = 3f)
+    {
+        if (colorAdj == null) return;
+
+        DOTween.Kill(FILTER_BLINK_ID);
+
+        var offColor = Color.white;
+        float oneBlink = 0.5f;                 // half-period
+        total = Mathf.Max(0f, total);
+        int loops = Mathf.Max(1, Mathf.FloorToInt(total)); // 1ì´ˆ = 1 loop
+
+        var seq = DOTween.Sequence()
+            .SetId(FILTER_BLINK_ID)
+            .SetUpdate(false) // íƒ€ì„ìŠ¤ì¼€ì¼ ì˜í–¥ ë°›ìŒ(ì¼ì‹œì •ì§€ ì‹œ ë©ˆì¶¤)
+            .SetLink(Timer.gameObject, LinkBehaviour.KillOnDestroy | LinkBehaviour.PauseOnDisable)
+            .OnComplete(() => colorAdj.colorFilter.value = offColor);
+
+        for (int i = 0; i < loops; i++)
+        {
+            // ON (0.5s)
+            seq.Append(DOTween.To(
+                () => colorAdj.colorFilter.value,
+                c => colorAdj.colorFilter.value = c,
+                onColor, oneBlink).SetEase(Ease.InOutSine));
+
+            // OFF (0.5s)
+            seq.Append(DOTween.To(
+                () => colorAdj.colorFilter.value,
+                c => colorAdj.colorFilter.value = c,
+                offColor, oneBlink).SetEase(Ease.InOutSine));
+        }
+    }
+    
+    public void GoToLeaderBoard()
+    {
+        Bridge.OpenLeaderBoard();
+    }
+}
+
+
+
+[DisallowMultipleComponent]
+public class UnscaledParticleDriver : MonoBehaviour
+{
+    ParticleSystem[] systems;
+
+    void Awake()
+    {
+        systems = GetComponentsInChildren<ParticleSystem>(true);
+    }
+
+    void OnEnable()
+    {
+        foreach (var ps in systems)
+        {
+            if (ps == null) continue;
+            ps.Simulate(0f, true, true);
+            ps.Play(true);
+        }
+    }
+
+    void LateUpdate()
+    {
+        if (Time.timeScale != 0f) return;
+        float dt = Time.unscaledDeltaTime;
+        if (dt <= 0f) return;
+        foreach (var ps in systems)
+        {
+            if (ps != null) ps.Simulate(dt, true, false);
+        }
+    }
+
 }

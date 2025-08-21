@@ -1,52 +1,82 @@
-using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-
-public enum GameState { Playing, Clear, GameOver }
+using static Enums;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
-
-    [Header("State")]
-    public GameState CurrentState = GameState.Playing;
-
-    [Header("Refs")]
-    [SerializeField] private GimmickManager gimmickManager; // 인스펙터에서 연결 권장
-
-    private void Awake()
+    public UIManager uiManager;
+    private bool gameEnd = false;
+    public bool isWin = false;
+    public float timerDuration = 30f;
+    private float currentTime;
+    public int score = 5000;
+    private bool isTimeFiveSecond = false;
+    void OnEnable()
     {
-        if (Instance == null) Instance = this;
-        else { Destroy(gameObject); return; }
+        EventBus.Instance.Subscribe(Consts.END_GAME, EndGame);
     }
 
-    private void Start()
+    void OnDisable()
     {
-        // 참고: 인스펙터에서 연결 못 했다면 자동 탐색
-        if (gimmickManager == null)
-            gimmickManager = FindFirstObjectByType<GimmickManager>();
-
-        // 30초마다 자동 기믹 발동 시작
-        gimmickManager?.StartAutoGimmicks(30f);
+        EventBus.Instance.Unsubscribe(Consts.END_GAME, EndGame);
     }
 
-    // 메인 루프에서 클리어/오버가 결정되면 아래 둘 중 하나를 호출
-    public void OnClear()
+    void Start()
     {
-        if (CurrentState != GameState.Playing) return;
-        CurrentState = GameState.Clear;
-        gimmickManager?.StopAutoGimmicks();
-        // TODO: 클리어 UI/점수 처리 등
-        Debug.Log("[GameManager] CLEAR");
+        currentTime = timerDuration;
     }
 
-    public void OnGameOver()
+    void Update()
     {
-        if (CurrentState != GameState.Playing) return;
-        CurrentState = GameState.GameOver;
-        gimmickManager?.StopAutoGimmicks();
-        // TODO: 게임오버 UI 처리 등
-        Debug.Log("[GameManager] GAME OVER");
+        if (gameEnd) return;
+
+        currentTime -= Time.deltaTime;
+
+        if (currentTime <= 5f && !isTimeFiveSecond)
+        {
+            uiManager.BlinkColorFilter1Hz(new Color(1f, 166f / 255f, 166f / 255f), total: 5f);
+            isTimeFiveSecond = true;
+            RealSoundManager.Instance.PlayOneShot(SfxClips.TimeEmergency);
+        }
+
+        if (currentTime <= 0f || isWin)
+        {
+            gameEnd = true;     // 재진입 방지
+            EndGame(); // 아래 Pulish하면 실행됨!
+            EventBus.Instance.Publish(Consts.END_GAME);
+        }
+        
     }
+
+    private void EndGame()
+    {
+        uiManager?.HideHoldCountdownUI();
+        if (gameEnd == false) gameEnd = true; 
+        Time.timeScale = 0f; 
+
+        if (isWin)
+        {
+            int timeBonus = Mathf.Max(0, Mathf.FloorToInt(currentTime) * 100);
+            int from = score;
+            int to = from + timeBonus;
+
+           
+            uiManager.KillTimerTweens();
+
+            uiManager.PlaySuccessBonus(timeBonus, from, to, onComplete: () =>
+            {
+                score = to;                 // 합산 끝난 뒤 커밋
+                uiManager.ShowResultUI();   // 결과창
+                uiManager.Result(true);
+            });
+        }
+        else
+        {
+            uiManager.KillTimerTweens();    // 안전장치
+            uiManager.ShowResultUI();
+            uiManager.Result(false);
+        }
+    }
+
+  
+    public void Test() { isWin = true; }
 }
