@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class PlayManager : MonoBehaviour
 {
     [SerializeField] private Camera mainCamera;
+    [SerializeField] private GameObject touchArea;
 
     public GameObject BlockPrefab;
     public List<GameObject> blockList = new List<GameObject>();
@@ -100,6 +101,7 @@ public class PlayManager : MonoBehaviour
 
     void EndGame()
     {
+        touchArea.gameObject.SetActive(false);
         gameEnded = true;
     }
 

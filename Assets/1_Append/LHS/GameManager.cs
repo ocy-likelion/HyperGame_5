@@ -41,7 +41,8 @@ public class GameManager : MonoBehaviour
         if (currentTime <= 0f || isWin)
         {
             gameEnd = true;     // 재진입 방지
-            EndGame();
+            //EndGame(); // 아래 Pulish하면 실행됨!
+            EventBus.Instance.Publish(Consts.END_GAME);
         }
         
     }
