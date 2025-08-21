@@ -1,4 +1,5 @@
 using UnityEngine;
+using static Enums;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,7 +9,7 @@ public class GameManager : MonoBehaviour
     public float timerDuration = 30f;
     private float currentTime;
     public int score = 5000;
-
+    private bool isTimeFiveSecond = false;
     void OnEnable()
     {
         EventBus.Instance.Subscribe(Consts.END_GAME, EndGame);
@@ -30,11 +31,19 @@ public class GameManager : MonoBehaviour
 
         currentTime -= Time.deltaTime;
 
+        if (currentTime <= 5f && !isTimeFiveSecond)
+        {
+            uiManager.BlinkColorFilter1Hz(new Color(1f, 166f / 255f, 166f / 255f), total: 5f);
+            isTimeFiveSecond = true;
+            RealSoundManager.Instance.PlayOneShot(SfxClips.TimeEmergency);
+        }
+
         if (currentTime <= 0f || isWin)
         {
             gameEnd = true;     // 재진입 방지
             EndGame();
         }
+        
     }
 
     private void EndGame()
