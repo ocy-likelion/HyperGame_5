@@ -20,6 +20,7 @@ public class SabotageEventManager : MonoBehaviour
     [SerializeField] GameObject lava;
 
     [Header("주요 프로퍼티")]
+    Sequence seq;
     // 두더지 관련
     readonly Vector2 MOLE_GEN_POS = new Vector2(0, 6f);
     readonly Vector2 FEATHER_GEN_POS = new Vector2(0, 6.5f);
@@ -48,6 +49,7 @@ public class SabotageEventManager : MonoBehaviour
 
     void Awake()
     {
+        DOTween.KillAll();
         TryGetComponent<PlayManager>(out playManager);
 
         LAVA_END_POS = new Vector3(0, playManager.goalTowerHeight - LAVA_OFFSET, 0);
@@ -82,6 +84,12 @@ public class SabotageEventManager : MonoBehaviour
     }
     void ResetEventBoolean()
     {
+        if (seq != null && seq.IsActive())
+        {
+            seq.Kill();      // 진행 중인 Tween 종료
+            seq = null;      // 참조 제거
+        }
+
         isTriggeredMole = false;
         isTriggeredEarthQuake = false;
         isTriggeredMiniMole = false;
@@ -99,7 +107,7 @@ public class SabotageEventManager : MonoBehaviour
             sabotageText.text = "두더지 떼가 몰려옵니다..";
             Text_SabotageAlarm.SetActive(true);
 
-            Sequence seq = DOTween.Sequence();
+            seq = DOTween.Sequence();
 
             seq.Append(sabotageText.DOFade(1f, 0.5f));
 
@@ -138,7 +146,7 @@ public class SabotageEventManager : MonoBehaviour
 
             Vector3 originalPos = ground.transform.position;
 
-            Sequence seq = DOTween.Sequence();
+            seq = DOTween.Sequence();
             seq.Append(sabotageText.DOFade(1f, 0.5f));
             seq.AppendInterval(2.5f);
             seq.Append(sabotageText.DOFade(0f, 0.5f).OnComplete(() => Text_SabotageAlarm.SetActive(false)));
@@ -173,7 +181,7 @@ public class SabotageEventManager : MonoBehaviour
             sabotageText.text = "작은 두더지 떼가 몰려옵니다!";
             Text_SabotageAlarm.SetActive(true);
 
-            Sequence seq = DOTween.Sequence();
+            seq = DOTween.Sequence();
 
             seq.Append(sabotageText.DOFade(1f, 0.5f));
 
@@ -214,7 +222,7 @@ public class SabotageEventManager : MonoBehaviour
             sabotageText.text = "거대한 두더지가 내려옵니다!";
             Text_SabotageAlarm.SetActive(true);
 
-            Sequence seq = DOTween.Sequence();
+            seq = DOTween.Sequence();
 
             seq.Append(sabotageText.DOFade(1f, 0.5f));
 
@@ -251,7 +259,7 @@ public class SabotageEventManager : MonoBehaviour
             sabotageText.text = "어디선가 천연가스가 새고 있습니다..!";
             Text_SabotageAlarm.SetActive(true);
 
-            Sequence seq = DOTween.Sequence();
+            seq = DOTween.Sequence();
 
             seq.Append(sabotageText.DOFade(1f, 0.5f));
 
