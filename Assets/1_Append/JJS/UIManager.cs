@@ -5,9 +5,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("포스트프로세싱")]
+    public Volume volume;
+    private ColorAdjustments colorAdj;
+    const string FILTER_BLINK_ID = "FILTER_BLINK";
+
     [Header("타이틀")]
     public GameObject TitlePanel;
     // 게임이 한 번이라도 시작되었는지(리셋 후에도 유지) — 앱 재실행 시 초기화됨
@@ -101,6 +108,13 @@ public class UIManager : MonoBehaviour
 
     void Awake()
     {
+        if (!volume.profile.TryGet(out colorAdj))
+            colorAdj = volume.profile.Add<ColorAdjustments>(true);
+
+        // override 활성화
+        colorAdj.colorFilter.overrideState = true;
+        colorAdj.postExposure.overrideState = true;
+
         if (HoldCountdownText != null)
         {
             holdCountCG = HoldCountdownText.GetComponent<CanvasGroup>();
@@ -264,6 +278,7 @@ public class UIManager : MonoBehaviour
 
     void ResumeGame()
     {
+        
         isPaused = false;
         Time.timeScale = 1f;
     }
@@ -293,6 +308,7 @@ public class UIManager : MonoBehaviour
             ActivateEffectUnscaled(SuccessEffect);
             ClearImage.sprite = SuccessSprite;
             ClearScoreText.text = gameManager ? gameManager.score.ToString() : "";
+            Bridge.SubmitScore(gameManager.score);
             RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.Win);
         }
         else
@@ -596,7 +612,43 @@ public class UIManager : MonoBehaviour
         countSeq = s;
     }
 
+    public void BlinkColorFilter1Hz(Color onColor, float total = 3f)
+    {
+        if (colorAdj == null) return;
 
+        DOTween.Kill(FILTER_BLINK_ID);
+
+        var offColor = Color.white;
+        float oneBlink = 0.5f;                 // half-period
+        total = Mathf.Max(0f, total);
+        int loops = Mathf.Max(1, Mathf.FloorToInt(total)); // 1초 = 1 loop
+
+        var seq = DOTween.Sequence()
+            .SetId(FILTER_BLINK_ID)
+            .SetUpdate(false) // 타임스케일 영향 받음(일시정지 시 멈춤)
+            .SetLink(Timer.gameObject, LinkBehaviour.KillOnDestroy | LinkBehaviour.PauseOnDisable)
+            .OnComplete(() => colorAdj.colorFilter.value = offColor);
+
+        for (int i = 0; i < loops; i++)
+        {
+            // ON (0.5s)
+            seq.Append(DOTween.To(
+                () => colorAdj.colorFilter.value,
+                c => colorAdj.colorFilter.value = c,
+                onColor, oneBlink).SetEase(Ease.InOutSine));
+
+            // OFF (0.5s)
+            seq.Append(DOTween.To(
+                () => colorAdj.colorFilter.value,
+                c => colorAdj.colorFilter.value = c,
+                offColor, oneBlink).SetEase(Ease.InOutSine));
+        }
+    }
+    
+    public void GoToLeaderBoard()
+    {
+        Bridge.OpenLeaderBoard();
+    }
 }
 
 
