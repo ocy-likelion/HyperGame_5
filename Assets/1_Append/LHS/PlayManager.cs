@@ -106,6 +106,10 @@ public class PlayManager : MonoBehaviour
     void CheckHighestBlock()
     {
         // 타워 높이 갱신 & 최상단 블럭 갱신
+        if (currentTowerHeight < -3)
+        {
+            currentTowerHeight = -3;
+        }
         currentTowerHeight = float.NegativeInfinity;
         highestBlock = null;
 

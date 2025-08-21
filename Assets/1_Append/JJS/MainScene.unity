@@ -8047,8 +8047,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2d9a23fa6afdd74a8bda84cf7832aa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  volume: {fileID: 1184943061}
-  colorAdj: {fileID: 0}
+  volume: {fileID: 832575518}
   TitlePanel: {fileID: 1514357535}
   TutorialUI: {fileID: 1286050818}
   PauseUI: {fileID: 1061933285}
