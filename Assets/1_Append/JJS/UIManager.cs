@@ -308,7 +308,7 @@ public class UIManager : MonoBehaviour
             ActivateEffectUnscaled(SuccessEffect);
             ClearImage.sprite = SuccessSprite;
             ClearScoreText.text = gameManager ? gameManager.score.ToString() : "";
-            Bridge.SubmitScore(gameManager.score);
+            //Bridge.SubmitScore(gameManager.score);
             RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.Win);
         }
         else
