@@ -27,8 +27,8 @@ public class SabotageEventManager : MonoBehaviour
     bool isTriggeredMole = false;
     // 지진 관련
     readonly Vector2 EARTHQUAKE_POS = new Vector2(0, -1f);
-    const float EARTHQUAKE_DURATION = 0.95f;
-    const float EARTHQUAKE_AMOUNT = 0.7f;
+    const float EARTHQUAKE_DURATION = 0.85f;
+    const float EARTHQUAKE_AMOUNT = 0.35f;
     const float EARTHQUAKE_TIMING = 17f;
     bool isTriggeredEarthQuake = false;
     // 미니 두더쥐 관련
@@ -61,11 +61,11 @@ public class SabotageEventManager : MonoBehaviour
     {
         if (!isTriggeredMole && playManager.GetElaspedTime() > MOLE_TIMING) // 10초 : 두더지 3마리
         {
-            TriggerNaturalGasEvent();
+            TriggerMiniMoleEvent();
         }
         if (!isTriggeredEarthQuake && playManager.GetElaspedTime() > EARTHQUAKE_TIMING) // 20초 : 지진
         {
-            TriggerEarthQuakeEvent();
+            TriggerMoleKingEvent();
         }
         if (!isTriggeredMiniMole && playManager.GetElaspedTime() > MINIMOLE_TIMING) // 30초 : 미니 두더지 9마리
         {

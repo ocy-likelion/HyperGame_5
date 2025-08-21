@@ -12,7 +12,7 @@ public class BlockDropProxy : MonoBehaviour
 
     GameObject blockTopInstance; // 프록시 생성 시 만들어지는 인스턴스
 
-    const float BLOCK_DROP_SPEED = 8f;
+    const float BLOCK_DROP_SPEED = 9.5f;
     
     public void InstantiateProxyObject(MineralDataManager _mineralDataManager, ProxyObjectPool _proxyObjectPool, EffectObjectPool _effectObjectPool)
     {
