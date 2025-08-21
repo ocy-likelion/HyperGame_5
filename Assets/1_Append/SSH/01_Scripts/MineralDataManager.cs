@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Collections.Generic;
+using System.Linq;
 
 public class MineralDataManager : MonoBehaviour
 {
@@ -111,6 +112,7 @@ public class MineralDataManager : MonoBehaviour
 
             proxyBlock.GetComponent<BlockDropProxy>().InstantiateProxyObject(this, blockDropProxyPool, effectObjectPool);
             proxyBlock.transform.position = spawnPosition;
+            proxyBlock.transform.eulerAngles = GetRandomRotation();
             proxyBlock.transform.SetParent(topParent);
             proxyBlock.GetComponent<SpriteRenderer>().sprite = opHandle.Result;
             proxyBlock.GetComponent<SpriteOutlineCollider>().BuildCollider();
@@ -150,5 +152,12 @@ public class MineralDataManager : MonoBehaviour
     public Transform GetParentTopObject()
     {
         return topParent;
+    }
+
+    Vector3[] rots = { new Vector3(0, 0, 0), new Vector3(0, 0, 90), new Vector3(0, 0, 180), new Vector3(0, 0, 270) };
+    Vector3 GetRandomRotation()
+    {
+        int randomIndex = UnityEngine.Random.Range(0, rots.Length);
+        return rots[randomIndex];
     }
 }

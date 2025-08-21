@@ -122,6 +122,8 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     //예측선 그리는 기능
     private void DrawPredictionLine()
     {
+        if (_currentBlock == null) return;
+            
         Collider2D blockCollider = _currentBlock.GetComponent<Collider2D>(); // 블록 바닥 높이 구하기
         var blockBottom = _currentBlock.transform.position;
         blockBottom.y = blockCollider.bounds.min.y - 0.05f; // 바닥보다 조금 더 낮은 지점에서 predict line 출발

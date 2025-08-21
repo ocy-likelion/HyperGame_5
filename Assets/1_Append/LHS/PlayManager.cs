@@ -19,7 +19,7 @@ public class PlayManager : MonoBehaviour
     public float goalTowerHeight = 2.25f; // 임시
 
     private float totalElapsedTime = 0.0f;
-    private float timeLimit = 30.0f; // 왜 15였지
+    private float timeLimit = 60.0f; // 왜 15였지
     private bool gameEnded = false;
 
     [SerializeField] private UIManager uiManager;

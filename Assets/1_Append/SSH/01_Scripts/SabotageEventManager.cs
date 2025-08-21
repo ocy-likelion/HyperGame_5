@@ -43,7 +43,7 @@ public class SabotageEventManager : MonoBehaviour
     // 용암 관련
     readonly Vector3 LAVA_START_POS = new Vector3(0, -12f, 0);
     Vector3 LAVA_END_POS;
-    const float LAVA_DURATION = 30f;
+    const float LAVA_DURATION = 60f;
     const int LAVA_OFFSET = 5; // 용암 위치 오프셋 값
 
     void Awake()
@@ -186,7 +186,7 @@ public class SabotageEventManager : MonoBehaviour
             {
                 for (int i = -1; i < 2; i++)
                 {
-                    for (int j = 3; j < 6; j++)
+                    for (int j = 3; j < 5; j++)
                     {
                         GameObject go = Instantiate(prefab_Mole);
                         go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(i, j, 0);
