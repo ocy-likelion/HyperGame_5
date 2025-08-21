@@ -32,16 +32,25 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         Init();
     }
 
+    private void Update()
+    {
+        if (_isPointerDown)
+        {
+            DrawPredictionLine(); // 블록 좌우 예측선 그리기
+        }
+    }
+
     //초기화
     private void Init()
     {
-        //예측선 초기화
+        // 블록 좌우 예측선 초기화
         _predictionLineLeft = Instantiate(predictionLinePrefab).GetComponent<Transform>();
         _predictionLineLeft.gameObject.SetActive(false);
         _predictionLineRight = Instantiate(predictionLinePrefab).GetComponent<Transform>();
         _predictionLineRight.gameObject.SetActive(false);
     }
-    //블록 스폰 위치 업데이트 기능
+
+    //카메라 이동에 따른 블록 스폰 위치 업데이트 기능
     void UpdateBlockSpawnPosition()
     {
         // 화면 중상단 좌표
@@ -52,7 +61,7 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         _blockSpawnPosition = worldPos;
     }
     
-    //돌 생성 기능
+    //블록 생성 기능
     private void SpawnBlock(GameObject newBlock)
     {
         if (_currentBlock is not null) return;
@@ -65,10 +74,9 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         {
             _predictionLineLeft.gameObject.SetActive(true);
             _predictionLineRight.gameObject.SetActive(true);
-            DrawPredictionLine();
         }
-        
     }
+
     //터치 입력 시작 이벤트 핸들
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -77,8 +85,8 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         SetBlockPosition(eventData.position);
         _predictionLineLeft.gameObject.SetActive(true);
         _predictionLineRight.gameObject.SetActive(true);
-        DrawPredictionLine();
     }
+
     //터치 입력 끝 이벤트 핸들
     public void OnPointerUp(PointerEventData eventData)
     {
@@ -93,15 +101,14 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.DropBlock);
     }
     
-    //드래그 입력 이벤트 핸들
+    //터치 후 드래그 입력 이벤트 핸들
     public void OnDrag(PointerEventData eventData)
     {
         if (_currentBlock is null) return;
         SetBlockPosition(eventData.position);
     }
     
-    
-    //입력 받은 위치 기반으로 블록위치 바꾸는 기능
+    //터치 입력 받은 위치 기반으로 블록 위치를 바꾸는 기능
     private void SetBlockPosition(Vector3 eventDataPos)
     {
         Vector3 viewportPos = mainCamera.ScreenToViewportPoint(eventDataPos);
@@ -110,18 +117,17 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         var clampedPos = mainCamera.ViewportToWorldPoint(viewportPos);
         _currentBlock.transform.position =  
             new Vector3(clampedPos.x, _currentBlock.transform.position.y, 0);
-        //예측선
-        DrawPredictionLine();
     }
+
     //예측선 그리는 기능
     private void DrawPredictionLine()
     {
-        Collider2D blockCollider = _currentBlock.GetComponent<Collider2D>(); // 블럭 바닥 높이 구하기
+        Collider2D blockCollider = _currentBlock.GetComponent<Collider2D>(); // 블록 바닥 높이 구하기
         var blockBottom = _currentBlock.transform.position;
         blockBottom.y = blockCollider.bounds.min.y - 0.05f; // 바닥보다 조금 더 낮은 지점에서 predict line 출발
         
-        var predictLineLeftRender = _predictionLineLeft.GetComponent<LineRenderer>(); // 블럭 좌측 선
-        var predictLineRightRender = _predictionLineRight.GetComponent<LineRenderer>(); // 블럭 우측 선
+        var predictLineLeftRender = _predictionLineLeft.GetComponent<LineRenderer>(); // 블록 좌측 선
+        var predictLineRightRender = _predictionLineRight.GetComponent<LineRenderer>(); // 블록 우측 선
 
         // left line
         var leftLineUpperPoint = new Vector3(0, 0, 0); // predict line 상단
