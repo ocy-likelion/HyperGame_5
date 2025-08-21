@@ -61,11 +61,11 @@ public class SabotageEventManager : MonoBehaviour
     {
         if (!isTriggeredMole && playManager.GetElaspedTime() > MOLE_TIMING) // 10초 : 두더지 3마리
         {
-            TriggerMiniMoleEvent();
+            TriggerMoleEvent();
         }
         if (!isTriggeredEarthQuake && playManager.GetElaspedTime() > EARTHQUAKE_TIMING) // 20초 : 지진
         {
-            TriggerMoleKingEvent();
+            TriggerEarthQuakeEvent();
         }
         if (!isTriggeredMiniMole && playManager.GetElaspedTime() > MINIMOLE_TIMING) // 30초 : 미니 두더지 9마리
         {

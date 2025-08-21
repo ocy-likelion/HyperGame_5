@@ -15807,6 +15807,18 @@ PrefabInstance:
       value: DustEffect
       objectReference: {fileID: 0}
     - target: {fileID: 480324, guid: 5badd1c20b11e485886819f781ece5c6, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 480324, guid: 5badd1c20b11e485886819f781ece5c6, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 480324, guid: 5badd1c20b11e485886819f781ece5c6, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 480324, guid: 5badd1c20b11e485886819f781ece5c6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -15846,6 +15858,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 480324, guid: 5badd1c20b11e485886819f781ece5c6, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 19864176, guid: 5badd1c20b11e485886819f781ece5c6, type: 3}
       propertyPath: lengthInSec
       value: 20
@@ -15872,19 +15888,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 19864176, guid: 5badd1c20b11e485886819f781ece5c6, type: 3}
       propertyPath: InitialModule.startColor.minColor.b
-      value: 0.2042542
+      value: 0.19677822
       objectReference: {fileID: 0}
     - target: {fileID: 19864176, guid: 5badd1c20b11e485886819f781ece5c6, type: 3}
       propertyPath: InitialModule.startColor.minColor.g
-      value: 0.28820083
+      value: 0.19967757
       objectReference: {fileID: 0}
     - target: {fileID: 19864176, guid: 5badd1c20b11e485886819f781ece5c6, type: 3}
       propertyPath: InitialModule.startColor.minColor.r
-      value: 0.509434
+      value: 0.20754719
       objectReference: {fileID: 0}
     - target: {fileID: 19864176, guid: 5badd1c20b11e485886819f781ece5c6, type: 3}
       propertyPath: InitialModule.gravityModifier.scalar
-      value: 0.07
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 19955286, guid: 5badd1c20b11e485886819f781ece5c6, type: 3}
       propertyPath: m_SortingOrder
