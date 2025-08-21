@@ -25,7 +25,7 @@ public class BlockDropProxy : MonoBehaviour
     public GameObject InstantiateTopObject() // 프록시 생성 시 탑 오브젝트도 미리 생성하는 메서드
     {
         blockTopInstance = Instantiate(blockTopObject, new Vector3(-10, -10, 0), Quaternion.Euler(Vector2.zero));
-        blockTopInstance.GetComponent<BlockOnlyTop>().InstantiateProxyObject(mineralDataManager.GetParentTopObject(), GetComponent<SpriteRenderer>().sprite, effectObjectPool);
+        blockTopInstance.GetComponent<BlockOnlyTop>().InstantiateProxyObject(mineralDataManager.GetParentTopObject(), GetComponent<SpriteRenderer>().sprite, effectObjectPool, mineralDataManager);
         blockTopInstance.SetActive(false);
         return blockTopInstance;
     }

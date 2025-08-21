@@ -136,6 +136,8 @@ public class MineralDataManager : MonoBehaviour
 
     public void AddLastBlock(GameObject _object)
     {
+        if (ingameBlockList.Contains(_object)) return;
+
         ingameBlockList.Add(_object);
     }
 
