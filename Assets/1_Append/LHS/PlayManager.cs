@@ -221,7 +221,7 @@ public class PlayManager : MonoBehaviour
         {
             yield return null;
         }
-        EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight());
+        EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight()); // 떨어짐과 동시에 카메라 위치 설정
 
         isBlockLanded = false;
         CreateBlock();
@@ -242,7 +242,7 @@ public class PlayManager : MonoBehaviour
     }
 
     // 카메라 높이값 계산
-    float CalculateSetCameraHeight()
+    public float CalculateSetCameraHeight()
     {
         if (highestBlock == null) return 0f;
 

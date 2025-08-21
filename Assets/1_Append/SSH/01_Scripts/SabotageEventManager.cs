@@ -119,7 +119,7 @@ public class SabotageEventManager : MonoBehaviour
                     Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
                     if (rb != null)
                     {
-                        float randomTorque = Random.Range(-100f, 100f); // 시계/반시계 랜덤 회전 힘
+                        float randomTorque = Random.Range(-10f, 10f); // 시계/반시계 랜덤 회전 힘
                         rb.AddTorque(randomTorque, ForceMode2D.Impulse);
                     }
                 }
@@ -196,7 +196,7 @@ public class SabotageEventManager : MonoBehaviour
                         Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
                         if (rb != null)
                         {
-                            float randomTorque = Random.Range(-100f, 100f); // 시계/반시계 랜덤 회전 힘
+                            float randomTorque = Random.Range(-10f, 10f); // 시계/반시계 랜덤 회전 힘
                             rb.AddTorque(randomTorque, ForceMode2D.Impulse);
                         }
                     }
@@ -211,7 +211,7 @@ public class SabotageEventManager : MonoBehaviour
             isTriggeredMoleKing = true;
 
             TMP_Text sabotageText = Text_SabotageAlarm.GetComponent<TMP_Text>();
-            sabotageText.text = "두더지의 왕, 몰킹이 다가옵니다..";
+            sabotageText.text = "거대한 두더지가 내려옵니다!";
             Text_SabotageAlarm.SetActive(true);
 
             Sequence seq = DOTween.Sequence();
@@ -233,7 +233,7 @@ public class SabotageEventManager : MonoBehaviour
                 Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
                 if (rb != null)
                 {
-                    float randomTorque = Random.Range(-100f, 100f); // 시계/반시계 랜덤 회전 힘
+                    float randomTorque = Random.Range(-10f, 10f); // 시계/반시계 랜덤 회전 힘
                     rb.AddTorque(randomTorque, ForceMode2D.Impulse);
                 }
 

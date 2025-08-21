@@ -1,4 +1,4 @@
-﻿public static class Consts
+public static class Consts
 {
     // to use string
     public static string GAME_CLEAR = "GameClear";
@@ -14,5 +14,5 @@
     public static string GAME_SCENE = "GameScene";
     
     public const float CAMERA_OFFSET = 7.38f;
-    public const float HEIGHT_OFFSET = 3f;
+    public const float HEIGHT_OFFSET = 2.35f; // 3
 }
