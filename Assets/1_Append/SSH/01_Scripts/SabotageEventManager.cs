@@ -12,6 +12,7 @@ public class SabotageEventManager : MonoBehaviour
     [SerializeField] GameObject prefab_Mole;
 
     [Header("씬 오브젝트")]
+    [SerializeField] GameObject NaturalGasObj;
     [SerializeField] GameObject Text_SabotageAlarm;
     [SerializeField] BlockController blockController;
     [SerializeField] GameObject backGround;
@@ -27,12 +28,18 @@ public class SabotageEventManager : MonoBehaviour
     // 지진 관련
     readonly Vector2 EARTHQUAKE_POS = new Vector2(0, -1f);
     const float EARTHQUAKE_DURATION = 0.95f;
-    const float EARTHQUAKE_AMOUNT = 1.1f;
+    const float EARTHQUAKE_AMOUNT = 0.7f;
     const float EARTHQUAKE_TIMING = 17f;
     bool isTriggeredEarthQuake = false;
     // 미니 두더쥐 관련
     const float MINIMOLE_TIMING = 27f;
     bool isTriggeredMiniMole = false;
+    // 몰킹 관련
+    const float MOLEKING_TIMING = 37f;
+    bool isTriggeredMoleKing = false;
+    // 천연가스 관련
+    const float NATURALGAS_TIMING = 47f;
+    bool isTriggeredNaturalGas = false;
     // 용암 관련
     readonly Vector3 LAVA_START_POS = new Vector3(0, -12f, 0);
     Vector3 LAVA_END_POS;
@@ -52,17 +59,25 @@ public class SabotageEventManager : MonoBehaviour
     }
     void Update()
     {
-        if (!isTriggeredMole && playManager.GetElaspedTime() > MOLE_TIMING)
+        if (!isTriggeredMole && playManager.GetElaspedTime() > MOLE_TIMING) // 10초 : 두더지 3마리
         {
-            TriggerMoleEvent();
+            TriggerNaturalGasEvent();
         }
-        if (!isTriggeredEarthQuake && playManager.GetElaspedTime() > EARTHQUAKE_TIMING)
+        if (!isTriggeredEarthQuake && playManager.GetElaspedTime() > EARTHQUAKE_TIMING) // 20초 : 지진
         {
-            TriggerSinkHoleEvent();
+            TriggerEarthQuakeEvent();
         }
-        if (!isTriggeredMiniMole && playManager.GetElaspedTime() > MINIMOLE_TIMING)
+        if (!isTriggeredMiniMole && playManager.GetElaspedTime() > MINIMOLE_TIMING) // 30초 : 미니 두더지 9마리
         {
             TriggerMiniMoleEvent();
+        }
+        if (!isTriggeredMoleKing && playManager.GetElaspedTime() > MOLEKING_TIMING) // 40초 : 몰킹 1마리
+        {
+            TriggerMoleKingEvent();
+        }
+        if (!isTriggeredNaturalGas && playManager.GetElaspedTime() > NATURALGAS_TIMING) // 50초 : 천연가스
+        {
+            TriggerNaturalGasEvent();
         }
     }
     void ResetEventBoolean()
@@ -70,6 +85,8 @@ public class SabotageEventManager : MonoBehaviour
         isTriggeredMole = false;
         isTriggeredEarthQuake = false;
         isTriggeredMiniMole = false;
+        isTriggeredMoleKing = false;
+        isTriggeredNaturalGas = false;
     }
 
     void TriggerMoleEvent() // 두더지 이벤트 메서드
@@ -102,14 +119,14 @@ public class SabotageEventManager : MonoBehaviour
                     Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
                     if (rb != null)
                     {
-                        float randomTorque = Random.Range(-300f, 300f); // 시계/반시계 랜덤 회전 힘
+                        float randomTorque = Random.Range(-100f, 100f); // 시계/반시계 랜덤 회전 힘
                         rb.AddTorque(randomTorque, ForceMode2D.Impulse);
                     }
                 }
             });
         }
     }
-    void TriggerSinkHoleEvent() // 싱크홀 이벤트 메서드
+    void TriggerEarthQuakeEvent() // 지진 이벤트 메서드
     {
         if (!isTriggeredEarthQuake)
         {
@@ -169,7 +186,7 @@ public class SabotageEventManager : MonoBehaviour
             {
                 for (int i = -1; i < 2; i++)
                 {
-                    for (int j = 1; j < 4; j++)
+                    for (int j = 3; j < 6; j++)
                     {
                         GameObject go = Instantiate(prefab_Mole);
                         go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(i, j, 0);
@@ -179,11 +196,79 @@ public class SabotageEventManager : MonoBehaviour
                         Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
                         if (rb != null)
                         {
-                            float randomTorque = Random.Range(-300f, 300f); // 시계/반시계 랜덤 회전 힘
+                            float randomTorque = Random.Range(-100f, 100f); // 시계/반시계 랜덤 회전 힘
                             rb.AddTorque(randomTorque, ForceMode2D.Impulse);
                         }
                     }
                 }
+            });
+        }
+    }
+    void TriggerMoleKingEvent() // 몰킹 이벤트 메서드
+    {
+        if (!isTriggeredMoleKing)
+        {
+            isTriggeredMoleKing = true;
+
+            TMP_Text sabotageText = Text_SabotageAlarm.GetComponent<TMP_Text>();
+            sabotageText.text = "두더지의 왕, 몰킹이 다가옵니다..";
+            Text_SabotageAlarm.SetActive(true);
+
+            Sequence seq = DOTween.Sequence();
+
+            seq.Append(sabotageText.DOFade(1f, 0.5f));
+
+            seq.AppendInterval(2.5f);
+
+            seq.Append(sabotageText.DOFade(0f, 0.5f)
+                .OnComplete(() => Text_SabotageAlarm.SetActive(false)));
+
+            seq.AppendCallback(() =>
+            {
+                GameObject go = Instantiate(prefab_Mole);
+                go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(0, 3, 0);
+                go.transform.localScale = new Vector3(2.5f, 2.5f, 2.5f);
+                go.GetComponent<SpriteOutlineCollider>().BuildCollider();
+
+                Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    float randomTorque = Random.Range(-100f, 100f); // 시계/반시계 랜덤 회전 힘
+                    rb.AddTorque(randomTorque, ForceMode2D.Impulse);
+                }
+
+                ShakeCamera(EARTHQUAKE_DURATION);
+            });
+        }
+    }
+    void TriggerNaturalGasEvent() // 천연가스 이벤트 메서드
+    {
+        if (!isTriggeredMoleKing)
+        {
+            isTriggeredMoleKing = true;
+
+            TMP_Text sabotageText = Text_SabotageAlarm.GetComponent<TMP_Text>();
+            sabotageText.text = "어디선가 천연가스가 새고 있습니다..!";
+            Text_SabotageAlarm.SetActive(true);
+
+            Sequence seq = DOTween.Sequence();
+
+            seq.Append(sabotageText.DOFade(1f, 0.5f));
+
+            seq.AppendInterval(2.5f);
+
+            seq.Append(sabotageText.DOFade(0f, 0.5f)
+                .OnComplete(() => Text_SabotageAlarm.SetActive(false)));
+
+            seq.AppendCallback(() =>
+            {
+                NaturalGasObj.SetActive(true);
+            });
+
+            seq.AppendInterval(3f);
+            seq.AppendCallback(() =>
+            {
+                NaturalGasObj.SetActive(false);
             });
         }
     }
