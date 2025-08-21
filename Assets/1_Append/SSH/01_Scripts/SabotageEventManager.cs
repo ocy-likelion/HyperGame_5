@@ -243,9 +243,9 @@ public class SabotageEventManager : MonoBehaviour
     }
     void TriggerNaturalGasEvent() // 천연가스 이벤트 메서드
     {
-        if (!isTriggeredMoleKing)
+        if (!isTriggeredNaturalGas)
         {
-            isTriggeredMoleKing = true;
+            isTriggeredNaturalGas = true;
 
             TMP_Text sabotageText = Text_SabotageAlarm.GetComponent<TMP_Text>();
             sabotageText.text = "어디선가 천연가스가 새고 있습니다..!";
