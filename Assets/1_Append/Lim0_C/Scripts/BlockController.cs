@@ -13,7 +13,8 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     private Vector3 _blockSpawnPosition;
     private GameObject _currentBlock; 
-    private Transform _predictionLine;
+    private Transform _predictionLineLeft;
+    private Transform _predictionLineRight;
     private bool _isPointerDown;
 
     private void OnEnable()
@@ -35,8 +36,10 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     private void Init()
     {
         //예측선 초기화
-        _predictionLine = Instantiate(predictionLinePrefab).GetComponent<Transform>();
-        _predictionLine.gameObject.SetActive(false);
+        _predictionLineLeft = Instantiate(predictionLinePrefab).GetComponent<Transform>();
+        _predictionLineLeft.gameObject.SetActive(false);
+        _predictionLineRight = Instantiate(predictionLinePrefab).GetComponent<Transform>();
+        _predictionLineRight.gameObject.SetActive(false);
     }
     //블록 스폰 위치 업데이트 기능
     void UpdateBlockSpawnPosition()
@@ -60,7 +63,8 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
             
         if (_isPointerDown)
         {
-            _predictionLine.gameObject.SetActive(true);
+            _predictionLineLeft.gameObject.SetActive(true);
+            _predictionLineRight.gameObject.SetActive(true);
             DrawPredictionLine();
         }
         
@@ -71,7 +75,8 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         _isPointerDown = true;
         if (_currentBlock is null) return;
         SetBlockPosition(eventData.position);
-        _predictionLine.gameObject.SetActive(true);
+        _predictionLineLeft.gameObject.SetActive(true);
+        _predictionLineRight.gameObject.SetActive(true);
         DrawPredictionLine();
     }
     //터치 입력 끝 이벤트 핸들
@@ -82,7 +87,8 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         //_currentBlock.GetComponent<Rigidbody2D>().simulated = true;
         _currentBlock.GetComponent<BlockDropProxy>().IsEnd = false;
         _currentBlock = null;
-        _predictionLine.gameObject.SetActive(false);
+        _predictionLineLeft.gameObject.SetActive(false);
+        _predictionLineRight.gameObject.SetActive(false);
         EventBus.Instance.Publish("RespawnBlock");
         RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.DropBlock);
     }
@@ -110,17 +116,36 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     //예측선 그리는 기능
     private void DrawPredictionLine()
     {
-        Collider2D blockCollider = _currentBlock.GetComponent<Collider2D>();
+        Collider2D blockCollider = _currentBlock.GetComponent<Collider2D>(); // 블럭 바닥 높이 구하기
         var blockBottom = _currentBlock.transform.position;
-        blockBottom.y = blockCollider.bounds.min.y;
+        blockBottom.y = blockCollider.bounds.min.y - 0.05f; // 바닥보다 조금 더 낮은 지점에서 predict line 출발
+        
+        var predictLineLeftRender = _predictionLineLeft.GetComponent<LineRenderer>(); // 블럭 좌측 선
+        var predictLineRightRender = _predictionLineRight.GetComponent<LineRenderer>(); // 블럭 우측 선
 
-        RaycastHit2D hit = Physics2D.Raycast(blockBottom, Vector2.down, 10);
-        var predictLineRender = _predictionLine.GetComponent<LineRenderer>();
-        predictLineRender.SetPosition(0, blockBottom);
+        // left line
+        var leftLineUpperPoint = new Vector3(0, 0, 0); // predict line 상단
+        leftLineUpperPoint.y = blockCollider.bounds.min.y - 0.05f;
+        leftLineUpperPoint.x = blockCollider.bounds.min.x;
 
-        var line2Y = hit.collider ? hit.point.y : -3;   //-3 지면 높이
-        var linePoint2 = new Vector3(_currentBlock.transform.position.x, line2Y, 0);
-        predictLineRender.SetPosition(1, linePoint2);
+        RaycastHit2D hit = Physics2D.Raycast(leftLineUpperPoint, Vector2.down, 10);
+        var line2Y = Mathf.Max(hit.point.y, -3);   // -3 지면 높이
+        var leftLineLowerPoint = new Vector3(leftLineUpperPoint.x, line2Y, 0); // predict line 하단
+
+        predictLineLeftRender.SetPosition(0, leftLineUpperPoint);
+        predictLineLeftRender.SetPosition(1, leftLineLowerPoint);
+
+        // right line
+        var rightLineUpperPoint = new Vector3(0, 0, 0); // predict line 상단
+        rightLineUpperPoint.y = leftLineUpperPoint.y; // == blockCollider.bounds.min.y - 0.05f
+        rightLineUpperPoint.x = blockCollider.bounds.max.x;
+
+        hit = Physics2D.Raycast(rightLineUpperPoint, Vector2.down, 10);
+        line2Y = Mathf.Max(hit.point.y, -3);   // -3 지면 높이
+        var rightLineLowerPoint = new Vector3(rightLineUpperPoint.x, line2Y, 0); // predict line 하단
+
+        predictLineRightRender.SetPosition(0, rightLineUpperPoint);
+        predictLineRightRender.SetPosition(1, rightLineLowerPoint);
     }
 
     public Vector3 GetBlockSpawnPoint()
