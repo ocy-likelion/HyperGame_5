@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8670853008159293926}
   - component: {fileID: 7142657611562303866}
   m_Layer: 0
-  m_Name: Prefab_Feather
+  m_Name: Prefab_Stone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

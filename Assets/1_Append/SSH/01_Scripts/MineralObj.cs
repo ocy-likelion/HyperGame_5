@@ -4,26 +4,21 @@ using UnityEngine;
 public class MineralObj : MonoBehaviour
 {
     [Header("컴포넌트")]
-    Rigidbody2D rb;
-    Collider2D col;
-    PhysicsMaterial2D pM;
+    protected Rigidbody2D rb;
+    protected Collider2D col;
 
     [Header("주요 프로퍼티")]
-    const float TERMINAL_SPEED = 5f;
-    const float MASS = 10;
-    const float DEAD_LINE_POS = -6f;
-    const float HIT_FORCE = 5f;
+    protected const float TERMINAL_SPEED = 5f;
+    protected const float MASS = 10;
+    protected const float DEAD_LINE_POS = -6f;
+    protected const float HIT_FORCE = 5f;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
-        pM = col.sharedMaterial;
 
         rb.linearVelocity = Vector2.down * TERMINAL_SPEED;
-    }
-    void Start()
-    {
-        GetComponent<SpriteOutlineCollider>().BuildCollider();
     }
     void Update()
     {
@@ -39,16 +34,6 @@ public class MineralObj : MonoBehaviour
         if (vel.magnitude > TERMINAL_SPEED)
         {
             rb.linearVelocity = vel.normalized * TERMINAL_SPEED;
-        }
-    }
-
-    void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Block"))
-        {
-            Debug.Log("두더지와 블럭이 만남");
-            Vector2 dir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
-            rb.AddForce(dir.normalized * HIT_FORCE, ForceMode2D.Impulse);
         }
     }
 }

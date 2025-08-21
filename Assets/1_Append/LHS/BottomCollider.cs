@@ -16,23 +16,19 @@ public class BottomCollider : MonoBehaviour
     {
         if (gameManager == null || uiManager == null) return;
 
-        int penalty = 0;
-
-        if (collision.gameObject.CompareTag("Block")) penalty = uiManager.BlockScore;
-     
-        if (penalty > 0)
+        if (collision.gameObject.CompareTag("Block"))
         {
             int from = gameManager.score;
-            int to = Mathf.Max(0, from - penalty);
+            int to = Mathf.Max(0, from - uiManager.BlockScore);
 
             // 점수 반영은 GameManager
             gameManager.score = to;
 
             // UI는 시각효과만
             uiManager.AnimateScoreChange(from, to);
-        }
 
-        playManager.blockList.Remove(collision.gameObject);
-        Destroy(collision.gameObject);
+            playManager.blockList.Remove(collision.gameObject);
+            Destroy(collision.gameObject);
+        }
     }
 }

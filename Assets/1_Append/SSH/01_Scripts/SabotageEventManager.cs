@@ -14,7 +14,7 @@ public class SabotageEventManager : MonoBehaviour
     [Header("씬 오브젝트")]
     [SerializeField] GameObject Text_SabotageAlarm;
     [SerializeField] BlockController blockController;
-    [SerializeField] Camera mainCam;
+    [SerializeField] GameObject backGround;
     [SerializeField] GameObject ground;
     [SerializeField] GameObject lava;
 
@@ -24,13 +24,15 @@ public class SabotageEventManager : MonoBehaviour
     readonly Vector2 FEATHER_GEN_POS = new Vector2(0, 6.5f);
     const float MOLE_TIMING = 7f;
     bool isTriggeredMole = false;
-    // 싱크홀 관련
-    readonly Vector2 SINKHOLE_POS = new Vector2(0, -1f);
-    const float SINKHOLE_DURATION = 0.95f;
-    const float SINKHOLE_AMOUNT = 0.8f;
-    const float SHAKE_CAMERA_AMOUNT = 1.2f;
-    const float SINKHOLE_TIMING = 17f;
-    bool isTriggeredSinkHole = false;
+    // 지진 관련
+    readonly Vector2 EARTHQUAKE_POS = new Vector2(0, -1f);
+    const float EARTHQUAKE_DURATION = 0.95f;
+    const float EARTHQUAKE_AMOUNT = 1.1f;
+    const float EARTHQUAKE_TIMING = 17f;
+    bool isTriggeredEarthQuake = false;
+    // 미니 두더쥐 관련
+    const float MINIMOLE_TIMING = 27f;
+    bool isTriggeredMiniMole = false;
     // 용암 관련
     readonly Vector3 LAVA_START_POS = new Vector3(0, -12f, 0);
     Vector3 LAVA_END_POS;
@@ -54,22 +56,26 @@ public class SabotageEventManager : MonoBehaviour
         {
             TriggerMoleEvent();
         }
-        if (!isTriggeredSinkHole && playManager.GetElaspedTime() > SINKHOLE_TIMING)
+        if (!isTriggeredEarthQuake && playManager.GetElaspedTime() > EARTHQUAKE_TIMING)
         {
             TriggerSinkHoleEvent();
+        }
+        if (!isTriggeredMiniMole && playManager.GetElaspedTime() > MINIMOLE_TIMING)
+        {
+            TriggerMiniMoleEvent();
         }
     }
     void ResetEventBoolean()
     {
         isTriggeredMole = false;
-        isTriggeredSinkHole = false;
+        isTriggeredEarthQuake = false;
+        isTriggeredMiniMole = false;
     }
 
     void TriggerMoleEvent() // 두더지 이벤트 메서드
     {
         if (!isTriggeredMole)
         {
-            int molePos = -1;
             isTriggeredMole = true;
 
             TMP_Text sabotageText = Text_SabotageAlarm.GetComponent<TMP_Text>();
@@ -87,21 +93,27 @@ public class SabotageEventManager : MonoBehaviour
 
             seq.AppendCallback(() =>
             {
-                for (int i = 0; i < 3; i++)
+                for (int i = -1; i < 2; i++)
                 {
                     GameObject go = Instantiate(prefab_Mole);
-                    go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(molePos, Random.Range(1f, 3f), 0);
-                    go.transform.eulerAngles = new Vector3(0, 0, Random.Range(0f, 180f));
-                    molePos++;
+                    go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(i, Random.Range(1f, 3f), 0);
+                    go.GetComponent<SpriteOutlineCollider>().BuildCollider();
+
+                    Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
+                    if (rb != null)
+                    {
+                        float randomTorque = Random.Range(-300f, 300f); // 시계/반시계 랜덤 회전 힘
+                        rb.AddTorque(randomTorque, ForceMode2D.Impulse);
+                    }
                 }
             });
         }
     }
     void TriggerSinkHoleEvent() // 싱크홀 이벤트 메서드
     {
-        if (!isTriggeredSinkHole)
+        if (!isTriggeredEarthQuake)
         {
-            isTriggeredSinkHole = true;
+            isTriggeredEarthQuake = true;
 
             TMP_Text sabotageText = Text_SabotageAlarm.GetComponent<TMP_Text>();
             sabotageText.text = "곧 지진이 일어날 것 같습니다..!!!";
@@ -116,29 +128,71 @@ public class SabotageEventManager : MonoBehaviour
 
             seq.AppendCallback(() =>
             {
-                ground.transform.DOShakePosition(SINKHOLE_DURATION, SINKHOLE_AMOUNT, 10, 90, false, true)
+                ground.transform.DOShakePosition(EARTHQUAKE_DURATION, EARTHQUAKE_AMOUNT, 10, 90, false, true)
                     .OnComplete(() => ground.transform.position = originalPos);
-                ShakeCamera(SINKHOLE_DURATION, SHAKE_CAMERA_AMOUNT);
+                ShakeCamera(EARTHQUAKE_DURATION);
             });
-            seq.AppendInterval(SINKHOLE_DURATION);
+            seq.AppendInterval(EARTHQUAKE_DURATION);
 
             // 여진
             seq.AppendCallback(() =>
             {
-                float aftershockDuration = SINKHOLE_DURATION * 1.5f;
-                float aftershockAmount = SINKHOLE_AMOUNT / 3f;
+                float aftershockDuration = EARTHQUAKE_DURATION * 1.5f;
+                float aftershockAmount = EARTHQUAKE_AMOUNT / 3f;
 
                 ground.transform.DOShakePosition(aftershockDuration, aftershockAmount, 10, 90, false, true)
                     .OnComplete(() => ground.transform.position = originalPos);
-                ShakeCamera(aftershockDuration, aftershockAmount / 3f);
+                ShakeCamera(aftershockDuration);
             });
         }
     }
-    void ShakeCamera(float duration, float strength) // 카메라 쉐이킹 메서드
+    void TriggerMiniMoleEvent() // 미니 두더지 이벤트 메서드
     {
-        Vector3 originPos = mainCam.transform.position;
-        mainCam.transform.DOShakePosition(duration, strength, 10, 90f, false, true)
-            .OnComplete(() => mainCam.transform.position =  originPos);
+        if (!isTriggeredMiniMole)
+        {
+            isTriggeredMiniMole = true;
+
+            TMP_Text sabotageText = Text_SabotageAlarm.GetComponent<TMP_Text>();
+            sabotageText.text = "작은 두더지 떼가 몰려옵니다!";
+            Text_SabotageAlarm.SetActive(true);
+
+            Sequence seq = DOTween.Sequence();
+
+            seq.Append(sabotageText.DOFade(1f, 0.5f));
+
+            seq.AppendInterval(2.5f);
+
+            seq.Append(sabotageText.DOFade(0f, 0.5f)
+                .OnComplete(() => Text_SabotageAlarm.SetActive(false)));
+
+            seq.AppendCallback(() =>
+            {
+                for (int i = -1; i < 2; i++)
+                {
+                    for (int j = 1; j < 4; j++)
+                    {
+                        GameObject go = Instantiate(prefab_Mole);
+                        go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(i, j, 0);
+                        go.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                        go.GetComponent<SpriteOutlineCollider>().BuildCollider();
+
+                        Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
+                        if (rb != null)
+                        {
+                            float randomTorque = Random.Range(-300f, 300f); // 시계/반시계 랜덤 회전 힘
+                            rb.AddTorque(randomTorque, ForceMode2D.Impulse);
+                        }
+                    }
+                }
+            });
+        }
+    }
+    void ShakeCamera(float duration) // 카메라 쉐이킹 메서드
+    {
+        Vector3 originPos = backGround.transform.position;
+        backGround.transform.DOKill();
+        backGround.transform.DOShakePosition(duration, new Vector3(12f, 12f, 0f), 10, 90f)
+            .OnComplete(() => backGround.transform.position =  originPos);
     }
     IEnumerator SurgeLavaCoroutine() // 용암이 차오르는 메서드
     {
@@ -163,7 +217,6 @@ public class SabotageEventManager : MonoBehaviour
         // 용암의 최종 도착
         lava.transform.position = LAVA_END_POS;
     }
-
     public void StartSurgeLava()
     {
         StartCoroutine(SurgeLavaCoroutine());

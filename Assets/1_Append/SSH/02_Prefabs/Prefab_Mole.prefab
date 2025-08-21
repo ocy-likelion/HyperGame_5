@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3534556899993804699}
   - component: {fileID: 5676092641224218927}
   - component: {fileID: 4868538057279762431}
-  - component: {fileID: 7333843525428056034}
+  - component: {fileID: 8778925454571863023}
   m_Layer: 0
   m_Name: Prefab_Mole
   m_TagString: Untagged
@@ -129,7 +129,7 @@ PolygonCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 10.24, y: 15.36}
+    oldSize: {x: 1.032, y: 1.5359999}
     newSize: {x: 1.28, y: 1.28}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -185,7 +185,7 @@ MonoBehaviour:
   simplifyTolerancePixels: 1
   shrinkAmount: 0.01
   drawGizmos: 1
---- !u!114 &7333843525428056034
+--- !u!114 &8778925454571863023
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -194,6 +194,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7869635054863380352}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76dd3746c8804ec4dbd2898cc70faba1, type: 3}
+  m_Script: {fileID: 11500000, guid: f25ee9ef0a38e1643a852e723e2c61ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
