@@ -1,3 +1,5 @@
+using DG.Tweening;
+using System.Collections;
 using UnityEngine;
 
 public class BlockOnlyTop : MonoBehaviour
@@ -5,6 +7,7 @@ public class BlockOnlyTop : MonoBehaviour
     private MineralDataManager mineralDataManager;
     private Rigidbody2D rb;
     private readonly float slideForce = -7f;
+    private Coroutine coroutine;
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -24,12 +27,30 @@ public class BlockOnlyTop : MonoBehaviour
         rb.linearVelocity = new Vector2(slideForce, slideForce);
     }
 
-    //private void OnCollisionEnter2D(Collision2D collision)
-    //{
-    //    if (collision.gameObject.CompareTag("Block") || collision.gameObject.CompareTag("Platform"))
-    //    {
-    //        if (mineralDataManager == null) return; 
-    //        mineralDataManager.AddLastBlock(gameObject);
-    //    }
-    //}
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Block") || collision.gameObject.CompareTag("Platform"))
+        {
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
+            }
+
+            coroutine = StartCoroutine(TopBlockSettingCoroutine());
+        }
+    }
+
+    IEnumerator TopBlockSettingCoroutine()
+    {
+        Rigidbody2D rb = this.gameObject.GetComponent<Rigidbody2D>();
+        rb.bodyType = RigidbodyType2D.Kinematic;
+
+        yield return new WaitForSeconds(0.1f);
+
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.gravityScale = 1f;
+        rb.linearVelocity = Vector2.zero;
+        rb.angularVelocity = 0f;
+    }
+
 }
