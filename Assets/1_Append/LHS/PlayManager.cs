@@ -98,13 +98,11 @@ public class PlayManager : MonoBehaviour
 
         EventBus.Instance.Publish(Consts.GAME_OVER);
     }
-
     void EndGame()
     {
         touchArea.gameObject.SetActive(false);
         gameEnded = true;
     }
-
     void CheckHighestBlock()
     {
         // 타워 높이 갱신 & 최상단 블럭 갱신
@@ -134,7 +132,6 @@ public class PlayManager : MonoBehaviour
         if (float.IsNegativeInfinity(currentTowerHeight))
             currentTowerHeight = 0f;
     }
-
     void CheckTowerHeight()
     {
         if (clearTriggered) return;
@@ -172,16 +169,7 @@ public class PlayManager : MonoBehaviour
             EventBus.Instance.Publish(Consts.END_GAME);
         }
     }
-
-
-
-    #region gimmicks
-    void Wind() { Debug.Log("휭"); }
-    void Mole() { Debug.Log("두더지"); }
-    #endregion
-
     #region 개발용
-
     public void CreateBlock()
     {
         // 광물 생성 및 드롭 (MineralDataManager 사용)

@@ -34,8 +34,6 @@ public class SabotageEventManager : MonoBehaviour
     Sequence eventSeq;
     // 두더지 관련
     bool isTriggeredMole = false;
-    // 미니 두더쥐 관련
-    bool isTriggeredMiniMole = false;
     // 거대 두더지 관련
     bool isTriggeredMoleKing = false;
     // 스톤러쉬 관련
@@ -98,7 +96,6 @@ public class SabotageEventManager : MonoBehaviour
         }
 
         isTriggeredMole = false;
-        isTriggeredMiniMole = false;
         isTriggeredMoleKing = false;
         isTriggeredStoneRush = false;
         isTriggeredNaturalGas = false;
@@ -135,30 +132,11 @@ public class SabotageEventManager : MonoBehaviour
 
                     Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
                     if (rb != null)
-                        rb.AddTorque(UnityEngine.Random.Range(-10f, 10f), ForceMode2D.Impulse);
-                }
-            });
-        }
-    }
-    public void TriggerMiniMoleEvent() // 작은 두더지 이벤트
-    {
-        if (!isTriggeredMiniMole)
-        {
-            isTriggeredMiniMole = true;
-            CommonSabotageEvent("작은 두더지 떼가 몰려옵니다!", 2.5f, () =>
-            {
-                for (int i = -1; i < 2; i++)
-                    for (int j = 3; j < 5; j++)
                     {
-                        GameObject go = Instantiate(prefab_Mole);
-                        go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(i, j, 0);
-                        go.transform.localScale = Vector3.one * 0.5f;
-                        go.GetComponent<SpriteOutlineCollider>().BuildCollider();
-
-                        Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
-                        if (rb != null)
-                            rb.AddTorque(UnityEngine.Random.Range(-10f, 10f), ForceMode2D.Impulse);
+                        float torque = UnityEngine.Random.value < 0.5f ? -10f : 10f;
+                        rb.AddTorque(torque, ForceMode2D.Impulse);
                     }
+}
             });
         }
     }
@@ -176,7 +154,10 @@ public class SabotageEventManager : MonoBehaviour
 
                 Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
                 if (rb != null)
-                    rb.AddTorque(UnityEngine.Random.Range(-10f, 10f), ForceMode2D.Impulse);
+                {
+                    float torque = UnityEngine.Random.value < 0.5f ? -10f : 10f;
+                    rb.AddTorque(torque, ForceMode2D.Impulse);
+                }
 
                 ShakeCamera(EARTHQUAKE_DURATION);
             });

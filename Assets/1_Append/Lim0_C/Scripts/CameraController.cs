@@ -17,6 +17,11 @@ public class CameraController : MonoBehaviour
             Vector3 pos = transform.position;
 
             pos.y = Mathf.Lerp(pos.y, targetY, Time.deltaTime * followSpeed);
+
+            // x, y가 0 이하로 내려가지 않도록 제한
+            pos.x = Mathf.Max(-0.32f, pos.x);
+            pos.y = Mathf.Max(-0.32f, pos.y);
+
             transform.position = pos;
         }
     }
