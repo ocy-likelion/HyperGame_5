@@ -55,8 +55,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 1554748302433878525}
     m_Modifications:
     - target: {fileID: 219275154801701154, guid: 6c576eacb57582949b4204e1423255d5, type: 3}
+      propertyPath: m_SortingLayer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 219275154801701154, guid: 6c576eacb57582949b4204e1423255d5, type: 3}
       propertyPath: m_SortingOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 219275154801701154, guid: 6c576eacb57582949b4204e1423255d5, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1223482307
       objectReference: {fileID: 0}
     - target: {fileID: 1029665354948826157, guid: 6c576eacb57582949b4204e1423255d5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -103,8 +111,16 @@ PrefabInstance:
       value: CFXR3 Hit Misc F Smoke
       objectReference: {fileID: 0}
     - target: {fileID: 8547932227743831032, guid: 6c576eacb57582949b4204e1423255d5, type: 3}
-      propertyPath: m_SortingOrder
+      propertyPath: m_SortingLayer
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8547932227743831032, guid: 6c576eacb57582949b4204e1423255d5, type: 3}
+      propertyPath: m_SortingOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8547932227743831032, guid: 6c576eacb57582949b4204e1423255d5, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1223482307
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

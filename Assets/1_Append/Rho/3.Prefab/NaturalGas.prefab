@@ -102,6 +102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   windDirection: {x: 1, y: 0}
   windStrength: 5
+  particle: {fileID: 9062369734160708576}
 --- !u!1001 &6089664686207878190
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -154,6 +155,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6174075287941299416, guid: 870c21dd892b1cd4b89f58f3d916b0a3, type: 3}
+      propertyPath: m_SortingLayer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6174075287941299416, guid: 870c21dd892b1cd4b89f58f3d916b0a3, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1223482307
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -162,5 +171,10 @@ PrefabInstance:
 --- !u!4 &1857291131544992101 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5567779226822753611, guid: 870c21dd892b1cd4b89f58f3d916b0a3, type: 3}
+  m_PrefabInstance: {fileID: 6089664686207878190}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &9062369734160708576 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 2974298279091582926, guid: 870c21dd892b1cd4b89f58f3d916b0a3, type: 3}
   m_PrefabInstance: {fileID: 6089664686207878190}
   m_PrefabAsset: {fileID: 0}

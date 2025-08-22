@@ -1,0 +1,52 @@
+Shader "Cartoon FX/Remaster/Particle Ubershader (WebGL Safe Full)"
+{
+    Properties
+    {
+        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Blend Source", Float) = 5
+        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Blend Destination", Float) = 10
+        [ToggleNoKeyword] _ZWrite ("Depth Write", Float) = 0
+        [NoScaleOffset] _MainTex ("Texture", 2D) = "white" {}
+        _SingleChannel ("Single Channel Texture", Float) = 0
+        [Toggle(_CFXR_UV_DISTORTION)] _UseUVDistortion ("Enable UV Distortion", Float) = 0
+        [NoScaleOffset] _DistortTex ("Distortion Texture", 2D) = "gray" {}
+        _Distort ("Distortion Strength", Range(0,2)) = 0.1
+        [Toggle(_CFXR_DISSOLVE)] _UseDissolve ("Enable Dissolve", Float) = 0
+        [NoScaleOffset] _DissolveTex ("Dissolve Texture", 2D) = "gray" {}
+        _DissolveSmooth ("Dissolve Smoothing", Range(0.0001,0.5)) = 0.1
+        [Toggle(_FLIPBOOK_BLENDING)] _UseFB ("Flipbook Blending", Float) = 0
+        [Toggle(_CFXR_SECONDCOLOR_LERP)] _UseSecondColor ("Secondary Vertex Color", Float) = 0
+        [NoScaleOffset] _SecondColorTex ("Second Color Map", 2D) = "black" {}
+    }
+
+    SubShader
+    {
+        Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "PreviewType"="Plane" }
+        Blend [_SrcBlend] [_DstBlend]
+        ZWrite [_ZWrite]
+        Cull Off
+
+        Pass
+        {
+            Name "BASE"
+            Tags { "LightMode"="UniversalForward" }
+
+            CGPROGRAM
+            #pragma vertex vertex_program
+            #pragma fragment fragment_program
+            #pragma target 2.0
+            #pragma multi_compile_fog
+            #pragma shader_feature_local _ _CFXR_DISSOLVE _CFXR_UV_DISTORTION _CFXR_SECONDCOLOR_LERP _FLIPBOOK_BLENDING
+
+            // WebGL용 soft particles 우회
+            #if defined(SHADER_API_GLES) || defined(SHADER_API_GLES3)
+                #define DISABLE_SOFT_PARTICLES
+            #endif
+
+            #define CFXR_UBERSHADER
+            #include "CFXR_PASSES.cginc"
+            ENDCG
+        }
+    }
+
+    CustomEditor "CartoonFX.MaterialInspector"
+}

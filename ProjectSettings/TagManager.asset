@@ -45,6 +45,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Particle
+    uniqueID: 1223482307
+    locked: 0
+  - name: Lava
+    uniqueID: 173351445
+    locked: 0
   m_RenderingLayers:
   - Default
   - Light Layer 1

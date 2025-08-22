@@ -8,22 +8,28 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: cfxr proc ring ab
-  m_Shader: {fileID: -6465566751694194690, guid: 1581eccce46ba384596a1dce7936ab19,
-    type: 3}
-  m_ValidKeywords:
-  - _FADING_ON
+  m_Shader: {fileID: -6465566751694194690, guid: 4dc4fa150d304434e888396a85f5166d, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
   m_InvalidKeywords:
   - _CFXR_DITHERED_SHADOWS_OFF
+  - _FADING_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _DissolveTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DistortTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -35,10 +41,15 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SecondColorTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _CFXR_DITHERED_SHADOWS: 0
     - _DissolveSmooth: 0.1
+    - _Distort: 0.1
     - _DstBlend: 10
     - _HdrBoost: 0
     - _HdrMultiply: 0
@@ -50,9 +61,14 @@ Material:
     - _SoftParticlesFadeDistanceNear: 0
     - _SrcBlend: 5
     - _UseDissolve: 0
+    - _UseFB: 0
     - _UseRadialUV: 0
     - _UseSP: 1
+    - _UseSecondColor: 0
+    - _UseUVDistortion: 0
     - _WorldSpaceRing: 0
+    - _ZWrite: 0
     m_Colors:
     - _Debug: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1

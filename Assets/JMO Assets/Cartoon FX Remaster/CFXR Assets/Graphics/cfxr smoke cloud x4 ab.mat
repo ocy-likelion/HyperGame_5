@@ -8,18 +8,18 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: cfxr smoke cloud x4 ab
-  m_Shader: {fileID: -6465566751694194690, guid: 1a29b4d27eb8b04479ef89c00dea533d, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 4dc4fa150d304434e888396a85f5166d, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ALPHABLEND_ON
   - _CFXR_DISSOLVE
-  - _CFXR_DITHERED_SHADOWS_ON
-  - _FADING_ON
   m_InvalidKeywords:
   - _
+  - _ALPHABLEND_ON
+  - _CFXR_DITHERED_SHADOWS_ON
   - _CFXR_OVERLAYBLEND_RGBA
   - _CFXR_OVERLAYTEX_OFF
+  - _FADING_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
