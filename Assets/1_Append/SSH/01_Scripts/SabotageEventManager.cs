@@ -50,7 +50,7 @@ public class SabotageEventManager : MonoBehaviour
     readonly Vector3 LAVA_START_POS = new Vector3(0, -10f, 0);
     Vector3 LAVA_END_POS;
     const float LAVA_DURATION = 60f;
-    const int LAVA_OFFSET = 5; // 용암 위치 오프셋 값(세로 길이 / 2)
+    const float LAVA_OFFSET = 2.25f; // 용암 위치 오프셋 값(세로 길이 / 2)
 
     void Awake()
     {
@@ -266,14 +266,15 @@ public class SabotageEventManager : MonoBehaviour
             lava.transform.position = Vector3.Lerp(LAVA_START_POS, LAVA_END_POS, t);
 
             // 용암이 따라잡는지 체크
-            if (lava.transform.position.y + 5 > playManager.currentTowerHeight && playManager.currentTowerHeight > -3 && playManager.HasActiveBlock())
+            if (lava.transform.position.y + LAVA_OFFSET > playManager.currentTowerHeight && playManager.currentTowerHeight > -3 && playManager.HasActiveBlock())
             {
                 text_LavaAlarm.SetActive(true);
 
+                // 3 프레임마다 2점 차감
                 frameCounter++;
                 if (frameCounter >= 3)
                 {
-                    gameManager.score -= 2; // 5프레임마다 1점 차감
+                    gameManager.score -= 2;
                     frameCounter = 0;
                 }
             }

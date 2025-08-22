@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     public bool isWin = false;
     public float timerDuration = 30f;
     private float currentTime;
-    public int score = 5000;
+    public int score = 10000;
     private bool isTimeFiveSecond = false;
     void OnEnable()
     {
