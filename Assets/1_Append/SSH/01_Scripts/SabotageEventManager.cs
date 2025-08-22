@@ -172,7 +172,7 @@ public class SabotageEventManager : MonoBehaviour
             {
                 for (int i = -1; i < 2; i+=2)
                 {
-                    for (int j = 3; j < 11; j+=2)
+                    for (int j = 3; j < 6; j+=2)
                     {
                         GameObject go = Instantiate(prefab_BlockTopObject);
                         go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(i, j, 0);

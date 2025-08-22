@@ -6,7 +6,7 @@ public class SpriteOutlineCollider : MonoBehaviour
 {
     [Header("주요 프로퍼티")]
     float alphaThreshold = 0.1f;
-    public float simplifyTolerancePixels = 1f;
+    public float simplifyTolerancePixels = 1.2f;
     [Range(0f, 0.1f)] public float shrinkAmount = 0.02f;
     public bool drawGizmos = true;
 
@@ -14,7 +14,7 @@ public class SpriteOutlineCollider : MonoBehaviour
     List<List<Vector2>> contours = new List<List<Vector2>>();
 
     [Header("최적화")]
-    const int DOWNSCALE_AMOUNT = 2; // 2~4 정도가 적당
+    const int DOWNSCALE_AMOUNT = 4; // 2~4 정도가 적당
 
     public void BuildCollider()
     {
