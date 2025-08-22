@@ -540,9 +540,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab_Mole: {fileID: 7869635054863380352, guid: 66707e7c659c8624d86edf462d743ceb, type: 3}
+  prefab_BlockTopObject: {fileID: 806113692991070866, guid: ce81a4c517042214e807e8ae7cd77781, type: 3}
+  effectObjectPool: {fileID: 1372612548}
+  blockController: {fileID: 886254982}
   NaturalGasObj: {fileID: 2022941235}
   Text_SabotageAlarm: {fileID: 427658436}
-  blockController: {fileID: 886254982}
   backGround: {fileID: 1781107776}
   ground: {fileID: 1635174783}
   lava: {fileID: 1255144649}
