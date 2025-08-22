@@ -274,7 +274,7 @@ public class SabotageEventManager : MonoBehaviour
                 frameCounter++;
                 if (frameCounter >= 3)
                 {
-                    gameManager.score -= 2;
+                    gameManager.score -= 1;
                     frameCounter = 0;
                 }
             }
