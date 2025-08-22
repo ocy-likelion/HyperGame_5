@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fc0a4e3635345d4eaca784cd36808ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simplifyTolerancePixels: 0.7
+  simplifyTolerancePixels: 1
   shrinkAmount: 0
   drawGizmos: 1
 --- !u!114 &1967482421517775761
