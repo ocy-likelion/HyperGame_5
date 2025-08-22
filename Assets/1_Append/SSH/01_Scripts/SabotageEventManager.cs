@@ -16,11 +16,14 @@ public class SabotageEventManager : MonoBehaviour
 
     // 씬 오브젝트
     [Header("씬 오브젝트")]
+    [SerializeField] UIManager uiManager;
+    [SerializeField] GameManager gameManager;
     MineralDataManager mineralDataManager;
     [SerializeField] EffectObjectPool effectObjectPool;
     [SerializeField] BlockController blockController;
 
     [SerializeField] GameObject NaturalGasObj;
+    [SerializeField] GameObject text_LavaAlarm;
     [SerializeField] GameObject Text_SabotageAlarm;
     [SerializeField] GameObject backGround;
     [SerializeField] GameObject ground;
@@ -44,7 +47,7 @@ public class SabotageEventManager : MonoBehaviour
     const float EARTHQUAKE_AMOUNT = 0.35f;
     bool isTriggeredEarthQuake = false;
     // 용암 관련
-    readonly Vector3 LAVA_START_POS = new Vector3(0, -12f, 0);
+    readonly Vector3 LAVA_START_POS = new Vector3(0, -10f, 0);
     Vector3 LAVA_END_POS;
     const float LAVA_DURATION = 60f;
     const int LAVA_OFFSET = 5; // 용암 위치 오프셋 값(세로 길이 / 2)
@@ -253,25 +256,37 @@ public class SabotageEventManager : MonoBehaviour
     }
     IEnumerator SurgeLavaCoroutine() // 용암이 차오르는 코루틴
     {
-        // 경과한 시간
         float elapsed = 0f;
+        int frameCounter = 0; // 5프레임마다 점수 차감을 위한 카운터
 
-        // 용암이 움직이는 메서드
         while (elapsed < LAVA_DURATION)
         {
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / LAVA_DURATION);
             lava.transform.position = Vector3.Lerp(LAVA_START_POS, LAVA_END_POS, t);
 
+            // 용암이 따라잡는지 체크
             if (lava.transform.position.y + 5 > playManager.currentTowerHeight && playManager.currentTowerHeight > -3 && playManager.HasActiveBlock())
             {
-                Debug.Log("용암이 따라잡음!!");
+                text_LavaAlarm.SetActive(true);
+
+                frameCounter++;
+                if (frameCounter >= 3)
+                {
+                    gameManager.score -= 2; // 5프레임마다 1점 차감
+                    frameCounter = 0;
+                }
+            }
+            else
+            {
+                text_LavaAlarm.SetActive(false);
+
+                frameCounter = 0; // 따라잡지 않았으면 카운터 초기화
             }
 
             yield return null;
         }
 
-        // 용암의 최종 도착
         lava.transform.position = LAVA_END_POS;
     }
     public void StartSurgeLava() // 용암 코루틴 시작

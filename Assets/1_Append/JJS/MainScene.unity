@@ -541,9 +541,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab_Mole: {fileID: 7869635054863380352, guid: 66707e7c659c8624d86edf462d743ceb, type: 3}
   prefab_BlockTopObject: {fileID: 806113692991070866, guid: ce81a4c517042214e807e8ae7cd77781, type: 3}
+  uiManager: {fileID: 0}
+  gameManager: {fileID: 1839854907}
   effectObjectPool: {fileID: 1372612548}
   blockController: {fileID: 886254982}
   NaturalGasObj: {fileID: 2022941235}
+  text_LavaAlarm: {fileID: 956174165}
   Text_SabotageAlarm: {fileID: 427658436}
   backGround: {fileID: 1781107776}
   ground: {fileID: 1635174783}
@@ -9739,7 +9742,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: 228}
+  m_AnchoredPosition: {x: 0, y: -399}
   m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &956174167
@@ -9784,7 +9787,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC6A9\uC554\uC5D0 \uB2FF\uC774\uBA74 \uC810\uC218\uAC00 \uAE4E\uC785\uB2C8\uB2E4!\n\uC870\uC2EC\uD558\uC138\uC694!"
+  m_text: "\uC6A9\uC554\uC5D0 \uB530\uB77C\uC7A1\uD788\uBA74 \uC810\uC218\uB97C \uC783\uC2B5\uB2C8\uB2E4!\n\uB354
+    \uB192\uC774 \uD0D1\uC744 \uC313\uC544\uC57C\uD574\uC694!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8e50a271e2d465649ac1fb4965a7d43e, type: 2}
   m_sharedMaterial: {fileID: 6412805146833517776, guid: 8e50a271e2d465649ac1fb4965a7d43e, type: 2}
