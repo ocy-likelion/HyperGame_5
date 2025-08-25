@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System.Collections;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 public class BlockOnlyTop : MonoBehaviour
 {
@@ -36,15 +37,30 @@ public class BlockOnlyTop : MonoBehaviour
                 StopCoroutine(coroutine);
             }
 
-            rb.gravityScale = 0f;
-            coroutine = StartCoroutine(TopBlockSettingCoroutine());
+            StartCoroutine(TopBlockSettingCoroutine());
         }
     }
 
     IEnumerator TopBlockSettingCoroutine()
     {
-        yield return null;
+        // 중력을 0에서 1로 점진적으로 증가
+        float duration = 0.5f; // 1초
+        float elapsed = 0f;
+        float startGravity = 0f;
+        float targetGravity = 1f;
 
-        rb.gravityScale = 1f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime; // 매 프레임 시간 누적
+            float t = elapsed / duration; // 0 ~ 1 비율
+            rb.gravityScale = Mathf.Lerp(startGravity, targetGravity, t);
+            yield return null; // 다음 프레임까지 대기
+        }
+
+        // 마지막에 정확히 1로 고정
+        rb.gravityScale = targetGravity;
+
+        // 코루틴 종료
+        coroutine = null;
     }
 }
