@@ -315,7 +315,7 @@ public class UIManager : MonoBehaviour
         {
             ActivateEffectUnscaled(FailEffect);
             ClearImage.sprite = FailSprite;
-            ClearScoreText.text = "";
+            ClearScoreText.text = "0";
             RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.Lose);
         }
     }
