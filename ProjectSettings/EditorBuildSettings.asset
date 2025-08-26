@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/1_Append/JJS/MainScene.unity
+    path: Assets/0_Append/JJS/MainScene.unity
     guid: daa222b6de5e0224b9576b91b226c9f4
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: ccaadb2709d1d784bb868d2806c08c92, type: 2}
