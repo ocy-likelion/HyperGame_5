@@ -8,6 +8,7 @@ public class TitleLogoDropper : MonoBehaviour
 {
     [Header("타이틀 배경이미지")]
     public GameObject titleObject;
+    public GameObject GradeLogo;
 
     [Header("Target (생략 시 본인)")]
     public RectTransform target;
@@ -82,6 +83,22 @@ public class TitleLogoDropper : MonoBehaviour
         logoBasePos = target.anchoredPosition;
         target.anchoredPosition = logoBasePos + new Vector2(0f, dropHeight);
         target.localScale = Vector3.one;
+
+        GradeLogo.SetActive(true);
+
+        var cg = GradeLogo.GetComponent<CanvasGroup>();
+        if (cg == null) cg = GradeLogo.AddComponent<CanvasGroup>();
+        cg.alpha = 1f;
+
+        // 2초 유지 후 0.5초 동안 페이드아웃
+        DOVirtual.DelayedCall(2f, () =>
+        {
+            cg.DOFade(0f, 0.5f).SetUpdate(useUnscaledTime).OnComplete(() =>
+            {
+                GradeLogo.SetActive(false);
+                cg.alpha = 1f; // 다음에 다시 쓸 때 대비 초기화
+            });
+        }).SetUpdate(useUnscaledTime);
 
         // --- 버튼 시작 상태 ---
         InitButtonsForEnter();
