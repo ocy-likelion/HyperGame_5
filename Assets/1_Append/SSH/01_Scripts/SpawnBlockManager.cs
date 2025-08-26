@@ -6,17 +6,17 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Collections.Generic;
 using System.Linq;
 
-public class MineralDataManager : MonoBehaviour
+public class SpawnBlockManager : MonoBehaviour
 {
     [Header("Components")]
-    [SerializeField] private Transform topParent;
+    [SerializeField] private Transform topObjParent;
     //private SabotageEventManager sabotageEventManager;
     private PlayManager playManager;
 
     [Header("Prefabs")]
     [SerializeField] private GameObject prefab_BlockDropProxy;
     [SerializeField] ProxyObjectPool blockDropProxyPool;
-    [SerializeField] EffectObjectPool effectObjectPool;
+    [SerializeField] EffectObjectPool effectObjPool;
 
     [Header("Properties")]
     private readonly Vector2 GEN_POS = new Vector2(0, 5f); // Mineral generation point
@@ -37,7 +37,7 @@ public class MineralDataManager : MonoBehaviour
         playManager = GetComponent<PlayManager>();
     }
 
-    public void GenerateRandomMineral()
+    public void SpawnRandomBlock()
     {
         float n = Random.Range(0f, 1f);
         MineralTypeEnum type;
@@ -60,12 +60,12 @@ public class MineralDataManager : MonoBehaviour
             type = MineralTypeEnum.Stone;
         }
 
-        GenerateMineralAsync(type);
+        CreateBlockObj(type);
         mineralCount++;
         //sabotageEventManager.EventCheckByMineralCount(mineralCount);
     }
 
-    private void GenerateMineralAsync(MineralTypeEnum type)
+    private void CreateBlockObj(MineralTypeEnum type)
     {
         // Set sprite address based on mineral type
         StringBuilder address = new StringBuilder($"Sprite_{type.ToString()}");
@@ -110,13 +110,13 @@ public class MineralDataManager : MonoBehaviour
             // Instantiate prefab
             GameObject proxyBlock = blockDropProxyPool.Get();
 
-            proxyBlock.GetComponent<BlockDropProxy>().InstantiateProxyObject(this, blockDropProxyPool, effectObjectPool);
+            proxyBlock.GetComponent<BlockDropProxy>().InstantiateProxyObject(this, blockDropProxyPool, effectObjPool);
             proxyBlock.transform.position = spawnPosition;
             proxyBlock.transform.eulerAngles = GetRandomRotation();
-            proxyBlock.transform.SetParent(topParent);
+            proxyBlock.transform.SetParent(topObjParent);
             proxyBlock.GetComponent<SpriteRenderer>().sprite = opHandle.Result;
             proxyBlock.GetComponent<SpriteOutlineCollider>().BuildCollider();
-            playManager.blockList.Add(proxyBlock.GetComponent<BlockDropProxy>().InstantiateTopObject()); // 탑 오브젝트를 바로 PlayManager의 BlockList에 넣기
+            playManager.BlockList.Add(proxyBlock.GetComponent<BlockDropProxy>().InstantiateTopObject()); // 탑 오브젝트를 바로 PlayManager의 BlockList에 넣기
             EventBus.Instance.Publish("SpawnBlock", proxyBlock); // 프록시 오브젝트를 이벤트 버스로 퍼블리시
         }
     }
@@ -153,7 +153,7 @@ public class MineralDataManager : MonoBehaviour
 
     public Transform GetParentTopObject()
     {
-        return topParent;
+        return topObjParent;
     }
 
     Vector3[] rots = { new Vector3(0, 0, 0), new Vector3(0, 0, 90), new Vector3(0, 0, 180), new Vector3(0, 0, 270) };

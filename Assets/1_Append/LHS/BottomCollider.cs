@@ -27,7 +27,7 @@ public class BottomCollider : MonoBehaviour
             // UI는 시각효과만
             uiManager.AnimateScoreChange(from, to);
 
-            playManager.blockList.Remove(collision.gameObject);
+            playManager.BlockList.Remove(collision.gameObject);
             Destroy(collision.gameObject);
         }
     }

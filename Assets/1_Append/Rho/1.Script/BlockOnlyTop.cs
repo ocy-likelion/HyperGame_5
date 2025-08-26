@@ -5,7 +5,7 @@ using static UnityEngine.Rendering.DebugUI;
 
 public class BlockOnlyTop : MonoBehaviour
 {
-    private MineralDataManager mineralDataManager;
+    private SpawnBlockManager mineralDataManager;
     private Rigidbody2D rb;
     private readonly float slideForce = -7f;
     private Coroutine coroutine;
@@ -14,7 +14,7 @@ public class BlockOnlyTop : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void InstantiateProxyObject(Transform _parent, Sprite sprite, EffectObjectPool _effectObjectPool, MineralDataManager _mineralDataManager)
+    public void InstantiateProxyObject(Transform _parent, Sprite sprite, EffectObjectPool _effectObjectPool, SpawnBlockManager _mineralDataManager)
     {
         this.transform.SetParent(_parent);
         GetComponent<SpriteRenderer>().sprite = sprite;

@@ -41,7 +41,7 @@ public class CharacterClimb : MonoBehaviour
         }
 
         // 시작 시 현재 타워 높이 기준으로 세팅
-        displayedHeight = playManager.currentTowerHeight;
+        displayedHeight = playManager.CurrentTowerHeight;
         // 캐릭터가 땅 밑에서 튀어나오는 걸 방지하려면 시작 위치도 살짝 맞춰준다(선택)
         Vector3 top = playManager.HighestTopPoint;
         if (top != Vector3.zero)
@@ -57,7 +57,7 @@ public class CharacterClimb : MonoBehaviour
         if (playManager == null || cam == null) return;
 
         // 1) 목표 높이(타워 꼭대기 y) 계산
-        float targetHeight = playManager.currentTowerHeight;
+        float targetHeight = playManager.CurrentTowerHeight;
         SmoothDisplayedHeight(targetHeight);
 
         // 2) 타깃 앵커 위치(최상단 블록의 x, 표시높이 + 오프셋)

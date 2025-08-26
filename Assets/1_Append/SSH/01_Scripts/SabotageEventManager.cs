@@ -18,7 +18,7 @@ public class SabotageEventManager : MonoBehaviour
     [Header("씬 오브젝트")]
     [SerializeField] UIManager uiManager;
     [SerializeField] GameManager gameManager;
-    MineralDataManager mineralDataManager;
+    SpawnBlockManager mineralDataManager;
     [SerializeField] EffectObjectPool effectObjectPool;
     [SerializeField] BlockController blockController;
 
@@ -58,7 +58,7 @@ public class SabotageEventManager : MonoBehaviour
         TryGetComponent(out playManager);
         TryGetComponent(out mineralDataManager);
 
-        LAVA_END_POS = new Vector3(0, playManager.goalTowerHeight - LAVA_OFFSET, 0);
+        LAVA_END_POS = new Vector3(0, PlayManager.GOAL_HEIGHT - LAVA_OFFSET, 0);
     }
     void Start()
     {
@@ -67,23 +67,23 @@ public class SabotageEventManager : MonoBehaviour
     }
     void Update()
     {
-        if (!isTriggeredMole && playManager.GetElaspedTime() > 7f) // 10초 : 두더지 3마리
+        if (!isTriggeredMole && playManager.GameElapsedTime > 7f) // 10초 : 두더지 3마리
         {
             TriggerMoleEvent();
         }
-        if (!isTriggeredEarthQuake && playManager.GetElaspedTime() > 17f) // 20초 : 지진
+        if (!isTriggeredEarthQuake && playManager.GameElapsedTime > 17f) // 20초 : 지진
         {
             TriggerEarthQuakeEvent();
         }
-        if (!isTriggeredStoneRush && playManager.GetElaspedTime() > 27f) // 30초 : 스톤러쉬
+        if (!isTriggeredStoneRush && playManager.GameElapsedTime > 27f) // 30초 : 스톤러쉬
         {
             TriggerStoneRushEvent();
         }
-        if (!isTriggeredMoleKing && playManager.GetElaspedTime() > 37f) // 40초 : 몰킹 1마리
+        if (!isTriggeredMoleKing && playManager.GameElapsedTime > 37f) // 40초 : 몰킹 1마리
         {
             TriggerMoleKingEvent();
         }
-        if (!isTriggeredNaturalGas && playManager.GetElaspedTime() > 47f) // 50초 : 천연가스
+        if (!isTriggeredNaturalGas && playManager.GameElapsedTime > 47f) // 50초 : 천연가스
         {
             TriggerNaturalGasEvent();
         }
@@ -266,7 +266,7 @@ public class SabotageEventManager : MonoBehaviour
             lava.transform.position = Vector3.Lerp(LAVA_START_POS, LAVA_END_POS, t);
 
             // 용암이 따라잡는지 체크
-            if (lava.transform.position.y + LAVA_OFFSET > playManager.currentTowerHeight && playManager.currentTowerHeight > -3 && playManager.HasActiveBlock())
+            if (lava.transform.position.y + LAVA_OFFSET > playManager.CurrentTowerHeight && playManager.CurrentTowerHeight > -3 && playManager.IsExistTopBlock())
             {
                 text_LavaAlarm.SetActive(true);
 

@@ -3,13 +3,19 @@ using static Enums;
 
 public class GameManager : MonoBehaviour
 {
-    public UIManager uiManager;
-    private bool gameEnd = false;
-    public bool isWin = false;
+    [SerializeField] private UIManager uiManager;
+    [SerializeField] private GameObject touchArea;
+
+    private bool isGameEnd = false;
+    public bool isClear = false;
     public float timerDuration = 30f;
     private float currentTime;
     public int score = 10000;
     private bool isTimeFiveSecond = false;
+
+    // public Getter
+    public bool IsGameEnd => isGameEnd;
+
     void OnEnable()
     {
         EventBus.Instance.Subscribe(Consts.END_GAME, EndGame);
@@ -27,7 +33,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (gameEnd) return;
+        if (isGameEnd) return;
 
         currentTime -= Time.deltaTime;
 
@@ -38,9 +44,9 @@ public class GameManager : MonoBehaviour
             RealSoundManager.Instance.PlayOneShot(SfxClips.TimeEmergency);
         }
 
-        if (currentTime <= 0f || isWin)
+        if (currentTime <= 0f || isClear)
         {
-            gameEnd = true;     // 재진입 방지
+            isGameEnd = true;     // 재진입 방지
             EndGame(); // 아래 Pulish하면 실행됨!
             EventBus.Instance.Publish(Consts.END_GAME);
         }
@@ -49,11 +55,12 @@ public class GameManager : MonoBehaviour
 
     private void EndGame()
     {
-        uiManager?.HideHoldCountdownUI();
-        if (gameEnd == false) gameEnd = true; 
-        Time.timeScale = 0f; 
+        uiManager.HideHoldCountdownUI();
+        if (isGameEnd == false) isGameEnd = true; 
+        Time.timeScale = 0f;
+        touchArea.SetActive(false); // 터치 막기
 
-        if (isWin)
+        if (isClear)
         {
             int timeBonus = Mathf.Max(0, Mathf.FloorToInt(currentTime) * 100);
             int from = score;
@@ -78,5 +85,5 @@ public class GameManager : MonoBehaviour
     }
 
   
-    public void Test() { isWin = true; }
+    public void Test() { isClear = true; }
 }

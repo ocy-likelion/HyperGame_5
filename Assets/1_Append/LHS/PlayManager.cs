@@ -6,223 +6,108 @@ using UnityEngine.UI;
 
 public class PlayManager : MonoBehaviour
 {
+    // 상수
+    public const float GOAL_HEIGHT = 1.25f; // 블럭 쌓기의 목표 높이(2.25)
+    private const float TIME_LIMIT = 60f; // 제한 시간
+    private const float STABLE_DURATION = 3f; // 블럭들이 안정화된 후 버텨야하는 시간
+    private const float UNSTABLE_VELOCITY_THRESHOLD = -0.03f; // 블록이 불안정하다고 판단할 Y축 속도 임계값
+
+    // 씬 오브젝트
+    [Header("씬 오브젝트")]
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private GameObject touchArea;
-
-    public GameObject BlockPrefab;
-    public List<GameObject> blockList = new List<GameObject>();
-    private readonly List<GameObject> newBlockList = new List<GameObject>();
-
-    private GameObject highestBlock;
-
-    public float currentTowerHeight;
-    public float goalTowerHeight = 2.25f; // 임시
-
-    private float totalElapsedTime = 0.0f;
-    private float timeLimit = 60.0f; // 왜 15였지
-    private bool gameEnded = false;
-
     [SerializeField] private UIManager uiManager;
-    [SerializeField] private float clearHoldSeconds = 3f;
-    private float clearHoldTimer = 0f;
-    private bool clearTriggered = false;
-    public float NotSafeVel = 0.03f;
+    [SerializeField] private GameManager gameManager;
+    [SerializeField] private GameObject towerHeightLine; // 유니티 에디터 전용
 
-    // dev UI
-    [SerializeField] private GameObject towerHeightLine;
-    private float nextTurnTime = 2f;
+    // private 필드(컴포넌트)
+    private SpawnBlockManager spawnBlockManager;
 
-    // ==== 추가된 프로퍼티(HEAD) ====
+    // private 필드
+    private List<GameObject> topBlockList = new List<GameObject>(); // 플레이어가 떨어뜨린 블럭 오브젝트 리스트
+    private GameObject highestBlock; // 가장 높이 있는 블럭 오브젝트
+    private float currentTowerHeight; // 현재 쌓은 블럭(이하 타워)의 높이
+    private float gameElapsedTime = 0.0f; // 게임 시작 후 경과된 시간
+    private float stableElapsedTime = 0f; // 타워가 안정을 찾은 후 경과된 시간
+    private bool isBlockLanded; // 떨어뜨린 블럭이 쌓인 블럭들에 닿았는지 여부
+
+    // public Getter
+    public List<GameObject> BlockList => topBlockList;
     public GameObject HighestBlock => highestBlock;
-
+    public float CurrentTowerHeight => currentTowerHeight;
+    public float GameElapsedTime => gameElapsedTime;
     public Vector3 HighestTopPoint
     {
         get
         {
             if (highestBlock == null) return Vector3.zero;
-            var col = highestBlock.GetComponent<Collider2D>();
+
+            Collider2D col = highestBlock.GetComponent<Collider2D>();
             if (col == null) return highestBlock.transform.position;
-            var b = col.bounds;
-            return new Vector3(highestBlock.transform.position.x, b.max.y, highestBlock.transform.position.z);
+
+            return new Vector3(highestBlock.transform.position.x, col.bounds.max.y, highestBlock.transform.position.z);
         }
     }
 
-    // ==== 컴포넌트(dev/block_fin5) ====
-    private MineralDataManager mineralDataManager;
-
-    void Awake()
+    // 유니티 콜백
+    private void Awake()
     {
-        mineralDataManager = GetComponent<MineralDataManager>();
+        TryGetComponent(out spawnBlockManager);
     }
-
-    void OnEnable()
+    private void OnEnable()
     {
-        EventBus.Instance.Subscribe(Consts.END_GAME, EndGame);
-        EventBus.Instance.Subscribe(Consts.BLOCK_LANDED, AddBlock);
-        EventBus.Instance.Subscribe("RespawnBlock", RespawnBlock);
+        EventBus.Instance.Subscribe(Consts.BLOCK_LANDED, OnBlockLanded);
+        EventBus.Instance.Subscribe(Consts.RESPAWN_BLOCK, RespawnBlock);
     }
-
-    void OnDisable()
+    private void OnDisable()
     {
-        EventBus.Instance.Unsubscribe(Consts.END_GAME, EndGame);
-        EventBus.Instance.Unsubscribe(Consts.BLOCK_LANDED, AddBlock);
+        EventBus.Instance.Unsubscribe(Consts.BLOCK_LANDED, OnBlockLanded);
         EventBus.Instance.Unsubscribe("RespawnBlock", RespawnBlock);
     }
-
-    void Start()
+    private void Start()
     {
         StartCoroutine(GameTimer());
-        CreateBlock();
+        spawnBlockManager.SpawnRandomBlock();
     }
-
-    void Update()
+    private void Update()
     {
-        if (gameEnded) return;
+        if (gameManager.IsGameEnd) return;
 
-        //elapsedTimeText.text = ((int)totalElapsedTime).ToString();
+        UpdateTowerStatus(); // 최고 블럭 및 높이 갱신, 안정 상태 체크, 클리어 체크
 
-        CheckHighestBlock();
-        CheckTowerHeight();
-
+#if UNITY_EDITOR
         if (towerHeightLine != null)
+        {
             towerHeightLine.transform.position = new Vector3(0.0f, currentTowerHeight, 0.0f);
+        }
+#endif
     }
 
-    IEnumerator GameTimer()
+    // 블럭
+    private void OnBlockLanded() // 떨어뜨린 블럭이 쌓인 블럭들과 닿았을 때 호출되는 이벤트 메서드
     {
-        while (totalElapsedTime < timeLimit)
-        {
-            totalElapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        EventBus.Instance.Publish(Consts.GAME_OVER);
-    }
-    void EndGame()
-    {
-        touchArea.gameObject.SetActive(false);
-        gameEnded = true;
-    }
-    void CheckHighestBlock()
-    {
-        // 타워 높이 갱신 & 최상단 블럭 갱신
-        if (currentTowerHeight < -3)
-        {
-            currentTowerHeight = -3;
-        }
-        currentTowerHeight = float.NegativeInfinity;
-        highestBlock = null;
-
-        foreach (var block in blockList)
-        {
-            if (block == null) continue;
-
-            var col = block.GetComponent<Collider2D>();
-            if (col == null) continue;
-
-            float height = col.bounds.max.y;
-
-            if (height > currentTowerHeight)
-            {
-                currentTowerHeight = height;
-                highestBlock = block;
-            }
-        }
-
-        if (float.IsNegativeInfinity(currentTowerHeight))
-            currentTowerHeight = 0f;
-    }
-    void CheckTowerHeight()
-    {
-        if (clearTriggered) return;
-
-        bool reached = currentTowerHeight >= goalTowerHeight;
-
-        if (!reached)
-        {
-            clearHoldTimer = 0f;
-            uiManager?.ResetHoldCountdown();  // ↓로 떨어지면 카운트 UI 리셋
-            return;
-        }
-
-        // 도달했지만 불안정하면 리셋
-        if (CheckTowerIsNotSafe())
-        {
-            clearHoldTimer = 0f;
-            uiManager?.ResetHoldCountdown();
-            return;
-        }
-
-        // 안정 상태 누적
-        clearHoldTimer += Time.deltaTime;
-
-        float remaining = Mathf.Max(0f, clearHoldSeconds - clearHoldTimer);
-        uiManager?.UpdateHoldCountdown(remaining); // ★ 숫자 튀어나오는 효과 갱신
-
-        if (clearHoldTimer >= clearHoldSeconds)
-        {
-            clearTriggered = true;
-            uiManager?.HideHoldCountdownUI(); // ★ 확정 시 숨김
-
-            var gameManager = GameObject.FindFirstObjectByType<GameManager>();
-            if (gameManager != null) gameManager.isWin = true;
-            EventBus.Instance.Publish(Consts.END_GAME);
-        }
-    }
-    #region 개발용
-    public void CreateBlock()
-    {
-        // 광물 생성 및 드롭 (MineralDataManager 사용)
-        if (mineralDataManager != null)
-        {
-            mineralDataManager.GenerateRandomMineral();
-        }
-        else
-        {
-            Debug.LogWarning("[PlayManager] MineralDataManager가 없습니다.");
-        }
-    }
-    bool isBlockLanded;
-    void AddBlock()
-    {
-        //if (newBlockList.Count > 0)
-        //{
-        //    blockList.Add(newBlockList[0]);
-        //    newBlockList.RemoveAt(0);
-        //}
         isBlockLanded = true;
     }
-
-    void RespawnBlock()
+    private void RespawnBlock() // 떨어뜨릴 블럭을 다시 생성
     {
-        StartCoroutine(WaitAndCreateBlock());
+        StartCoroutine(SpawnBlockWhenLanded());
     }
-
-    IEnumerator WaitAndCreateBlock()
+    IEnumerator SpawnBlockWhenLanded()
     {
-        //yield return new WaitForSeconds(nextTurnTime);
-
-        //// 쓰러지고 있는지 판단해서 쓰러지면 더 기다림
-        //while (CheckTowerIsNotSafe())
-        //{
-        //    yield return new WaitForSeconds(nextTurnTime);
-        //}
-
-        //EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight());
-        //yield return new WaitForSeconds(1f);    // 카메라 움직이는 동안 생성 대기
-
+        // 떨어뜨린 블럭이 쌓인 블럭들에 닿을 때까지 대기
         while (!isBlockLanded)
         {
             yield return null;
         }
-        EventBus.Instance.Publish("SetCameraHeight", CalculateSetCameraHeight()); // 떨어짐과 동시에 카메라 위치 설정
 
-        isBlockLanded = false;
-        CreateBlock();
+        isBlockLanded = false; // 블럭 랜딩 여부 초기화
+        spawnBlockManager.SpawnRandomBlock(); // 블럭 생성
+
+        // LEGACY
+        // EventBus.Instance.Publish("SetCameraHeight", GetCameraHeight()); // 떨어짐과 동시에 카메라 위치 설정
     }
 
-    // 타워가 안정한지 체크
-    bool CheckTowerIsNotSafe()
+    // 쌓여진 블럭 상태 체크
+    bool IsTowerUnstable() // 타워가 안정한지 체크
     {
         if (highestBlock == null) return false;
 
@@ -231,37 +116,86 @@ public class PlayManager : MonoBehaviour
 
         // 표준 Rigidbody2D 속도 사용
         var velocityY = rb.linearVelocity.y;
-        bool isNotSafe = (velocityY <= -NotSafeVel);
+        bool isNotSafe = (velocityY <= UNSTABLE_VELOCITY_THRESHOLD);
         return isNotSafe;
     }
+    /// <summary>
+    /// 매 프레임 타워 상태 갱신
+    /// - 최고 블록 높이 계산
+    /// - 쌓인 블럭들이 안정 상태인지 체크
+    /// - 목표 높이 달성 시 클리어 처리
+    /// </summary>
+    private void UpdateTowerStatus()
+    {
+        // 최고 블럭 및 높이 갱신
+        highestBlock = null;
+        currentTowerHeight = float.NegativeInfinity;
 
-    // 카메라 높이값 계산
-    public float CalculateSetCameraHeight()
+        foreach (GameObject topBlock in topBlockList)
+        {
+            if (topBlock == null) continue;
+
+            Collider2D col = topBlock.GetComponent<Collider2D>();
+            if (col == null) continue;
+
+            float topY = col.bounds.max.y;
+            if (topY > currentTowerHeight)
+            {
+                currentTowerHeight = topY;
+                highestBlock = topBlock;
+            }
+        }
+
+        if (float.IsNegativeInfinity(currentTowerHeight)) // 블록 없을 경우 높이 초기화
+            currentTowerHeight = 0f;
+
+        // 쌓인 블럭들이 안정 상태인지 체크
+        if (currentTowerHeight < GOAL_HEIGHT || IsTowerUnstable()) // 안정하지 못하거나 목표 높이에 도달하지 못한 경우 리턴
+        {
+            stableElapsedTime = 0f;
+            uiManager?.ResetHoldCountdown();
+            return;
+        }
+
+        stableElapsedTime += Time.deltaTime; // 안정 시간 누적
+        uiManager.UpdateHoldCountdown(Mathf.Max(0f, STABLE_DURATION - stableElapsedTime)); // 안정된 시간만큼 UI 갱신
+
+        // 목표 높이 달성 시 클리어 처리
+        if (stableElapsedTime >= STABLE_DURATION)
+        {
+            uiManager.HideHoldCountdownUI();
+            gameManager.isClear = true; // 클리어 여부
+            EventBus.Instance.Publish(Consts.END_GAME);
+        }
+    }
+
+    // 카메라
+    public float GetCameraHeight() // 카메라 높이값 계산 및 반환
     {
         if (highestBlock == null) return 0f;
 
-        // 화면 중하단 좌표 (미사용이지만 남겨둠)
-        Vector3 screenLowerCenter =
-            new Vector3(Screen.width * 0.5f, Screen.height * 0.2f, Consts.CAMERA_OFFSET);
-        Vector3 worldPos = mainCamera.ScreenToWorldPoint(screenLowerCenter);
-
-        float height = highestBlock.transform.position.y + Consts.HEIGHT_OFFSET;
-        return height;
+        return highestBlock.transform.position.y + Consts.CAMERA_HEIGHT_OFFSET;
     }
-    #endregion
 
-    public bool HasActiveBlock() // 현재 땅에 블럭이 있는지 검사하는 로직
+    // Etc
+    public bool IsExistTopBlock() // 현재 땅 위에 블럭이 있는지 검사
     {
-        foreach (var obj in blockList)
+        foreach (GameObject topBlock in topBlockList)
         {
-            if (obj.activeSelf)
+            if (topBlock.activeSelf)
                 return true;
         }
+
         return false;
     }
-
-    public float GetElaspedTime()
+    private IEnumerator GameTimer() // 게임 진행 시간 타이머 코루틴
     {
-        return totalElapsedTime;
+        while (gameElapsedTime < TIME_LIMIT)
+        {
+            gameElapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        EventBus.Instance.Publish(Consts.GAME_OVER);
     }
 }

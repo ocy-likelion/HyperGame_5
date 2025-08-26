@@ -14,5 +14,5 @@ public static class Consts
     public static string GAME_SCENE = "GameScene";
     
     public const float CAMERA_OFFSET = 7.38f;
-    public const float HEIGHT_OFFSET = 2.35f; // 3
+    public const float CAMERA_HEIGHT_OFFSET = 3f; // 3
 }

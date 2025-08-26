@@ -11,19 +11,16 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        if (isCompleteCameraMove)
-        {
-            float targetY = playManager.CalculateSetCameraHeight();
-            Vector3 pos = transform.position;
+        float targetY = playManager.GetCameraHeight();
+        Vector3 pos = transform.position;
 
-            pos.y = Mathf.Lerp(pos.y, targetY, Time.deltaTime * followSpeed);
+        pos.y = Mathf.Lerp(pos.y, targetY, Time.deltaTime * followSpeed);
 
-            // x, y가 0 이하로 내려가지 않도록 제한
-            pos.x = Mathf.Max(-0.32f, pos.x);
-            pos.y = Mathf.Max(-0.32f, pos.y);
+        // x, y가 0 이하로 내려가지 않도록 제한
+        pos.x = Mathf.Max(-0.32f, pos.x);
+        pos.y = Mathf.Max(-0.32f, pos.y);
 
-            transform.position = pos;
-        }
+        transform.position = pos;
     }
     private void OnEnable()
     {
@@ -34,10 +31,10 @@ public class CameraController : MonoBehaviour
         EventBus.Instance.Unsubscribe<float>("SetCameraHeight", SetCameraHeight);
     }
 
-    public void SetCameraHeight(float height)
+    public void SetCameraHeight(float height) // LEGACY
     {
-        isCompleteCameraMove = false;
-        var pos = new Vector3(gameObject.transform.position.x, height, gameObject.transform.position.z);
-        gameObject.transform.DOLocalMove(pos, 0.25f).SetEase(Ease.OutQuad).OnComplete(() => isCompleteCameraMove = true);
+        //isCompleteCameraMove = false;
+        //var pos = new Vector3(gameObject.transform.position.x, height, gameObject.transform.position.z);
+        //gameObject.transform.DOLocalMove(pos, 0.25f).SetEase(Ease.OutQuad).OnComplete(() => isCompleteCameraMove = true);
     }
 }
