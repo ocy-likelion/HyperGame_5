@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MoleObj : MineralObj
+public class MoleBlockObject : SabotageEventBlockObject
 {
     void OnTriggerEnter2D(Collider2D collision)
     {

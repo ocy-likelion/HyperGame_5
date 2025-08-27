@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-public class StoneObj : MineralObj
+public class StoneObj : SabotageEventBlockObject
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

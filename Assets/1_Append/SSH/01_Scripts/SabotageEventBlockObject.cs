@@ -1,33 +1,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MineralObj : MonoBehaviour
+public class SabotageEventBlockObject : MonoBehaviour
 {
-    [Header("컴포넌트")]
-    protected Rigidbody2D rb;
-    protected Collider2D col;
-
-    [Header("주요 프로퍼티")]
+    // 상수
     protected const float TERMINAL_SPEED = 5f;
     protected const float MASS = 10;
     protected const float DEAD_LINE_POS = -6f;
-    protected const float HIT_FORCE = 5f;
+    protected const float HIT_FORCE = 15f;
 
-    void Awake()
+    // protected 필드(컴포넌트)
+    protected Rigidbody2D rb;
+    protected Collider2D col;
+
+    // 유니티 콜백
+    private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        col = GetComponent<Collider2D>();
+        TryGetComponent(out rb);
+        TryGetComponent(out col);
 
-        rb.linearVelocity = Vector2.down * TERMINAL_SPEED;
+        rb.linearVelocity = Vector2.down * TERMINAL_SPEED; // 시작하자마자 종단 속도로 움직이기
     }
-    void Update()
+    private void Update()
     {
         if (transform.position.y < DEAD_LINE_POS)
         {
             Destroy(gameObject);
         }
     }
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         Vector2 vel = rb.linearVelocity;
 

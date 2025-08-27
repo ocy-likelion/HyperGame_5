@@ -9,50 +9,46 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class SabotageEventManager : MonoBehaviour
 {
+    // 상수
+    private const float EARTHQUAKE_DURATION = 0.85f; // 지진 기간
+    private const float EARTHQUAKE_AMOUNT = 0.35f; // 지진 세기
+    private const float LAVA_DURATION = 60f; // 용암이 움직이는 시간
+    private const float LAVA_OFFSET = 2.25f; // 용암 위치 오프셋 값
+
     // 프리팹
     [Header("프리팹")]
-    [SerializeField] GameObject prefab_Mole;
-    [SerializeField] GameObject prefab_BlockTopObject;
+    [SerializeField] private GameObject prefab_Mole;
+    [SerializeField] private GameObject prefab_TopBlock;
 
     // 씬 오브젝트
     [Header("씬 오브젝트")]
-    [SerializeField] UIManager uiManager;
-    [SerializeField] GameManager gameManager;
-    SpawnBlockManager spawnBlockManager;
-    [SerializeField] EffectObjectPool effectObjectPool;
-    [SerializeField] BlockController blockController;
+    [SerializeField] private UIManager uiManager;
+    [SerializeField] private GameManager gameManager;
+    [SerializeField] private EffectObjectPool effectObjectPool;
+    [SerializeField] private BlockController blockController;
+    [SerializeField] private GameObject[] naturalGasObj;
+    [SerializeField] private GameObject text_LavaAlarm;
+    [SerializeField] private GameObject text_SabotageAlarm;
+    [SerializeField] private GameObject backGround;
+    [SerializeField] private GameObject ground;
+    [SerializeField] private GameObject lava;
 
-    [SerializeField] GameObject NaturalGasObj;
-    [SerializeField] GameObject text_LavaAlarm;
-    [SerializeField] GameObject Text_SabotageAlarm;
-    [SerializeField] GameObject backGround;
-    [SerializeField] GameObject ground;
-    [SerializeField] GameObject lava;
+    // private 필드(컴포넌트)
+    private PlayManager playManager;
+    private SpawnBlockManager spawnBlockManager;
 
-    // 컴포넌트
-    PlayManager playManager;
+    // private 필드
+    private Sequence eventSeq; // 방해 이벤트의 두트윈 시퀀스
+    private bool isTriggeredMole = false;
+    private bool isTriggeredMoleKing = false;
+    private bool isTriggeredStoneRush = false;
+    private bool isTriggeredNaturalGas = false;
+    private bool isTriggeredEarthQuake = false;
+    private readonly Vector3 LAVA_START_POS = new Vector3(0, -10f, 0);
+    private Vector3 LAVA_END_POS;
 
-    // 필드
-    Sequence eventSeq;
-    // 두더지 관련
-    bool isTriggeredMole = false;
-    // 거대 두더지 관련
-    bool isTriggeredMoleKing = false;
-    // 스톤러쉬 관련
-    bool isTriggeredStoneRush = false;
-    // 천연가스 관련
-    bool isTriggeredNaturalGas = false;
-    // 지진 관련
-    const float EARTHQUAKE_DURATION = 0.85f;
-    const float EARTHQUAKE_AMOUNT = 0.35f;
-    bool isTriggeredEarthQuake = false;
-    // 용암 관련
-    readonly Vector3 LAVA_START_POS = new Vector3(0, -10f, 0);
-    Vector3 LAVA_END_POS;
-    const float LAVA_DURATION = 60f;
-    const float LAVA_OFFSET = 2.25f; // 용암 위치 오프셋 값(세로 길이 / 2)
-
-    void Awake()
+    // 유니티 콜백
+    private void Awake()
     {
         DOTween.KillAll();
         TryGetComponent(out playManager);
@@ -60,16 +56,18 @@ public class SabotageEventManager : MonoBehaviour
 
         LAVA_END_POS = new Vector3(0, PlayManager.GOAL_HEIGHT - LAVA_OFFSET, 0);
     }
-    void Start()
+    private void Start()
     {
         ResetEventBoolean();
         StartSurgeLava();
     }
-    void Update()
+    private void Update()
     {
         if (!isTriggeredMole && playManager.GameElapsedTime > 7f) // 10초 : 두더지 3마리
         {
-            TriggerMoleEvent();
+            //TriggerMoleEvent();
+            TriggerNaturalGasEvent();
+
         }
         if (!isTriggeredEarthQuake && playManager.GameElapsedTime > 17f) // 20초 : 지진
         {
@@ -89,7 +87,7 @@ public class SabotageEventManager : MonoBehaviour
         }
     }
 
-    void ResetEventBoolean() // 각종 이벤트 트리거 초기화
+    private void ResetEventBoolean() // 각종 이벤트 트리거 초기화
     {
         if (eventSeq != null && eventSeq.IsActive())
         {
@@ -103,23 +101,23 @@ public class SabotageEventManager : MonoBehaviour
         isTriggeredNaturalGas = false;
         isTriggeredEarthQuake = false;
     }
-    void CommonSabotageEvent(string message, float displayTime, Action callback) // 방해 이벤트 메서드에 사용되는 공통 요소
+    private void CommonSabotageEvent(string message, float displayTime, Action callback) // 방해 이벤트 메서드에 사용되는 공통 요소
     {
-        TMP_Text sabotageText = Text_SabotageAlarm.GetComponent<TMP_Text>();
+        TMP_Text sabotageText = text_SabotageAlarm.GetComponent<TMP_Text>();
         sabotageText.text = message;
-        Text_SabotageAlarm.SetActive(true);
+        text_SabotageAlarm.SetActive(true);
 
         eventSeq = DOTween.Sequence();
         eventSeq.Append(sabotageText.DOFade(1f, 0.5f));
         eventSeq.AppendInterval(displayTime);
         eventSeq.Append(sabotageText.DOFade(0f, 0.5f)
-            .OnComplete(() => Text_SabotageAlarm.SetActive(false)));
+            .OnComplete(() => text_SabotageAlarm.SetActive(false)));
         eventSeq.AppendCallback(new TweenCallback(() =>
         {
             callback?.Invoke(); // callback이 null이면 안전하게 무시
         }));
     }
-    public void TriggerMoleEvent() // 기본 두더지 이벤트
+    private void TriggerMoleEvent() // 기본 두더지 이벤트
     {
         if (!isTriggeredMole)
         {
@@ -135,14 +133,14 @@ public class SabotageEventManager : MonoBehaviour
                     Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
                     if (rb != null)
                     {
-                        float torque = UnityEngine.Random.value < 0.5f ? -10f : 10f;
+                        float torque = UnityEngine.Random.value < 0.5f ? -5f : 5f;
                         rb.AddTorque(torque, ForceMode2D.Impulse);
                     }
 }
             });
         }
     }
-    public void TriggerMoleKingEvent() // 거대 두더지 이벤트
+    private void TriggerMoleKingEvent() // 거대 두더지 이벤트
     {
         if (!isTriggeredMoleKing)
         {
@@ -157,7 +155,7 @@ public class SabotageEventManager : MonoBehaviour
                 Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
                 if (rb != null)
                 {
-                    float torque = UnityEngine.Random.value < 0.5f ? -10f : 10f;
+                    float torque = UnityEngine.Random.value < 0.5f ? -5f : 5f;
                     rb.AddTorque(torque, ForceMode2D.Impulse);
                 }
 
@@ -165,7 +163,7 @@ public class SabotageEventManager : MonoBehaviour
             });
         }
     }
-    public void TriggerStoneRushEvent() // 스톤러쉬 이벤트
+    private void TriggerStoneRushEvent() // 스톤러쉬 이벤트
     {
         if (!isTriggeredStoneRush)
         {
@@ -176,7 +174,7 @@ public class SabotageEventManager : MonoBehaviour
                 {
                     for (int j = 3; j < 6; j+=2)
                     {
-                        GameObject go = Instantiate(prefab_BlockTopObject);
+                        GameObject go = Instantiate(prefab_TopBlock);
                         go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(i, j, 0);
 
                         AsyncOperationHandle<Sprite> spriteLoadHandle = Addressables.LoadAssetAsync<Sprite>($"Sprite_Stone_{UnityEngine.Random.Range(1, 5)}");
@@ -197,29 +195,29 @@ public class SabotageEventManager : MonoBehaviour
             });
         }
     }
-    public void TriggerNaturalGasEvent() // 천연가스 이벤트
+    private void TriggerNaturalGasEvent() // 천연가스 이벤트
     {
         if (!isTriggeredNaturalGas)
         {
-            isTriggeredNaturalGas = true;
-
-            CommonSabotageEvent("어디선가 천연가스가\n새고 있습니다..!", 2.5f, () =>
+            if (!isTriggeredNaturalGas)
             {
-                // 텍스트 페이드 아웃 후 별도 시퀀스로 가스 이벤트 실행
-                Sequence gasSeq = DOTween.Sequence();
-                gasSeq.AppendCallback(() =>
+                isTriggeredNaturalGas = true;
+
+                CommonSabotageEvent("어디선가 천연가스가\n새고 있습니다..!", 2.5f, () =>
                 {
-                    NaturalGasObj.SetActive(true);
+                    if (naturalGasObj.Length == 0) return;
+
+                    int randomIndex = UnityEngine.Random.Range(0, naturalGasObj.Length);
+
+                    Sequence gasSeq = DOTween.Sequence();
+                    gasSeq.AppendCallback(() => naturalGasObj[randomIndex].SetActive(true));
+                    gasSeq.AppendInterval(3f);
+                    gasSeq.AppendCallback(() => naturalGasObj[randomIndex].GetComponent<NaturalGasObject>().TurnOffNaturalGas());
                 });
-                gasSeq.AppendInterval(3f);
-                gasSeq.AppendCallback(() =>
-                {
-                    NaturalGasObj.SetActive(false);
-                });
-            });
+            }
         }
     }
-    public void TriggerEarthQuakeEvent() // 지진 이벤트
+    private void TriggerEarthQuakeEvent() // 지진 이벤트
     {
         if (!isTriggeredEarthQuake)
         {
@@ -247,14 +245,14 @@ public class SabotageEventManager : MonoBehaviour
         }
     }
 
-    void ShakeCamera(float duration) // 카메라가 흔들리는 효과(배경 흔들기)
+    private void ShakeCamera(float duration) // 카메라가 흔들리는 효과(배경 흔들기)
     {
         Vector3 originPos = backGround.transform.position;
         backGround.transform.DOKill();
         backGround.transform.DOShakePosition(duration, new Vector3(12f, 12f, 0f), 10, 90f)
             .OnComplete(() => backGround.transform.position =  originPos);
     }
-    IEnumerator SurgeLavaCoroutine() // 용암이 차오르는 코루틴
+    private IEnumerator SurgeLavaCoroutine() // 용암이 차오르는 코루틴
     {
         float elapsed = 0f;
         int frameCounter = 0; // 5프레임마다 점수 차감을 위한 카운터
