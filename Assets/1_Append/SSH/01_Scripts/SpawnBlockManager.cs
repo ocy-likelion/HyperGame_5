@@ -8,15 +8,18 @@ using System.Linq;
 
 public class SpawnBlockManager : MonoBehaviour
 {
-    [Header("Components")]
+    // 씬 오브젝트
+    [Header("씬 오브젝트")]
     [SerializeField] private Transform topObjParent;
-    //private SabotageEventManager sabotageEventManager;
-    private PlayManager playManager;
 
-    [Header("Prefabs")]
+    // 프리팹
+    [Header("프리팹")]
     [SerializeField] private GameObject prefab_BlockDropProxy;
-    [SerializeField] ProxyObjectPool blockDropProxyPool;
-    [SerializeField] EffectObjectPool effectObjPool;
+    [SerializeField] private FallingProxyBlockObjectPool fallingProxyBlockObjectPool;
+    [SerializeField] private EffectObjectPool effectObjectPool;
+
+    // private 필드(컴포넌트)
+    private PlayManager playManager;
 
     [Header("Properties")]
     private readonly Vector2 GEN_POS = new Vector2(0, 5f); // Mineral generation point
@@ -33,7 +36,6 @@ public class SpawnBlockManager : MonoBehaviour
     private void Awake()
     {
         mineralCount = 0;
-        //sabotageEventManager = GetComponent<SabotageEventManager>();
         playManager = GetComponent<PlayManager>();
     }
 
@@ -108,9 +110,9 @@ public class SpawnBlockManager : MonoBehaviour
             Vector3 spawnPosition = new Vector3(x, tempY, 0);
 
             // Instantiate prefab
-            GameObject proxyBlock = blockDropProxyPool.Get();
+            GameObject proxyBlock = fallingProxyBlockObjectPool.Get();
 
-            proxyBlock.GetComponent<BlockDropProxy>().InstantiateProxyObject(this, blockDropProxyPool, effectObjPool);
+            proxyBlock.GetComponent<BlockDropProxy>().InstantiateProxyObject(this, fallingProxyBlockObjectPool, effectObjectPool);
             proxyBlock.transform.position = spawnPosition;
             proxyBlock.transform.eulerAngles = GetRandomRotation();
             proxyBlock.transform.SetParent(topObjParent);

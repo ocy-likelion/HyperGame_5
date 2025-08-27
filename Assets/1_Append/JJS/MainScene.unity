@@ -684,8 +684,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   topObjParent: {fileID: 357424832}
   prefab_BlockDropProxy: {fileID: 5202448632294348487, guid: 4ce01d19bc5e67441b38280376ff5f46, type: 3}
-  blockDropProxyPool: {fileID: 1468015189}
-  effectObjPool: {fileID: 1372612548}
+  fallingProxyBlockObjectPool: {fileID: 0}
+  effectObjectPool: {fileID: 0}
 --- !u!114 &161776132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17687,7 +17687,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1468015188}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 043811beeb6cd3440bd070d82ad50f51, type: 3}
+  m_Script: {fileID: 11500000, guid: ea8ad001cee3c804b9999d83e9a5ffd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   proxyGameObject: {fileID: 5202448632294348487, guid: 4ce01d19bc5e67441b38280376ff5f46, type: 3}
@@ -20307,7 +20307,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiManager: {fileID: 732051078}
   touchArea: {fileID: 1476427191}
-  isWin: 0
+  isClear: 0
   timerDuration: 60
   score: 5000
 --- !u!4 &1839854908

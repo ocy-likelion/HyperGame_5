@@ -26,7 +26,7 @@ public class SerializableKeyValue<EJewelType, GameObject>
     public GameObject jewelGameObject;
 }
 
-public class ProxyObjectPool : MonoBehaviour
+public class FallingProxyBlockObjectPool : MonoBehaviour
 {
     [SerializeField] GameObject proxyGameObject;
     private Queue<GameObject> proxyQueue = new Queue<GameObject>();

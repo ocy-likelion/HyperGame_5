@@ -35,7 +35,7 @@ public class PlayManager : MonoBehaviour
     public GameObject HighestBlock => highestBlock;
     public float CurrentTowerHeight => currentTowerHeight;
     public float GameElapsedTime => gameElapsedTime;
-    public Vector3 HighestTopPoint
+    public Vector3 HighestTopPoint // 가장 높은 지점의 Position 값
     {
         get
         {
@@ -91,7 +91,7 @@ public class PlayManager : MonoBehaviour
     {
         StartCoroutine(SpawnBlockWhenLanded());
     }
-    IEnumerator SpawnBlockWhenLanded()
+    private IEnumerator SpawnBlockWhenLanded() // 블럭이 쌓인 블럭들과 닿았을 때 다음 블럭을 생성하는 코루틴
     {
         // 떨어뜨린 블럭이 쌓인 블럭들에 닿을 때까지 대기
         while (!isBlockLanded)

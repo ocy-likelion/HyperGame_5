@@ -10,7 +10,7 @@ public class JewelDataManager : MonoBehaviour
     [SerializeField] Transform topParent;
 
     [SerializeField] private List<SerializableKeyValue<EJewelType, GameObject>> jewelTypePrefab;
-    [SerializeField] ProxyObjectPool blockDropProxyPool;
+    [SerializeField] FallingProxyBlockObjectPool blockDropProxyPool;
     public List<GameObject> ingameBlockList { get; private set; } = new List<GameObject>();
     private Dictionary<EJewelType, GameObject> queueGameObject = new Dictionary<EJewelType, GameObject>();
 

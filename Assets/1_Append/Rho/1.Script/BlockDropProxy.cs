@@ -5,7 +5,7 @@ using DG.Tweening;
 public class BlockDropProxy : MonoBehaviour
 {
     private SpawnBlockManager mineralDataManager;
-    private ProxyObjectPool proxyObjectPool;
+    private FallingProxyBlockObjectPool proxyObjectPool;
     private EffectObjectPool effectObjectPool;
     public bool IsEnd = true;
     [SerializeField] GameObject blockTopObject;
@@ -14,7 +14,7 @@ public class BlockDropProxy : MonoBehaviour
 
     const float BLOCK_DROP_SPEED = 9.5f;
     
-    public void InstantiateProxyObject(SpawnBlockManager _mineralDataManager, ProxyObjectPool _proxyObjectPool, EffectObjectPool _effectObjectPool)
+    public void InstantiateProxyObject(SpawnBlockManager _mineralDataManager, FallingProxyBlockObjectPool _proxyObjectPool, EffectObjectPool _effectObjectPool)
     {
         IsEnd = true;
         mineralDataManager = _mineralDataManager;
