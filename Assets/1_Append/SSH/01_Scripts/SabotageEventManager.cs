@@ -145,9 +145,10 @@ public class SabotageEventManager : MonoBehaviour
                     spriteLoadHandle.Completed += op =>
                     {
                         Sprite sprite = op.Result;
-                        go.GetComponent<TopBlockObject>().InitTopBlockObject(spawnBlockManager.TopBlockObjectParent, sprite, effectObjectPool);
-                        go.GetComponent<SpriteOutlineCollider>().BuildCollider();
+                        go.GetComponent<TopBlockObject>().InitTopBlockObject(spawnBlockManager.TopBlockObjectParent, sprite, effectObjectPool); // 쌓이는 블럭 오브젝트 초기화
+                        go.GetComponent<SpriteOutlineCollider>().BuildCollider(); // 콜라이더 생성
 
+                        // 회전하는 힘 가해주기
                         Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
                         if (rb != null)
                         {
@@ -164,8 +165,10 @@ public class SabotageEventManager : MonoBehaviour
         {
             if (naturalGasObj.Length == 0) return;
 
+            // 무작위 천연가스 선택
             int randomIndex = UnityEngine.Random.Range(0, naturalGasObj.Length);
 
+            // 3초간 천연가스 효과 활성화
             Sequence gasSeq = DOTween.Sequence();
             gasSeq.AppendCallback(() => naturalGasObj[randomIndex].SetActive(true));
             gasSeq.AppendInterval(3f);
@@ -178,14 +181,14 @@ public class SabotageEventManager : MonoBehaviour
         {
             Vector3 originalPos = ground.transform.position;
 
-            ground.transform.DOShakePosition(EARTHQUAKE_DURATION, EARTHQUAKE_AMOUNT, 10, 90, false, true)
-                .OnComplete(() => ground.transform.position = originalPos);
-            ShakeCamera(EARTHQUAKE_DURATION);
+            ground.transform.DOShakePosition(EARTHQUAKE_DURATION, EARTHQUAKE_AMOUNT, 10, 90, false, true).OnComplete(() => ground.transform.position = originalPos); // 두트윈으로 흔들기
+            ShakeCamera(EARTHQUAKE_DURATION); // 카메라 흔들기
 
             // 여진
             float aftershockDuration = EARTHQUAKE_DURATION * 1.5f;
             float aftershockAmount = EARTHQUAKE_AMOUNT / 3f;
 
+            // 본진 대기 후 여진 활성화
             eventSeq.AppendInterval(EARTHQUAKE_DURATION);
             eventSeq.AppendCallback(() =>
             {
@@ -207,7 +210,8 @@ public class SabotageEventManager : MonoBehaviour
     private IEnumerator SurgeLavaCoroutine() // 용암이 차오르는 코루틴
     {
         float elapsed = 0f;
-        int frameCounter = 0; // 5프레임마다 점수 차감을 위한 카운터
+        int frameCounter = 0; // 프레임마다 점수 차감을 위한 프레임 카운터
+        const int FIXED_FRAME = 3;
 
         while (elapsed < LAVA_DURATION)
         {
@@ -222,7 +226,7 @@ public class SabotageEventManager : MonoBehaviour
 
                 // 3 프레임마다 2점 차감
                 frameCounter++;
-                if (frameCounter >= 3)
+                if (frameCounter >= FIXED_FRAME)
                 {
                     gameManager.score -= 1;
                     frameCounter = 0;

@@ -9,7 +9,7 @@ public class NaturalGasObject : MonoBehaviour
 
     // 프리팹
     [Header("프리팹")]
-    [SerializeField] private ParticleSystem prefab_NaturalGasParticle;
+    [SerializeField] private ParticleSystem prefab_NaturalGasParticle; // 천연가스 파티클
 
     // private 필드(인스펙터 노출)
     [SerializeField] private Vector2 windDirection = Vector2.right; // 바람 방향
@@ -42,28 +42,6 @@ public class NaturalGasObject : MonoBehaviour
             }
         }
     }
-    private void OnTriggerEnter2D(Collider2D collision) // 리스트에 collision 오브젝트를 추가
-    {
-        if (!affectedObjects.Contains(collision.transform))
-        {
-            affectedObjects.Add(collision.transform);
-
-            Rigidbody2D rb = collision.GetComponent<Rigidbody2D>();
-            rigidbodyMap[collision.transform] = rb;
-        }
-    }
-    private void OnTriggerExit2D(Collider2D collision) // 리스트에서 오브젝트를 제거
-    {
-        if (affectedObjects.Contains(collision.transform))
-        {
-            affectedObjects.Remove(collision.transform);
-            
-            if (rigidbodyMap.ContainsKey(collision.transform))
-            {
-                rigidbodyMap.Remove(collision.transform);
-            }
-        }
-    }
 
     // Etc
     public void TurnOffNaturalGas()
@@ -88,5 +66,29 @@ public class NaturalGasObject : MonoBehaviour
 
         // 오브젝트 비활성화
         gameObject.SetActive(false);
+    }
+
+    // 물리 콜백
+    private void OnTriggerEnter2D(Collider2D collision) // 리스트에 collision 오브젝트를 추가
+    {
+        if (!affectedObjects.Contains(collision.transform))
+        {
+            affectedObjects.Add(collision.transform);
+
+            Rigidbody2D rb = collision.GetComponent<Rigidbody2D>();
+            rigidbodyMap[collision.transform] = rb;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision) // 리스트에서 오브젝트를 제거
+    {
+        if (affectedObjects.Contains(collision.transform))
+        {
+            affectedObjects.Remove(collision.transform);
+            
+            if (rigidbodyMap.ContainsKey(collision.transform))
+            {
+                rigidbodyMap.Remove(collision.transform);
+            }
+        }
     }
 }

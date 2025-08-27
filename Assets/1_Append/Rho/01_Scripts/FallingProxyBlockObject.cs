@@ -7,8 +7,8 @@ public class FallingProxyBlockObject : MonoBehaviour
     // 상수
     const float BLOCK_DROP_SPEED = 9.5f;
 
-    [Header("프리팹")]
     // 프리팹
+    [Header("프리팹")]
     [SerializeField] private GameObject prefab_TopBlock;
 
     // private 필드
