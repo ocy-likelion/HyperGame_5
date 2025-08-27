@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 
-public class BlockOnlyTop : MonoBehaviour
+public class TopBlockObject : MonoBehaviour
 {
     private SpawnBlockManager mineralDataManager;
     private Rigidbody2D rb;

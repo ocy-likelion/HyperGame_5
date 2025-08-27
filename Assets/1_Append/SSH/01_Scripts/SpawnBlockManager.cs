@@ -8,52 +8,53 @@ using System.Linq;
 
 public class SpawnBlockManager : MonoBehaviour
 {
-    // 씬 오브젝트
-    [Header("씬 오브젝트")]
-    [SerializeField] private Transform topObjParent;
-
-    // 프리팹
-    [Header("프리팹")]
-    [SerializeField] private GameObject prefab_BlockDropProxy;
-    [SerializeField] private FallingProxyBlockObjectPool fallingProxyBlockObjectPool;
-    [SerializeField] private EffectObjectPool effectObjectPool;
-
-    // private 필드(컴포넌트)
-    private PlayManager playManager;
-
-    [Header("Properties")]
-    private readonly Vector2 GEN_POS = new Vector2(0, 5f); // Mineral generation point
-    private int mineralCount = 0; // Generated mineral count
-    private float x = 0; // Horizontal position control
-    private List<GameObject> ingameBlockList = new List<GameObject>(); // List of active blocks
-
-    // Mineral appearance probabilities
+    // 상수
     private const float STONE_PROB = 0.05f;
     private const float COPPER_PROB = 0.45f;
     private const float SILVER_PROB = 0.35f;
     private const float GOLD_PROB = 0.15f;
 
+    // 씬 오브젝트
+    [Header("씬 오브젝트")]
+    [SerializeField] private Transform topBlockObjectParent;
+    [SerializeField] private FallingProxyBlockObjectPool fallingProxyBlockObjectPool;
+    [SerializeField] private EffectObjectPool effectObjectPool;
+
+    // 프리팹
+    [Header("프리팹")]
+    [SerializeField] private GameObject prefab_FallingProxyBlock;
+
+    // private 필드(컴포넌트)
+    private PlayManager playManager;
+
+    // private 필드
+    private readonly Vector3[] rots = { new Vector3(0, 0, 0), new Vector3(0, 0, 90), new Vector3(0, 0, 180), new Vector3(0, 0, 270) };
+
+    // public Getter
+    public Transform TopBlockObjectParent => topBlockObjectParent;
+
+    // 유니티 콜백
     private void Awake()
     {
-        mineralCount = 0;
-        playManager = GetComponent<PlayManager>();
+        TryGetComponent(out playManager);
     }
 
-    public void SpawnRandomBlock()
+    // 불럭 생성
+    public void SpawnRandomBlock() // 무작위 블럭 생성
     {
-        float n = Random.Range(0f, 1f);
+        float prob = Random.Range(0f, 1f);
         MineralTypeEnum type;
 
-        // Determine mineral type based on probability
-        if (n <= GOLD_PROB)
+        // 확률에 따른 타입 할당
+        if (prob <= GOLD_PROB)
         {
             type = MineralTypeEnum.Gold;
         }
-        else if (n <= GOLD_PROB + SILVER_PROB)
+        else if (prob <= GOLD_PROB + SILVER_PROB)
         {
             type = MineralTypeEnum.Silver;
         }
-        else if (n <= GOLD_PROB + SILVER_PROB + COPPER_PROB)
+        else if (prob <= GOLD_PROB + SILVER_PROB + COPPER_PROB)
         {
             type = MineralTypeEnum.Copper;
         }
@@ -62,15 +63,13 @@ public class SpawnBlockManager : MonoBehaviour
             type = MineralTypeEnum.Stone;
         }
 
-        CreateBlockObj(type);
-        mineralCount++;
-        //sabotageEventManager.EventCheckByMineralCount(mineralCount);
+        CreateBlockObjectAsync(type);
     }
-
-    private void CreateBlockObj(MineralTypeEnum type)
+    private void CreateBlockObjectAsync(MineralTypeEnum type) // 비동기로 블럭의 스프라이트를 불러오고 오브젝트도 생성
     {
-        // Set sprite address based on mineral type
-        StringBuilder address = new StringBuilder($"Sprite_{type.ToString()}");
+        StringBuilder address = new StringBuilder($"Sprite_{type.ToString()}"); // 불러올 스프라이트 어드레스
+
+        // 타입에 따른 스프라이트 설정
         switch (type)
         {
             case MineralTypeEnum.Stone:
@@ -87,81 +86,42 @@ public class SpawnBlockManager : MonoBehaviour
                 break;
         }
 
-        // Load sprite asynchronously
+        // 비동기로 스프라이트 로드
         AsyncOperationHandle<Sprite> spriteLoadHandle = Addressables.LoadAssetAsync<Sprite>(address.ToString());
         spriteLoadHandle.Completed += (opHandle) => OnSpriteLoadCompleted(opHandle);
     }
-
-    private void OnSpriteLoadCompleted(AsyncOperationHandle<Sprite> opHandle)
+    private void OnSpriteLoadCompleted(AsyncOperationHandle<Sprite> opHandle) // 블럭 스프라이트 로드 이벤트 메서드
     {
         if (opHandle.Status == AsyncOperationStatus.Succeeded)
         {
-            // Calculate max Y position from existing blocks
-            float maxY = 0;
-            foreach (var block in ingameBlockList)
-            {
-                if (block == null) continue;
+            GameObject proxyBlock = fallingProxyBlockObjectPool.Get(); // 떨어뜨릴 블럭 오브젝트를 풀에서 가져오기
 
-                float temp = block.transform.position.y;
-                maxY = Mathf.Max(temp, maxY);
-            }
+            proxyBlock.GetComponent<FallingProxyBlockObject>().InitFallingProxyBlock(this, fallingProxyBlockObjectPool, effectObjectPool); // 블럭 오브젝트 초기화
+            EventBus.Instance.Publish("SpawnBlock", proxyBlock); // 블럭의 위치를 설정
+            proxyBlock.transform.eulerAngles = GetRandomRotation(); // 0, 90, 180, 270도 회전 중 무작위로 설정
+            proxyBlock.transform.SetParent(topBlockObjectParent); // 부모 오브젝트 설정
 
-            float tempY = maxY + 10f;
-            Vector3 spawnPosition = new Vector3(x, tempY, 0);
+            proxyBlock.GetComponent<SpriteRenderer>().sprite = opHandle.Result; // 스프라이트 할당
+            proxyBlock.GetComponent<SpriteOutlineCollider>().BuildCollider(); // 콜라이더 생성
 
-            // Instantiate prefab
-            GameObject proxyBlock = fallingProxyBlockObjectPool.Get();
-
-            proxyBlock.GetComponent<BlockDropProxy>().InstantiateProxyObject(this, fallingProxyBlockObjectPool, effectObjectPool);
-            proxyBlock.transform.position = spawnPosition;
-            proxyBlock.transform.eulerAngles = GetRandomRotation();
-            proxyBlock.transform.SetParent(topObjParent);
-            proxyBlock.GetComponent<SpriteRenderer>().sprite = opHandle.Result;
-            proxyBlock.GetComponent<SpriteOutlineCollider>().BuildCollider();
-            playManager.BlockList.Add(proxyBlock.GetComponent<BlockDropProxy>().InstantiateTopObject()); // 탑 오브젝트를 바로 PlayManager의 BlockList에 넣기
-            EventBus.Instance.Publish("SpawnBlock", proxyBlock); // 프록시 오브젝트를 이벤트 버스로 퍼블리시
+            GameObject go = proxyBlock.GetComponent<FallingProxyBlockObject>().InstantiateTopBlock();
+            playManager.BlockList.Add(go); // 쌓이는 블럭 오브젝트를 PlayManager의 BlockList에 추가
         }
-    }
-
-    public void StartSlidingToObject()
-    {
-        if (ingameBlockList.Count > 0)
+        else
         {
-            var lastBlock = ingameBlockList[ingameBlockList.Count - 1];
-            var blockTop = lastBlock.GetComponent<BlockOnlyTop>();
-            if (blockTop != null)
-            {
-                blockTop.ApplySlideMotion();
-            }
+            Debug.LogError("로드할 스프라이트가 어드레서블에 없습니다.");
         }
     }
 
-    public void AddLastBlock(GameObject _object)
-    {
-        if (ingameBlockList.Contains(_object)) return;
-
-        ingameBlockList.Add(_object);
-    }
-
-    public void RightArrowButton()
-    {
-        x += 1f;
-    }
-
-    public void LeftArrowButton()
-    {
-        x -= 1f;
-    }
-
-    public Transform GetParentTopObject()
-    {
-        return topObjParent;
-    }
-
-    Vector3[] rots = { new Vector3(0, 0, 0), new Vector3(0, 0, 90), new Vector3(0, 0, 180), new Vector3(0, 0, 270) };
-    Vector3 GetRandomRotation()
+    // Etc
+    private Vector3 GetRandomRotation() // 0, 90, 180, 270도 중 랜덤한 값 반환
     {
         int randomIndex = UnityEngine.Random.Range(0, rots.Length);
         return rots[randomIndex];
     }
+}
+
+public enum MineralTypeEnum
+{
+    None, Stone, Copper, Silver, Gold
 }

@@ -19,12 +19,12 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     private void OnEnable()
     {
-        EventBus.Instance.Subscribe<GameObject>("SpawnBlock", SpawnBlock);
+        EventBus.Instance.Subscribe<GameObject>("SpawnBlock", InitBlockPosition);
     }
 
     void OnDisable()
     {
-        EventBus.Instance.Unsubscribe<GameObject>("SpawnBlock", SpawnBlock);
+        EventBus.Instance.Unsubscribe<GameObject>("SpawnBlock", InitBlockPosition);
     }
 
     private void Start()
@@ -61,19 +61,18 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         _blockSpawnPosition = worldPos;
     }
     
-    //블록 생성 기능
-    private void SpawnBlock(GameObject newBlock)
+    
+    private void InitBlockPosition(GameObject newBlock) // 카메라 위치에 따른 블럭의 위치 설정
     {
         if (_currentBlock is not null) return;
         UpdateBlockSpawnPosition();
         _currentBlock = newBlock;
         //_currentBlock.GetComponent<Rigidbody2D>().simulated = false;
-        _currentBlock.GetComponent<Transform>().position = _blockSpawnPosition;
+        _currentBlock.transform.position = _blockSpawnPosition;
             
         if (_isPointerDown)
         {
-            _predictionLineLeft.gameObject.SetActive(true);
-            _predictionLineRight.gameObject.SetActive(true);
+            TogglePredictionLines(true);
         }
     }
 
@@ -83,8 +82,7 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         _isPointerDown = true;
         if (_currentBlock is null) return;
         SetBlockPosition(eventData.position);
-        _predictionLineLeft.gameObject.SetActive(true);
-        _predictionLineRight.gameObject.SetActive(true);
+        TogglePredictionLines(true);
     }
 
     //터치 입력 끝 이벤트 핸들
@@ -93,10 +91,10 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         _isPointerDown = false;
         if (_currentBlock is null) return;
         //_currentBlock.GetComponent<Rigidbody2D>().simulated = true;
-        _currentBlock.GetComponent<BlockDropProxy>().IsEnd = false;
+        _currentBlock.GetComponent<FallingProxyBlockObject>().StopFalling();
         _currentBlock = null;
-        _predictionLineLeft.gameObject.SetActive(false);
-        _predictionLineRight.gameObject.SetActive(false);
+        TogglePredictionLines(false);
+
         EventBus.Instance.Publish("RespawnBlock");
         RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.DropBlock);
     }
@@ -159,5 +157,11 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     public Vector3 GetBlockSpawnPoint()
     {
         return _blockSpawnPosition;
+    }
+
+    private void TogglePredictionLines(bool isActive)
+    {
+        _predictionLineLeft.gameObject.SetActive(isActive);
+        _predictionLineRight.gameObject.SetActive(isActive);
     }
 }

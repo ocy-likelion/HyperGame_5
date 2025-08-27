@@ -24,14 +24,13 @@ public class SpriteOutlineCollider : MonoBehaviour
         Sprite sprite = sr.sprite;
         PolygonCollider2D poly = GetComponent<PolygonCollider2D>();
 
-        if (sprite == null) { Debug.LogError("[PPRC] SpriteRenderer.sprite 가 없습니다."); return; }
         Texture2D tex = sprite.texture;
-        if (!tex.isReadable) { Debug.LogError("[PPRC] 텍스처가 Read/Write Enabled 가 아닙니다."); return; }
+        if (!tex.isReadable) { Debug.LogError("텍스처의 Read/Write를 Enabled로 변경해야합니다."); return; }
 
         Rect texRect = sprite.textureRect;
         int w = (int)texRect.width;
         int h = (int)texRect.height;
-        if (w == 0 || h == 0) { Debug.LogError("[PPRC] sprite.textureRect가 비어있음."); return; }
+        if (w == 0 || h == 0) { Debug.LogError("sprite.textureRect가 비어있습니다."); return; }
 
         Color32[] allPixels = tex.GetPixels32();
 
@@ -92,7 +91,7 @@ public class SpriteOutlineCollider : MonoBehaviour
         if (adjacency.Count == 0)
         {
             poly.pathCount = 0;
-            Debug.LogWarning("[PPRC] 경계 없음(완전 투명?).");
+            Debug.LogWarning("경계가 없는 완전 투명한 스프라이트입니다.");
             return;
         }
 
@@ -147,7 +146,7 @@ public class SpriteOutlineCollider : MonoBehaviour
 
                     if (loop.Count > (w2 + h2) * 16)
                     {
-                        Debug.LogWarning("[PPRC] 루프가 비정상적으로 큼, 중지.");
+                        Debug.LogWarning("비정상적으로 큰 루프가 감지되었습니다.");
                         break;
                     }
                 }

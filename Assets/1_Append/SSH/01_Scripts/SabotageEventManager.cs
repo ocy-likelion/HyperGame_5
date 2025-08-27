@@ -18,7 +18,7 @@ public class SabotageEventManager : MonoBehaviour
     [Header("씬 오브젝트")]
     [SerializeField] UIManager uiManager;
     [SerializeField] GameManager gameManager;
-    SpawnBlockManager mineralDataManager;
+    SpawnBlockManager spawnBlockManager;
     [SerializeField] EffectObjectPool effectObjectPool;
     [SerializeField] BlockController blockController;
 
@@ -56,7 +56,7 @@ public class SabotageEventManager : MonoBehaviour
     {
         DOTween.KillAll();
         TryGetComponent(out playManager);
-        TryGetComponent(out mineralDataManager);
+        TryGetComponent(out spawnBlockManager);
 
         LAVA_END_POS = new Vector3(0, PlayManager.GOAL_HEIGHT - LAVA_OFFSET, 0);
     }
@@ -183,7 +183,7 @@ public class SabotageEventManager : MonoBehaviour
                         spriteLoadHandle.Completed += op =>
                         {
                             Sprite sprite = op.Result;
-                            go.GetComponent<BlockOnlyTop>().InstantiateProxyObject(mineralDataManager.GetParentTopObject(), sprite, effectObjectPool, mineralDataManager);
+                            go.GetComponent<TopBlockObject>().InstantiateProxyObject(spawnBlockManager.TopBlockObjectParent, sprite, effectObjectPool, spawnBlockManager);
                             go.GetComponent<SpriteOutlineCollider>().BuildCollider();
 
                             Rigidbody2D rb = go.GetComponent<Rigidbody2D>();

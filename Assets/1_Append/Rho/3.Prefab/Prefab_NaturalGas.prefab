@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2965509205001718557}
   - component: {fileID: 9047865700593688019}
   m_Layer: 0
-  m_Name: NaturalGas
+  m_Name: Prefab_NaturalGas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

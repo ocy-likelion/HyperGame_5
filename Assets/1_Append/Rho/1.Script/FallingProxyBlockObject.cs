@@ -2,37 +2,42 @@ using System.Collections;
 using UnityEngine;
 using DG.Tweening;
 
-public class BlockDropProxy : MonoBehaviour
+public class FallingProxyBlockObject : MonoBehaviour
 {
-    private SpawnBlockManager mineralDataManager;
-    private FallingProxyBlockObjectPool proxyObjectPool;
-    private EffectObjectPool effectObjectPool;
-    public bool IsEnd = true;
-    [SerializeField] GameObject blockTopObject;
-
-    GameObject blockTopInstance; // 프록시 생성 시 만들어지는 인스턴스
-
+    // 상수
     const float BLOCK_DROP_SPEED = 9.5f;
-    
-    public void InstantiateProxyObject(SpawnBlockManager _mineralDataManager, FallingProxyBlockObjectPool _proxyObjectPool, EffectObjectPool _effectObjectPool)
+
+    [Header("프리팹")]
+    // 프리팹
+    [SerializeField] private GameObject prefab_TopBlock;
+
+    // private 필드
+    private SpawnBlockManager mineralDataManager;
+    private FallingProxyBlockObjectPool fallingProxyBlockObjectPool;
+    private EffectObjectPool effectObjectPool;
+    private bool isFalling = true;
+    private GameObject topBlockObjectInstance; // 쌓이는 블럭 오브젝트 인스턴스
+
+    // 블럭 초기화
+    public void InitFallingProxyBlock(SpawnBlockManager mineralDataManager, FallingProxyBlockObjectPool fallingProxyBlockObjectPool, EffectObjectPool effectObjectPool)
     {
-        IsEnd = true;
-        mineralDataManager = _mineralDataManager;
-        proxyObjectPool = _proxyObjectPool;
-        effectObjectPool = _effectObjectPool;
+        isFalling = true;
+        this.mineralDataManager = mineralDataManager;
+        this.fallingProxyBlockObjectPool = fallingProxyBlockObjectPool;
+        this.effectObjectPool = effectObjectPool;
         StartCoroutine(BlockOpacityCoroutine());
     }
-    public GameObject InstantiateTopObject() // 프록시 생성 시 탑 오브젝트도 미리 생성하는 메서드
+    public GameObject InstantiateTopBlock() // 쌓이는 블럭 오브젝트를 생성(호출 시점 : 떨어뜨릴 블럭 오브젝트 생성과 동시에 호출)
     {
-        blockTopInstance = Instantiate(blockTopObject, new Vector3(-10, -10, 0), Quaternion.Euler(Vector2.zero));
-        blockTopInstance.GetComponent<BlockOnlyTop>().InstantiateProxyObject(mineralDataManager.GetParentTopObject(), GetComponent<SpriteRenderer>().sprite, effectObjectPool, mineralDataManager);
-        blockTopInstance.SetActive(false);
-        return blockTopInstance;
+        topBlockObjectInstance = Instantiate(prefab_TopBlock, new Vector3(-10, -10, 0), Quaternion.Euler(Vector2.zero));
+        topBlockObjectInstance.GetComponent<TopBlockObject>().InstantiateProxyObject(mineralDataManager.TopBlockObjectParent, GetComponent<SpriteRenderer>().sprite, effectObjectPool, mineralDataManager);
+        topBlockObjectInstance.SetActive(false);
+        return topBlockObjectInstance;
     }
 
     void FixedUpdate()
     {
-        if (!IsEnd)
+        if (!isFalling)
         {
             Vector3 targetPosition = transform.position;
             transform.position = targetPosition + Vector3.down * Time.fixedDeltaTime * BLOCK_DROP_SPEED;
@@ -41,27 +46,26 @@ public class BlockDropProxy : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        if (IsEnd) return;
+        if (isFalling) return;
         if (collision.gameObject.CompareTag("Block") || collision.gameObject.CompareTag("Platform"))
         {
             RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.HitBlock);
             GameObject backGroundObject = GameObject.FindWithTag("BackGround");
             backGroundObject.transform.DOShakePosition(1f, new Vector3(5f, 5f, 0f), 10, 90f);
 
-            IsEnd = true;
+            isFalling = true;
 
-            blockTopInstance.SetActive(true);
-            blockTopInstance.transform.position = transform.position;
-            blockTopInstance.transform.rotation = transform.rotation;
+            topBlockObjectInstance.SetActive(true);
+            topBlockObjectInstance.transform.position = transform.position;
+            topBlockObjectInstance.transform.rotation = transform.rotation;
 
-            Rigidbody2D rb = blockTopInstance.GetComponent<Rigidbody2D>();
+            Rigidbody2D rb = topBlockObjectInstance.GetComponent<Rigidbody2D>();
             rb.linearVelocity = Vector2.zero;
             rb.angularVelocity = 0f;
 
-            proxyObjectPool.Return(gameObject);
-            mineralDataManager.AddLastBlock(blockTopInstance);
+            fallingProxyBlockObjectPool.Return(gameObject);
             EventBus.Instance.Publish(Consts.BLOCK_LANDED); // 블럭이 떨어졌음을 알리기
-            blockTopInstance = null;
+            topBlockObjectInstance = null;
 
             effectObjectPool.Get(this.gameObject.transform); // 효과
 
@@ -77,7 +81,7 @@ public class BlockDropProxy : MonoBehaviour
         bool isLower = true;
         Color originColor = spriteRenderer.color;
 
-        while (IsEnd)
+        while (isFalling)
         {
             if (isLower)
             {
@@ -114,5 +118,10 @@ public class BlockDropProxy : MonoBehaviour
         }
 
         spriteRenderer.color = originColor;
+    }
+
+    public void StopFalling()
+    {
+        isFalling = false;
     }
 }

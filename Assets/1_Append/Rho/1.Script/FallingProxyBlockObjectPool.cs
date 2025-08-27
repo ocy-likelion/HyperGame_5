@@ -2,65 +2,49 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-#if UNITY_EDITOR
-using UnityEditor.Build.Content;
-#endif
-public enum EJewelType
-{
-    easy,
-    moderate_1,
-    //moderate_2,
-    difficult_1
-    //difficult_2,
-    //difficult_3,
-    //hard_1,
-    //hard_2,
-    //hard_3,
-    //hard_4
-}
-
-[Serializable]
-public class SerializableKeyValue<EJewelType, GameObject>
-{
-    public EJewelType jewelType;
-    public GameObject jewelGameObject;
-}
 
 public class FallingProxyBlockObjectPool : MonoBehaviour
 {
-    [SerializeField] GameObject proxyGameObject;
-    private Queue<GameObject> proxyQueue = new Queue<GameObject>();
+    // 상수
     private const int LOAD_COUNT = 15;
 
+    // 프리팹
+    [Header("프리팹")]
+    [SerializeField] private GameObject prefab_FallingProxyBlock;
+
+    // private 필드
+    private Queue<GameObject> fallingProxyBlockObjectQueue = new Queue<GameObject>();
+
+    // 유니티 콜백
     private void Awake()
     {
         for (int i = 0; i < LOAD_COUNT; i++)
         {
-            GameObject proxyTempObject = Instantiate(proxyGameObject);
-            proxyQueue.Enqueue(proxyTempObject);
-            proxyTempObject.SetActive(false);
+            CreateAndEnqueue();
         }
     }
 
+    // 메인
     public GameObject Get()
     {
-        if (proxyQueue.Count == 0)
+        if (fallingProxyBlockObjectQueue.Count == 0)
         {
-            foreach (var jewel in proxyQueue)
-            {
-                GameObject proxyTempObject = Instantiate(proxyGameObject);
-                proxyQueue.Enqueue(proxyTempObject);
-                proxyTempObject.SetActive(false);
-            }
+            CreateAndEnqueue();
         }
 
-        GameObject jewelGameObject = proxyQueue.Dequeue();
-        jewelGameObject.SetActive(true);
-        return jewelGameObject;
+        GameObject go = fallingProxyBlockObjectQueue.Dequeue();
+        go.SetActive(true);
+        return go;
     }
     public void Return(GameObject _gameObject)
     {
-        proxyQueue.Enqueue(_gameObject);
+        fallingProxyBlockObjectQueue.Enqueue(_gameObject);
         _gameObject.SetActive(false);
+    }
+    private void CreateAndEnqueue() // 새 오브젝트 생성 후 큐에 저장
+    {
+        GameObject go = Instantiate(prefab_FallingProxyBlock);
+        go.SetActive(false);
+        fallingProxyBlockObjectQueue.Enqueue(go);
     }
 }

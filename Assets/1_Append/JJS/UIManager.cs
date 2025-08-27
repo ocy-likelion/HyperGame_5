@@ -11,7 +11,7 @@ using UnityEngine.Rendering;
 public class UIManager : MonoBehaviour
 {
     [Header("포스트프로세싱")]
-    public Volume volume;
+    [SerializeField] private Volume warningScreenVolume;
     private ColorAdjustments colorAdj;
     const string FILTER_BLINK_ID = "FILTER_BLINK";
 
@@ -108,8 +108,8 @@ public class UIManager : MonoBehaviour
 
     void Awake()
     {
-        if (!volume.profile.TryGet(out colorAdj))
-            colorAdj = volume.profile.Add<ColorAdjustments>(true);
+        if (!warningScreenVolume.profile.TryGet(out colorAdj))
+            colorAdj = warningScreenVolume.profile.Add<ColorAdjustments>(true);
 
         // override 활성화
         colorAdj.colorFilter.overrideState = true;
