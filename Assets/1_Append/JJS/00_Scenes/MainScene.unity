@@ -16886,7 +16886,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a329070a8e77a8418af85b290912cf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  effectGameObject: {fileID: 5202448632294348487, guid: c5b496585122b8340a01f064b27eeec6, type: 3}
+  prefab_Effect: {fileID: 5202448632294348487, guid: c5b496585122b8340a01f064b27eeec6, type: 3}
 --- !u!4 &1372612549
 Transform:
   m_ObjectHideFlags: 0

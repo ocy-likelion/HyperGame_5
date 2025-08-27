@@ -22,7 +22,7 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         EventBus.Instance.Subscribe<GameObject>("SpawnBlock", InitBlockPosition);
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         EventBus.Instance.Unsubscribe<GameObject>("SpawnBlock", InitBlockPosition);
     }
@@ -51,7 +51,7 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     }
 
     //카메라 이동에 따른 블록 스폰 위치 업데이트 기능
-    void UpdateBlockSpawnPosition()
+    private void UpdateBlockSpawnPosition()
     {
         // 화면 중상단 좌표
         Vector3 screenUpperCenter =
