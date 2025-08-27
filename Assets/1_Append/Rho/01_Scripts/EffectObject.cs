@@ -4,24 +4,26 @@ using UnityEngine;
 
 public class EffectObject : MonoBehaviour
 {
-    [SerializeField] ParticleSystem particle;
-    private EffectObjectPool effectPool;
-    
-    public void InitEffectObject(EffectObjectPool _effectObjectPool)
-    {
-        effectPool = _effectObjectPool;
-        this.transform.SetParent(_effectObjectPool.transform);
-    }
+    // 프리팹
+    [Header("프리팹")]
+    [SerializeField] private ParticleSystem particle;
 
-    public void PlayEffect()
+    // private 필드
+    private EffectObjectPool effectObjectPool;
+
+    public void InitEffectObject(EffectObjectPool effectObjectPool) // 오브젝트 초기화
+    {
+        this.effectObjectPool = effectObjectPool;
+        transform.SetParent(effectObjectPool.transform);
+    }
+    public void PlayEffect() // 이펙트 코루틴 재생
     {
         StartCoroutine(ParticleCoroutine());
     }
-
-    IEnumerator ParticleCoroutine()
+    private IEnumerator ParticleCoroutine() // 파티클 코루틴
     {
         particle.Play();
         yield return new WaitForSeconds(1.5f);
-        effectPool.Return(this.gameObject);
+        effectObjectPool.Return(gameObject);
     }
 }

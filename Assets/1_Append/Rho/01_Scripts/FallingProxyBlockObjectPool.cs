@@ -24,7 +24,6 @@ public class FallingProxyBlockObjectPool : MonoBehaviour
         }
     }
 
-    // 메인
     public GameObject Get()
     {
         if (fallingProxyBlockObjectQueue.Count == 0)

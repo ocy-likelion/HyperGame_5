@@ -1,7 +1,6 @@
 using DG.Tweening;
 using System.Collections;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
 public class TopBlockObject : MonoBehaviour
 {
@@ -17,8 +16,7 @@ public class TopBlockObject : MonoBehaviour
         TryGetComponent(out rb);
     }
 
-    // 메인
-    public void InitTopBlockObject(Transform parent, Sprite sprite, EffectObjectPool effectObjectPool)
+    public void InitTopBlockObject(Transform parent, Sprite sprite, EffectObjectPool effectObjectPool) // 블럭 초기화
     {
         transform.SetParent(parent);
         GetComponent<SpriteRenderer>().sprite = sprite;
