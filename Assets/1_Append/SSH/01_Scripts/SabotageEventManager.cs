@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using TMPro;
 using UnityEngine;
@@ -39,13 +40,10 @@ public class SabotageEventManager : MonoBehaviour
 
     // private 필드
     private Sequence eventSeq; // 방해 이벤트의 두트윈 시퀀스
-    private bool isTriggeredMole = false;
-    private bool isTriggeredMoleKing = false;
-    private bool isTriggeredStoneRush = false;
-    private bool isTriggeredNaturalGas = false;
-    private bool isTriggeredEarthQuake = false;
     private readonly Vector3 LAVA_START_POS = new Vector3(0, -10f, 0);
     private Vector3 LAVA_END_POS;
+    private List<Action> sabotageEvents;
+    private readonly float[] eventTimes = { 7f, 17f, 27f, 37f, 47f }; // 이벤트 시작 시간
 
     // 유니티 콜백
     private void Awake()
@@ -58,49 +56,18 @@ public class SabotageEventManager : MonoBehaviour
     }
     private void Start()
     {
-        ResetEventBoolean();
-        StartSurgeLava();
-    }
-    private void Update()
-    {
-        if (!isTriggeredMole && playManager.GameElapsedTime > 7f) // 10초 : 두더지 3마리
-        {
-            //TriggerMoleEvent();
-            TriggerNaturalGasEvent();
-
-        }
-        if (!isTriggeredEarthQuake && playManager.GameElapsedTime > 17f) // 20초 : 지진
-        {
-            TriggerEarthQuakeEvent();
-        }
-        if (!isTriggeredStoneRush && playManager.GameElapsedTime > 27f) // 30초 : 스톤러쉬
-        {
-            TriggerStoneRushEvent();
-        }
-        if (!isTriggeredMoleKing && playManager.GameElapsedTime > 37f) // 40초 : 몰킹 1마리
-        {
-            TriggerMoleKingEvent();
-        }
-        if (!isTriggeredNaturalGas && playManager.GameElapsedTime > 47f) // 50초 : 천연가스
-        {
-            TriggerNaturalGasEvent();
-        }
-    }
-
-    private void ResetEventBoolean() // 각종 이벤트 트리거 초기화
-    {
         if (eventSeq != null && eventSeq.IsActive())
         {
             eventSeq.Kill(); // 진행 중인 Tween 종료
             eventSeq = null; // 참조 제거
         }
+        sabotageEvents = new() { TriggerMoleEvent, TriggerGreatMoleEvent, TriggerStoneRushEvent, TriggerNaturalGasEvent, TriggerEarthQuakeEvent };
 
-        isTriggeredMole = false;
-        isTriggeredMoleKing = false;
-        isTriggeredStoneRush = false;
-        isTriggeredNaturalGas = false;
-        isTriggeredEarthQuake = false;
+        StartCoroutine(SurgeLavaCoroutine());
+        StartCoroutine(EventSequenceCoroutine());
     }
+
+    // 각종 이벤트
     private void CommonSabotageEvent(string message, float displayTime, Action callback) // 방해 이벤트 메서드에 사용되는 공통 요소
     {
         TMP_Text sabotageText = text_SabotageAlarm.GetComponent<TMP_Text>();
@@ -117,39 +84,14 @@ public class SabotageEventManager : MonoBehaviour
             callback?.Invoke(); // callback이 null이면 안전하게 무시
         }));
     }
-    private void TriggerMoleEvent() // 기본 두더지 이벤트
+    private void TriggerMoleEvent() // 두더지 이벤트
     {
-        if (!isTriggeredMole)
+        CommonSabotageEvent("두더지 떼가 몰려옵니다..", 2.5f, () =>
         {
-            isTriggeredMole = true;
-            CommonSabotageEvent("두더지 떼가 몰려옵니다..", 2.5f, () =>
-            {
-                for (int i = -1; i < 2; i++)
-                {
-                    GameObject go = Instantiate(prefab_Mole);
-                    go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(i, UnityEngine.Random.Range(1f, 3f), 0);
-                    go.GetComponent<SpriteOutlineCollider>().BuildCollider();
-
-                    Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
-                    if (rb != null)
-                    {
-                        float torque = UnityEngine.Random.value < 0.5f ? -5f : 5f;
-                        rb.AddTorque(torque, ForceMode2D.Impulse);
-                    }
-}
-            });
-        }
-    }
-    private void TriggerMoleKingEvent() // 거대 두더지 이벤트
-    {
-        if (!isTriggeredMoleKing)
-        {
-            isTriggeredMoleKing = true;
-            CommonSabotageEvent("거대한 두더지가 내려옵니다!", 2.5f, () =>
+            for (int i = -1; i < 2; i++)
             {
                 GameObject go = Instantiate(prefab_Mole);
-                go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(0, 3, 0);
-                go.transform.localScale = Vector3.one * 2.5f;
+                go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(i, UnityEngine.Random.Range(1f, 3f), 0);
                 go.GetComponent<SpriteOutlineCollider>().BuildCollider();
 
                 Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
@@ -158,93 +100,95 @@ public class SabotageEventManager : MonoBehaviour
                     float torque = UnityEngine.Random.value < 0.5f ? -5f : 5f;
                     rb.AddTorque(torque, ForceMode2D.Impulse);
                 }
+            }
+        });
+    }
+    private void TriggerGreatMoleEvent() // 거대 두더지 이벤트
+    {
+        CommonSabotageEvent("거대한 두더지가 내려옵니다!", 2.5f, () =>
+        {
+            GameObject go = Instantiate(prefab_Mole);
+            go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(0, 3, 0);
+            go.transform.localScale = Vector3.one * 2.5f;
+            go.GetComponent<SpriteOutlineCollider>().BuildCollider();
 
-                ShakeCamera(EARTHQUAKE_DURATION);
-            });
-        }
+            Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                float torque = UnityEngine.Random.value < 0.5f ? -5f : 5f;
+                rb.AddTorque(torque, ForceMode2D.Impulse);
+            }
+
+            ShakeCamera(EARTHQUAKE_DURATION);
+        });
     }
     private void TriggerStoneRushEvent() // 스톤러쉬 이벤트
     {
-        if (!isTriggeredStoneRush)
+        CommonSabotageEvent("돌 무더기가 떨어집니다!!", 2.5f, () =>
         {
-            isTriggeredStoneRush = true;
-            CommonSabotageEvent("돌 무더기가 떨어집니다!!", 2.5f, () =>
+            for (int i = -1; i < 2; i += 2)
             {
-                for (int i = -1; i < 2; i+=2)
+                for (int j = 3; j < 6; j += 2)
                 {
-                    for (int j = 3; j < 6; j+=2)
+                    GameObject go = Instantiate(prefab_TopBlock);
+                    go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(i, j, 0);
+
+                    AsyncOperationHandle<Sprite> spriteLoadHandle = Addressables.LoadAssetAsync<Sprite>($"Sprite_Stone_{UnityEngine.Random.Range(1, 5)}");
+                    spriteLoadHandle.Completed += op =>
                     {
-                        GameObject go = Instantiate(prefab_TopBlock);
-                        go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(i, j, 0);
+                        Sprite sprite = op.Result;
+                        go.GetComponent<TopBlockObject>().InstantiateProxyObject(spawnBlockManager.TopBlockObjectParent, sprite, effectObjectPool, spawnBlockManager);
+                        go.GetComponent<SpriteOutlineCollider>().BuildCollider();
 
-                        AsyncOperationHandle<Sprite> spriteLoadHandle = Addressables.LoadAssetAsync<Sprite>($"Sprite_Stone_{UnityEngine.Random.Range(1, 5)}");
-                        spriteLoadHandle.Completed += op =>
+                        Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
+                        if (rb != null)
                         {
-                            Sprite sprite = op.Result;
-                            go.GetComponent<TopBlockObject>().InstantiateProxyObject(spawnBlockManager.TopBlockObjectParent, sprite, effectObjectPool, spawnBlockManager);
-                            go.GetComponent<SpriteOutlineCollider>().BuildCollider();
-
-                            Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
-                            if (rb != null)
-                            {
-                                rb.AddTorque(UnityEngine.Random.Range(-3f, 3f), ForceMode2D.Impulse);
-                            }
-                        };
-                    }
+                            rb.AddTorque(UnityEngine.Random.Range(-3f, 3f), ForceMode2D.Impulse);
+                        }
+                    };
                 }
-            });
-        }
+            }
+        });
     }
     private void TriggerNaturalGasEvent() // 천연가스 이벤트
     {
-        if (!isTriggeredNaturalGas)
+        CommonSabotageEvent("어디선가 천연가스가\n새고 있습니다..!", 2.5f, () =>
         {
-            if (!isTriggeredNaturalGas)
-            {
-                isTriggeredNaturalGas = true;
+            if (naturalGasObj.Length == 0) return;
 
-                CommonSabotageEvent("어디선가 천연가스가\n새고 있습니다..!", 2.5f, () =>
-                {
-                    if (naturalGasObj.Length == 0) return;
+            int randomIndex = UnityEngine.Random.Range(0, naturalGasObj.Length);
 
-                    int randomIndex = UnityEngine.Random.Range(0, naturalGasObj.Length);
-
-                    Sequence gasSeq = DOTween.Sequence();
-                    gasSeq.AppendCallback(() => naturalGasObj[randomIndex].SetActive(true));
-                    gasSeq.AppendInterval(3f);
-                    gasSeq.AppendCallback(() => naturalGasObj[randomIndex].GetComponent<NaturalGasObject>().TurnOffNaturalGas());
-                });
-            }
-        }
+            Sequence gasSeq = DOTween.Sequence();
+            gasSeq.AppendCallback(() => naturalGasObj[randomIndex].SetActive(true));
+            gasSeq.AppendInterval(3f);
+            gasSeq.AppendCallback(() => naturalGasObj[randomIndex].GetComponent<NaturalGasObject>().TurnOffNaturalGas());
+        });
     }
     private void TriggerEarthQuakeEvent() // 지진 이벤트
     {
-        if (!isTriggeredEarthQuake)
+        CommonSabotageEvent("곧 지진이 일어날 것\n같습니다..!!!", 2.5f, () =>
         {
-            isTriggeredEarthQuake = true;
-            CommonSabotageEvent("곧 지진이 일어날 것\n같습니다..!!!", 2.5f, () =>
+            Vector3 originalPos = ground.transform.position;
+
+            ground.transform.DOShakePosition(EARTHQUAKE_DURATION, EARTHQUAKE_AMOUNT, 10, 90, false, true)
+                .OnComplete(() => ground.transform.position = originalPos);
+            ShakeCamera(EARTHQUAKE_DURATION);
+
+            // 여진
+            float aftershockDuration = EARTHQUAKE_DURATION * 1.5f;
+            float aftershockAmount = EARTHQUAKE_AMOUNT / 3f;
+
+            eventSeq.AppendInterval(EARTHQUAKE_DURATION);
+            eventSeq.AppendCallback(() =>
             {
-                Vector3 originalPos = ground.transform.position;
-
-                ground.transform.DOShakePosition(EARTHQUAKE_DURATION, EARTHQUAKE_AMOUNT, 10, 90, false, true)
+                ground.transform.DOShakePosition(aftershockDuration, aftershockAmount, 10, 90, false, true)
                     .OnComplete(() => ground.transform.position = originalPos);
-                ShakeCamera(EARTHQUAKE_DURATION);
-
-                // 여진
-                float aftershockDuration = EARTHQUAKE_DURATION * 1.5f;
-                float aftershockAmount = EARTHQUAKE_AMOUNT / 3f;
-
-                eventSeq.AppendInterval(EARTHQUAKE_DURATION);
-                eventSeq.AppendCallback(() =>
-                {
-                    ground.transform.DOShakePosition(aftershockDuration, aftershockAmount, 10, 90, false, true)
-                        .OnComplete(() => ground.transform.position = originalPos);
-                    ShakeCamera(aftershockDuration);
-                });
+                ShakeCamera(aftershockDuration);
             });
-        }
+        });
     }
 
+    // Etc
     private void ShakeCamera(float duration) // 카메라가 흔들리는 효과(배경 흔들기)
     {
         Vector3 originPos = backGround.transform.position;
@@ -288,8 +232,22 @@ public class SabotageEventManager : MonoBehaviour
 
         lava.transform.position = LAVA_END_POS;
     }
-    public void StartSurgeLava() // 용암 코루틴 시작
+    private IEnumerator EventSequenceCoroutine() // 방해 이벤트 시퀀스 코루틴
     {
-        StartCoroutine(SurgeLavaCoroutine());
+        for (int i = 0; i < eventTimes.Length; i++)
+        {
+            float waitTime = eventTimes[i] - playManager.GameElapsedTime;
+            yield return new WaitForSeconds(waitTime);
+
+            if (sabotageEvents.Count > 0)
+            {
+                // 남은 이벤트 중 랜덤 선택
+                int randomIndex = UnityEngine.Random.Range(0, sabotageEvents.Count);
+                sabotageEvents[randomIndex].Invoke();
+
+                // 선택한 이벤트 제거
+                sabotageEvents.RemoveAt(randomIndex);
+            }
+        }
     }
 }
