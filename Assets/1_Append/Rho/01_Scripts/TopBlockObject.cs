@@ -5,43 +5,27 @@ using static UnityEngine.Rendering.DebugUI;
 
 public class TopBlockObject : MonoBehaviour
 {
-    private SpawnBlockManager mineralDataManager;
+    // private 필드(컴포넌트)
     private Rigidbody2D rb;
-    private readonly float slideForce = -7f;
+
+    // private 필드
     private Coroutine coroutine;
+
+    // 유니티 콜백
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
+        TryGetComponent(out rb);
     }
 
-    public void InstantiateProxyObject(Transform _parent, Sprite sprite, EffectObjectPool _effectObjectPool, SpawnBlockManager _mineralDataManager)
+    // 메인
+    public void InitTopBlockObject(Transform parent, Sprite sprite, EffectObjectPool effectObjectPool)
     {
-        this.transform.SetParent(_parent);
+        transform.SetParent(parent);
         GetComponent<SpriteRenderer>().sprite = sprite;
         GetComponent<SpriteOutlineCollider>().BuildCollider();
-        _effectObjectPool.Get(this.gameObject.transform);
-        mineralDataManager = _mineralDataManager;
+        effectObjectPool.Get(this.gameObject.transform);
     }
-
-    public void ApplySlideMotion() // 크리스탈 기믹
-    {
-        rb.linearVelocity = new Vector2(slideForce, slideForce);
-    }
-
-    public void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Block") || collision.gameObject.CompareTag("Platform"))
-        {
-            if (coroutine != null)
-            {
-                StopCoroutine(coroutine);
-            }
-
-            StartCoroutine(TopBlockSettingCoroutine());
-        }
-    }
-
-    IEnumerator TopBlockSettingCoroutine()
+    IEnumerator TopBlockSettingCoroutine() // 블럭 안정화 작업 코루틴
     {
         // 중력을 0에서 1로 점진적으로 증가
         float duration = 0.5f; // 1초
@@ -62,5 +46,19 @@ public class TopBlockObject : MonoBehaviour
 
         // 코루틴 종료
         coroutine = null;
+    }
+
+    // 물리 콜백
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Block") || collision.gameObject.CompareTag("Platform"))
+        {
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
+            }
+
+            StartCoroutine(TopBlockSettingCoroutine());
+        }
     }
 }

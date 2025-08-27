@@ -70,10 +70,12 @@ public class SabotageEventManager : MonoBehaviour
     // 각종 이벤트
     private void CommonSabotageEvent(string message, float displayTime, Action callback) // 방해 이벤트 메서드에 사용되는 공통 요소
     {
+        // 텍스트 세팅
         TMP_Text sabotageText = text_SabotageAlarm.GetComponent<TMP_Text>();
         sabotageText.text = message;
         text_SabotageAlarm.SetActive(true);
 
+        // 두트윈 시퀀스를 통해 순차적으로 텍스트 알람 및 메서드 실행되도록 하기
         eventSeq = DOTween.Sequence();
         eventSeq.Append(sabotageText.DOFade(1f, 0.5f));
         eventSeq.AppendInterval(displayTime);
@@ -90,10 +92,12 @@ public class SabotageEventManager : MonoBehaviour
         {
             for (int i = -1; i < 2; i++)
             {
+                // 두더지 생성
                 GameObject go = Instantiate(prefab_Mole);
                 go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(i, UnityEngine.Random.Range(1f, 3f), 0);
                 go.GetComponent<SpriteOutlineCollider>().BuildCollider();
 
+                // 두더지에 회전 힘 가하기
                 Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
                 if (rb != null)
                 {
@@ -107,11 +111,13 @@ public class SabotageEventManager : MonoBehaviour
     {
         CommonSabotageEvent("거대한 두더지가 내려옵니다!", 2.5f, () =>
         {
+            // 두더지 생성
             GameObject go = Instantiate(prefab_Mole);
             go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(0, 3, 0);
             go.transform.localScale = Vector3.one * 2.5f;
             go.GetComponent<SpriteOutlineCollider>().BuildCollider();
 
+            // 두더지에 회전 힘 가하기
             Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
@@ -119,7 +125,7 @@ public class SabotageEventManager : MonoBehaviour
                 rb.AddTorque(torque, ForceMode2D.Impulse);
             }
 
-            ShakeCamera(EARTHQUAKE_DURATION);
+            ShakeCamera(EARTHQUAKE_DURATION); // 카메라도 흔들어주기
         });
     }
     private void TriggerStoneRushEvent() // 스톤러쉬 이벤트
@@ -130,14 +136,16 @@ public class SabotageEventManager : MonoBehaviour
             {
                 for (int j = 3; j < 6; j += 2)
                 {
+                    // 돌 생성
                     GameObject go = Instantiate(prefab_TopBlock);
                     go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(i, j, 0);
 
+                    // 비동기로 돌 스프라이트 할당
                     AsyncOperationHandle<Sprite> spriteLoadHandle = Addressables.LoadAssetAsync<Sprite>($"Sprite_Stone_{UnityEngine.Random.Range(1, 5)}");
                     spriteLoadHandle.Completed += op =>
                     {
                         Sprite sprite = op.Result;
-                        go.GetComponent<TopBlockObject>().InstantiateProxyObject(spawnBlockManager.TopBlockObjectParent, sprite, effectObjectPool, spawnBlockManager);
+                        go.GetComponent<TopBlockObject>().InitTopBlockObject(spawnBlockManager.TopBlockObjectParent, sprite, effectObjectPool);
                         go.GetComponent<SpriteOutlineCollider>().BuildCollider();
 
                         Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
