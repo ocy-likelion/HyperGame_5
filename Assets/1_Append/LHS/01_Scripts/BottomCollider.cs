@@ -15,11 +15,9 @@ public class BottomCollider : MonoBehaviour
             int from = gameManager.Score;
             int to = Mathf.Max(0, from - uiManager.BlockScore);
 
-            
             gameManager.SetScore(to); // 점수 반영
 
-            // UI는 시각효과만
-            uiManager.AnimateScoreChange(from, to);
+            uiManager.AnimateScoreChange(from, to); // UI 변경
 
             playManager.BlockList.Remove(collision.gameObject);
             Destroy(collision.gameObject);

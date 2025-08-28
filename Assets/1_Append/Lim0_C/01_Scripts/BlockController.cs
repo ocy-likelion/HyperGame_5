@@ -49,15 +49,11 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         _predictionLineRight = Instantiate(predictionLinePrefab).GetComponent<Transform>();
         _predictionLineRight.gameObject.SetActive(false);
     }
-
-    //카메라 이동에 따른 블록 스폰 위치 업데이트 기능
-    private void UpdateBlockSpawnPosition()
+    private void UpdateBlockSpawnPosition() // 카메라 이동에 따른 블록 스폰 위치 업데이트 기능
     {
-        // 화면 중상단 좌표
-        Vector3 screenUpperCenter =
-            new Vector3(Screen.width * 0.5f, Screen.height * 0.8f, Consts.CAMERA_OFFSET);
+        Vector3 screenUpperCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.8f, Consts.CAMERA_OFFSET);
         Vector3 worldPos = mainCamera.ScreenToWorldPoint(screenUpperCenter);
-        worldPos.z = 0; // 2D는 z=0 맞추는 경우가 많음
+        worldPos.z = 0; // 2D 오브젝트에 맞게 z축 값을 0으로
         _blockSpawnPosition = worldPos;
     }
     
