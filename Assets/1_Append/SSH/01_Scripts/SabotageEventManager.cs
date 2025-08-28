@@ -11,8 +11,8 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 public class SabotageEventManager : MonoBehaviour
 {
     // 상수
-    private const float EARTHQUAKE_DURATION = 0.85f; // 지진 기간
-    private const float EARTHQUAKE_AMOUNT = 0.35f; // 지진 세기
+    private const float EARTHQUAKE_DURATION = 0.85f; // 지진 지속 시간
+    private const float EARTHQUAKE_AMOUNT = 0.55f; // 지진 세기
     private const float LAVA_DURATION = 60f; // 용암이 움직이는 시간
     private const float LAVA_OFFSET = 2.25f; // 용암 위치 오프셋 값
 

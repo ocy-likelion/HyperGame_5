@@ -7,7 +7,7 @@ public class SabotageEventBlockObject : MonoBehaviour
     protected const float TERMINAL_SPEED = 5f;
     protected const float MASS = 10;
     protected const float DEAD_LINE_POS = -6f;
-    protected const float HIT_FORCE = 15f;
+    protected const float HIT_FORCE = 30f;
 
     // protected 필드(컴포넌트)
     protected Rigidbody2D rb;
