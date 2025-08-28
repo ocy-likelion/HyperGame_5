@@ -42,6 +42,7 @@ public class SabotageEventManager : MonoBehaviour
     // private 필드
     private Sequence eventSeq; // 방해 이벤트의 두트윈 시퀀스
     private readonly Vector3 LAVA_START_POS = new Vector3(0, -10f, 0);
+    private readonly Vector3 GREAT_MOLE_POS = new Vector3(4, 3, 0);
     private Vector3 LAVA_END_POS;
     private List<Action> sabotageEvents;
     private readonly float[] eventTimes = { 7f, 17f, 27f, 37f, 47f }; // 이벤트 시작 시간
@@ -62,6 +63,7 @@ public class SabotageEventManager : MonoBehaviour
             eventSeq.Kill(); // 진행 중인 Tween 종료
             eventSeq = null; // 참조 제거
         }
+
         sabotageEvents = new() { TriggerMoleEvent, TriggerGreatMoleEvent, TriggerStoneRushEvent, TriggerNaturalGasEvent, TriggerEarthQuakeEvent };
 
         StartCoroutine(SurgeLavaCoroutine());
@@ -102,7 +104,7 @@ public class SabotageEventManager : MonoBehaviour
                 Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
                 if (rb != null)
                 {
-                    float torque = UnityEngine.Random.value < 0.5f ? -3f : 3f;
+                    float torque = UnityEngine.Random.value < 0.5f ? -1.5f : 1.5f;
                     rb.AddTorque(torque, ForceMode2D.Impulse);
                 }
             }
@@ -110,11 +112,11 @@ public class SabotageEventManager : MonoBehaviour
     }
     private void TriggerGreatMoleEvent() // 거대 두더지 이벤트
     {
-        CommonSabotageEvent("거대한 두더지가 내려옵니다!", 2.5f, () =>
+        CommonSabotageEvent("거대한 두더지가 다가옵니다!", 2.5f, () =>
         {
             // 두더지 생성
             GameObject go = Instantiate(prefab_Mole);
-            go.transform.position = blockController.BlockSpawnPosition + new Vector3(0, 3, 0);
+            go.transform.position = GREAT_MOLE_POS;
             go.transform.localScale = Vector3.one * 2.5f;
             go.GetComponent<SpriteOutlineCollider>().BuildCollider();
 
@@ -122,8 +124,8 @@ public class SabotageEventManager : MonoBehaviour
             Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
-                float torque = UnityEngine.Random.value < 0.5f ? -3f : 3f;
-                rb.AddTorque(torque, ForceMode2D.Impulse);
+                // 왼쪽으로 힘 주기
+                rb.AddForce(Vector2.left * 25f, ForceMode2D.Impulse); // 5f는 힘의 크기
             }
 
             ShakeCamera(EARTHQUAKE_DURATION); // 카메라도 흔들어주기
