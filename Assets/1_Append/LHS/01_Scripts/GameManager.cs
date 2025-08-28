@@ -10,7 +10,8 @@ public class GameManager : MonoBehaviour
     public bool isClear = false;
     public float timerDuration = 30f;
     private float currentTime;
-    public int score = 10000;
+    private int score = 10000;
+    public int Score => score;
     private bool isTimeFiveSecond = false;
 
     // public Getter
@@ -83,7 +84,10 @@ public class GameManager : MonoBehaviour
             uiManager.Result(false);
         }
     }
-
+    public void SetScore(int score)
+    {
+        this.score = score;
+    }
   
     public void Test() { isClear = true; }
 }

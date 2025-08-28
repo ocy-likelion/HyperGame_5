@@ -78,13 +78,13 @@ public class UIManager : MonoBehaviour
 
 
     [Header("점수 계산 로직 및 효과")]
-    public TextMeshProUGUI ScoreText;
-    public int BasicScore;
-    public int BlockScore = 200;
-
+    public TextMeshProUGUI text_Score;
+    private int basicScore;
+    private int blockScore = 200;
+    public int BlockScore => blockScore;
     public bool isPaused = false;
 
-    public GameManager gameManager;
+    [SerializeField] private GameManager gameManager;
 
     RectTransform timerRT;
     Vector2 basePos;
@@ -123,6 +123,10 @@ public class UIManager : MonoBehaviour
             holdCountCG.alpha = 0f;
             HoldCountdownText.gameObject.SetActive(false);
         }
+
+        // 변수 초기화
+        basicScore = gameManager.Score;
+        text_Score.text = basicScore.ToString();
     }
 
     void Start()
@@ -130,16 +134,12 @@ public class UIManager : MonoBehaviour
         timerRT = TimerImage.rectTransform;
         basePos = timerRT.anchoredPosition;
 
-        if (ScoreText != null)
+        if (text_Score != null)
         {
-            scoreRT = ScoreText.rectTransform;
+            scoreRT = text_Score.rectTransform;
             scoreBasePos = scoreRT.anchoredPosition;
-            scoreBaseColor = ScoreText.color;
+            scoreBaseColor = text_Score.color;
         }
-
-        // 시작 점수 초기화
-        ScoreText.text = BasicScore.ToString();
-        if (gameManager) gameManager.score = BasicScore;
 
         if (!sGameStarted)
         {
@@ -162,7 +162,7 @@ public class UIManager : MonoBehaviour
     {
         // 점수 애니 중에는 UI 텍스트 덮어쓰지 않음
         if (gameManager && !isAnimatingScore)
-            ScoreText.text = gameManager.score.ToString();
+            text_Score.text = gameManager.Score.ToString();
 
         // 시작 후에만 튜토리얼 자동 오픈
         if (sGameStarted && !PlayedGame.hadPlayed)
@@ -307,7 +307,7 @@ public class UIManager : MonoBehaviour
         {
             ActivateEffectUnscaled(SuccessEffect);
             ClearImage.sprite = SuccessSprite;
-            ClearScoreText.text = gameManager ? gameManager.score.ToString() : "";
+            ClearScoreText.text = gameManager ? gameManager.Score.ToString() : "";
             //Bridge.SubmitScore(gameManager.score);
             RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.Win);
         }
@@ -374,7 +374,7 @@ public class UIManager : MonoBehaviour
     // === 점수 애니메이션 ===
     public void AnimateScoreChange(int from, int to, Action onComplete = null)
     {
-        if (ScoreText == null) { onComplete?.Invoke(); return; }
+        if (text_Score == null) { onComplete?.Invoke(); return; }
 
         int start = Mathf.Max(0, from);
         int end = Mathf.Max(0, to);
@@ -396,12 +396,12 @@ public class UIManager : MonoBehaviour
         scoreSeq = DOTween.Sequence().SetUpdate(true);
 
         // 1) 강조색 전환 & 살짝 펀치 스케일
-        scoreSeq.Append(ScoreText.DOColor(hiColor, 0.08f));
+        scoreSeq.Append(text_Score.DOColor(hiColor, 0.08f));
         scoreSeq.Join(scoreRT.DOPunchScale(Vector3.one * 0.12f, 0.18f, 8, 0.8f));
 
         // 2) 숫자 카운트 & 흔들림
         scoreSeq.Append(
-            DOVirtual.Int(start, end, dur, v => ScoreText.text = v.ToString()).SetUpdate(true)
+            DOVirtual.Int(start, end, dur, v => text_Score.text = v.ToString()).SetUpdate(true)
         );
         scoreSeq.Join(
             scoreRT.DOShakeAnchorPos(shakeDur, new Vector2(strength, strength),
@@ -411,7 +411,7 @@ public class UIManager : MonoBehaviour
         );
 
         // 3) 원래 색상으로 복귀
-        scoreSeq.Append(ScoreText.DOColor(scoreBaseColor, 0.22f));
+        scoreSeq.Append(text_Score.DOColor(scoreBaseColor, 0.22f));
 
         scoreSeq.OnComplete(() =>
         {
@@ -424,7 +424,7 @@ public class UIManager : MonoBehaviour
     // 보너스 연출
     public void PlaySuccessBonus(int timeBonus, int from, int to, System.Action onComplete = null)
     {
-        if (ScoreText == null || scoreRT == null)
+        if (text_Score == null || scoreRT == null)
         {
             AnimateScoreChange(from, to, onComplete);
             return;
@@ -439,8 +439,8 @@ public class UIManager : MonoBehaviour
         bonusRT.anchoredPosition = scoreBasePos + new Vector2(0f, 36f);
 
         var tmp = go.AddComponent<TMPro.TextMeshProUGUI>();
-        tmp.font = ScoreText.font;
-        tmp.fontSize = Mathf.Max(ScoreText.fontSize * 0.85f, 18f);
+        tmp.font = text_Score.font;
+        tmp.fontSize = Mathf.Max(text_Score.fontSize * 0.85f, 18f);
         tmp.alignment = TMPro.TextAlignmentOptions.Center;
         tmp.text = $"+{timeBonus}";
         tmp.color = new Color(green.r, green.g, green.b, 0f);
@@ -448,7 +448,7 @@ public class UIManager : MonoBehaviour
 
         var seq = DOTween.Sequence().SetUpdate(true);
 
-        seq.Append(ScoreText.DOColor(green, 0.06f));
+        seq.Append(text_Score.DOColor(green, 0.06f));
         seq.Join(scoreRT.DOPunchScale(Vector3.one * 0.18f, 0.22f, 12, 0.9f));
 
         seq.Join(tmp.DOFade(1f, 0.12f));
@@ -465,7 +465,7 @@ public class UIManager : MonoBehaviour
             });
         });
 
-        seq.Append(ScoreText.DOColor(scoreBaseColor, 0.18f));
+        seq.Append(text_Score.DOColor(scoreBaseColor, 0.18f));
     }
 
     public void KillTimerTweens()

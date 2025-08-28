@@ -228,9 +228,9 @@ public class SabotageEventManager : MonoBehaviour
                 frameCounter++;
                 if (frameCounter >= FIXED_FRAME)
                 {
-                    if (gameManager.score > 0)
+                    if (gameManager.Score > 0)
                     {
-                        gameManager.score -= 1;
+                        gameManager.SetScore(-1);
                         frameCounter = 0;
                     }
                 }
