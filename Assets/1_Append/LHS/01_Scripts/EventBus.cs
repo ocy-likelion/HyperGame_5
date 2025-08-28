@@ -97,4 +97,14 @@ public class EventBus : MonoBehaviour
             action?.Invoke(param);
         }
     }
+
+#if UNITY_EDITOR
+    private void OnDestroy()
+    {
+        if (!Application.isPlaying) // 씬 닫을 때
+        {
+            instance = null;
+        }
+    }
+#endif
 }
