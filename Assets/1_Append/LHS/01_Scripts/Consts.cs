@@ -13,6 +13,6 @@ public static class Consts
 
     public static string GAME_SCENE = "GameScene";
     
-    public const float CAMERA_OFFSET = 7.38f;
+    public const float CAMERA_OFFSET = 7.38f; // 카메라의 고정된 Z축 값
     public const float CAMERA_HEIGHT_OFFSET = 3f; // 3
 }

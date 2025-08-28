@@ -7,41 +7,37 @@ using UnityEngine.SceneManagement;
 
 public class RealSoundManager : MonoBehaviour
 {
+    // private 필드(인스펙터 노출)
+    [SerializeField] private AudioClip bgmClip;
+    [SerializeField] private AudioClip[] sfxClips;
+
+    // private 필드
     private AudioSource _bgmAudioSource;
     private AudioSource _sfxAudioSource;
-    
     private bool _isMuted = false;
-    
-    [SerializeField]private AudioClip bgmClip;
-    [SerializeField]private AudioClip[] sfxClips;
 
+    // 싱글턴
     public static RealSoundManager Instance { get; private set; }
-    
+
+    // 유니티 콜백
     private void Awake()
     {
-        if (Instance != null) { Destroy(gameObject); return; }
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
         DontDestroyOnLoad(gameObject);
         SceneManager.sceneLoaded += OnSceneLoad;
     }
 
+    // 초기화
     private void OnSceneLoad(Scene scene, LoadSceneMode mode)
     {
         Init();
     }
-
-    public void OnClickMute()
-    {
-        _isMuted = !_isMuted;
-        UpdateMute();
-    }
-
-    void UpdateMute()
-    {
-        _bgmAudioSource.mute = _isMuted;
-        _sfxAudioSource.mute = _isMuted;
-    }
-
     private void Init()
     {
         _bgmAudioSource = FindObjectsByType<AudioSource>(FindObjectsSortMode.None)[0];
@@ -54,11 +50,11 @@ public class RealSoundManager : MonoBehaviour
         UpdateMute();
     }
 
+    // 재생
     public void PlayOneShot(Enums.SfxClips sfxClip)
     {
         _sfxAudioSource.PlayOneShot(sfxClips[(int)sfxClip]);
     }
-
     public void GameEndFade()
     {
         StartCoroutine(FadeAudio(_bgmAudioSource.volume, 0.3f, 0.5f));
@@ -68,7 +64,7 @@ public class RealSoundManager : MonoBehaviour
         float time = 0f;
 
         while (time < duration)
-        {   
+        {
             time += Time.unscaledDeltaTime;
             _bgmAudioSource.volume = Mathf.Lerp(startVolume, targetVolume, time / duration);
             yield return null;
@@ -76,9 +72,20 @@ public class RealSoundManager : MonoBehaviour
 
         _bgmAudioSource.volume = targetVolume;
     }
-
     public void OnClickButton()
     {
         _sfxAudioSource.PlayOneShot(sfxClips[(int)Enums.SfxClips.Click]);
+    }
+
+    // 뮤트
+    private void UpdateMute()
+    {
+        _bgmAudioSource.mute = _isMuted;
+        _sfxAudioSource.mute = _isMuted;
+    }
+    public void OnClickMute()
+    {
+        _isMuted = !_isMuted;
+        UpdateMute();
     }
 }

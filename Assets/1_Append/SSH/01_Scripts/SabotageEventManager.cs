@@ -90,18 +90,18 @@ public class SabotageEventManager : MonoBehaviour
     {
         CommonSabotageEvent("두더지 떼가 몰려옵니다..", 2.5f, () =>
         {
-            for (int i = -1; i < 2; i++)
+            for (int i = -2; i < 3; i++)
             {
                 // 두더지 생성
                 GameObject go = Instantiate(prefab_Mole);
-                go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(i, UnityEngine.Random.Range(1f, 3f), 0);
+                go.transform.position = blockController.BlockSpawnPosition + new Vector3(i, UnityEngine.Random.Range(2, 7));
                 go.GetComponent<SpriteOutlineCollider>().BuildCollider();
 
                 // 두더지에 회전 힘 가하기
                 Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
                 if (rb != null)
                 {
-                    float torque = UnityEngine.Random.value < 0.5f ? -5f : 5f;
+                    float torque = UnityEngine.Random.value < 0.5f ? -3f : 3f;
                     rb.AddTorque(torque, ForceMode2D.Impulse);
                 }
             }
@@ -113,7 +113,7 @@ public class SabotageEventManager : MonoBehaviour
         {
             // 두더지 생성
             GameObject go = Instantiate(prefab_Mole);
-            go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(0, 3, 0);
+            go.transform.position = blockController.BlockSpawnPosition + new Vector3(0, 3, 0);
             go.transform.localScale = Vector3.one * 2.5f;
             go.GetComponent<SpriteOutlineCollider>().BuildCollider();
 
@@ -121,7 +121,7 @@ public class SabotageEventManager : MonoBehaviour
             Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
-                float torque = UnityEngine.Random.value < 0.5f ? -5f : 5f;
+                float torque = UnityEngine.Random.value < 0.5f ? -3f : 3f;
                 rb.AddTorque(torque, ForceMode2D.Impulse);
             }
 
@@ -138,7 +138,7 @@ public class SabotageEventManager : MonoBehaviour
                 {
                     // 돌 생성
                     GameObject go = Instantiate(prefab_TopBlock);
-                    go.transform.position = blockController.GetBlockSpawnPoint() + new Vector3(i, j, 0);
+                    go.transform.position = blockController.BlockSpawnPosition + new Vector3(i, j, 0);
 
                     // 비동기로 돌 스프라이트 할당
                     AsyncOperationHandle<Sprite> spriteLoadHandle = Addressables.LoadAssetAsync<Sprite>($"Sprite_Stone_{UnityEngine.Random.Range(1, 5)}");

@@ -4,7 +4,7 @@ using UnityEngine;
 public class SabotageEventBlockObject : MonoBehaviour
 {
     // 상수
-    protected const float TERMINAL_SPEED = 5f;
+    protected const float TERMINAL_SPEED = 9f;
     protected const float MASS = 10;
     protected const float DEAD_LINE_POS = -6f;
     protected const float HIT_FORCE = 30f;

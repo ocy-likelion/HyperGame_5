@@ -4,17 +4,19 @@ using DG.Tweening;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] PlayManager playManager;
+    // 상수
+    private const float FOLLOW_SPEED = 2f;
 
-    const float followSpeed = 2f;
-    bool isCompleteCameraMove = false;
+    // private 필드(인스펙터 노출)
+    [SerializeField] private PlayManager playManager;
 
+    // 유니티 콜백
     private void Update()
     {
         float targetY = playManager.GetCameraHeight();
         Vector3 pos = transform.position;
 
-        pos.y = Mathf.Lerp(pos.y, targetY, Time.deltaTime * followSpeed);
+        pos.y = Mathf.Lerp(pos.y, targetY, Time.deltaTime * FOLLOW_SPEED);
 
         // x, y가 0 이하로 내려가지 않도록 제한
         pos.x = Mathf.Max(-0.32f, pos.x);
@@ -31,7 +33,8 @@ public class CameraController : MonoBehaviour
         EventBus.Instance.Unsubscribe<float>("SetCameraHeight", SetCameraHeight);
     }
 
-    public void SetCameraHeight(float height) // LEGACY
+    // LEGACY
+    public void SetCameraHeight(float height)
     {
         //isCompleteCameraMove = false;
         //var pos = new Vector3(gameObject.transform.position.x, height, gameObject.transform.position.z);

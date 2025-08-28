@@ -7,6 +7,11 @@ using UnityEngine.UI;
 
 public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
+    // 상수
+    private const float GROUND_Y = -3f; // 기반(라인의 마지노선)
+    private const float RAY_DISTANCE = 10f; // 레이를 쏠 최대 거리
+    private const float LINE_Y_OFFSET = 0.05f; // 라인의 오프셋 값
+
     // private 필드(인스펙터 노출)
     [SerializeField] private Camera mainCamera;
     [SerializeField] private GameObject blockPrefab;
@@ -14,10 +19,13 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     // private 필드
     private Vector3 _blockSpawnPosition;
-    private GameObject _currentBlock; 
+    private GameObject _currentBlock;
     private Transform _predictionLineLeft;
     private Transform _predictionLineRight;
     private bool _isPointerDown;
+
+    // public Getter
+    public Vector3 BlockSpawnPosition => _blockSpawnPosition;
 
     // 유니티 콜백
     private void OnEnable()
@@ -30,18 +38,50 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     }
     private void Start()
     {
-        Init();
+        InitPredictionLine();
     }
     private void Update()
     {
         if (_isPointerDown)
         {
-            DrawPredictionLine(); // 블록 좌우 예측선 그리기
+            DrawPredictionLine(); // 블럭 좌우 예측선 그리기
         }
     }
 
-    // 메인
-    private void Init() // 블록 좌우 예측선 초기화
+    // 블럭
+    private void InitBlockPosition(GameObject newBlock) // 카메라 위치에 따른 블럭의 위치 설정
+    {
+        if (_currentBlock != null) return; // 블록이 이미 존재하면 중복 생성 방지
+
+        _currentBlock = newBlock;
+        _currentBlock.transform.position = GetBlockSpawnPosition();
+
+        if (_isPointerDown)
+        {
+            TogglePredictionLines(true);
+        }
+    }
+    private Vector3 GetBlockSpawnPosition()
+    {
+        var screenPosition = new Vector3(Screen.width * 0.5f, Screen.height * 0.8f, Consts.CAMERA_OFFSET);
+        var worldPosition = mainCamera.ScreenToWorldPoint(screenPosition);
+        worldPosition.z = 0f; // 2D 오브젝트는 z=0
+
+        _blockSpawnPosition = worldPosition;
+        return worldPosition;
+    }
+    private void SetBlockPosition(Vector3 eventDataPos)
+    {
+        Vector3 viewportPos = mainCamera.ScreenToViewportPoint(eventDataPos);
+        viewportPos.x = Mathf.Clamp(viewportPos.x, 0.1f, 0.9f);
+        viewportPos.z = Consts.CAMERA_OFFSET;
+        var clampedPos = mainCamera.ViewportToWorldPoint(viewportPos);
+        _currentBlock.transform.position =
+            new Vector3(clampedPos.x, _currentBlock.transform.position.y, 0);
+    }
+
+    // 예측선
+    private void InitPredictionLine() // 블럭 좌우 예측선 초기화
     {
         _predictionLineLeft = Instantiate(predictionLinePrefab).GetComponent<Transform>();
         _predictionLineLeft.gameObject.SetActive(false);
@@ -49,115 +89,71 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         _predictionLineRight = Instantiate(predictionLinePrefab).GetComponent<Transform>();
         _predictionLineRight.gameObject.SetActive(false);
     }
-    private void UpdateBlockSpawnPosition() // 카메라 이동에 따른 블록 스폰 위치 업데이트 기능
+    private void DrawPredictionLine()
     {
-        Vector3 screenUpperCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.8f, Consts.CAMERA_OFFSET);
-        Vector3 worldPos = mainCamera.ScreenToWorldPoint(screenUpperCenter);
-        worldPos.z = 0; // 2D 오브젝트에 맞게 z축 값을 0으로
-        _blockSpawnPosition = worldPos;
+        if (_currentBlock == null) return;
+
+        Collider2D blockCollider = _currentBlock.GetComponent<Collider2D>();
+        
+        UpdateLine(_predictionLineLeft, new Vector2(blockCollider.bounds.min.x, blockCollider.bounds.min.y - LINE_Y_OFFSET)); // 좌측 라인
+        UpdateLine(_predictionLineRight, new Vector2(blockCollider.bounds.max.x, blockCollider.bounds.min.y - LINE_Y_OFFSET)); // 우측 라인
     }
-    
-    
-    private void InitBlockPosition(GameObject newBlock) // 카메라 위치에 따른 블럭의 위치 설정
+    private void UpdateLine(Transform lineObj, Vector2 start)
     {
-        if (_currentBlock is not null) return;
-        UpdateBlockSpawnPosition();
-        _currentBlock = newBlock;
-        //_currentBlock.GetComponent<Rigidbody2D>().simulated = false;
-        _currentBlock.transform.position = _blockSpawnPosition;
-            
-        if (_isPointerDown)
+        LineRenderer lineRenderer = lineObj.GetComponent<LineRenderer>();
+
+        // 아래 방향으로 레이 발사
+        RaycastHit2D hit = Physics2D.Raycast(start, Vector2.down, RAY_DISTANCE);
+
+        float endY = GROUND_Y;
+
+        if (hit.collider != null)
         {
-            TogglePredictionLines(true);
+            // 태그가 Platform 또는 Block일 때만 충돌 지점으로 라인 종료
+            if (hit.collider.CompareTag("Platform") || hit.collider.CompareTag("Block"))
+            {
+                endY = hit.point.y;
+            }
         }
+
+        // 시작점과 끝점 업데이트
+        lineRenderer.SetPosition(0, start);
+        lineRenderer.SetPosition(1, new Vector3(start.x, Mathf.Max(endY, GROUND_Y), 0));
+    }
+    private void TogglePredictionLines(bool isActive)
+    {
+        _predictionLineLeft.gameObject.SetActive(isActive);
+        _predictionLineRight.gameObject.SetActive(isActive);
     }
 
-    //터치 입력 시작 이벤트 핸들
+    // 입력 핸들
     public void OnPointerDown(PointerEventData eventData)
     {
         _isPointerDown = true;
-        if (_currentBlock is null) return;
+
+        if (_currentBlock == null) return;
+
         SetBlockPosition(eventData.position);
         TogglePredictionLines(true);
     }
-
-    //터치 입력 끝 이벤트 핸들
     public void OnPointerUp(PointerEventData eventData)
     {
         _isPointerDown = false;
-        if (_currentBlock is null) return;
-        //_currentBlock.GetComponent<Rigidbody2D>().simulated = true;
+
+        if (_currentBlock == null) return;
+
         _currentBlock.GetComponent<FallingProxyBlockObject>().StopFalling();
         _currentBlock = null;
+
         TogglePredictionLines(false);
 
         EventBus.Instance.Publish("RespawnBlock");
         RealSoundManager.Instance.PlayOneShot(Enums.SfxClips.DropBlock);
     }
-    
-    //터치 후 드래그 입력 이벤트 핸들
     public void OnDrag(PointerEventData eventData)
     {
-        if (_currentBlock is null) return;
-        SetBlockPosition(eventData.position);
-    }
-    
-    //터치 입력 받은 위치 기반으로 블록 위치를 바꾸는 기능
-    private void SetBlockPosition(Vector3 eventDataPos)
-    {
-        Vector3 viewportPos = mainCamera.ScreenToViewportPoint(eventDataPos);
-        viewportPos.x = Mathf.Clamp(viewportPos.x, 0.1f, 0.9f);
-        viewportPos.z = Consts.CAMERA_OFFSET;
-        var clampedPos = mainCamera.ViewportToWorldPoint(viewportPos);
-        _currentBlock.transform.position =  
-            new Vector3(clampedPos.x, _currentBlock.transform.position.y, 0);
-    }
-
-    //예측선 그리는 기능
-    private void DrawPredictionLine()
-    {
         if (_currentBlock == null) return;
-            
-        Collider2D blockCollider = _currentBlock.GetComponent<Collider2D>(); // 블록 바닥 높이 구하기
-        var blockBottom = _currentBlock.transform.position;
-        blockBottom.y = blockCollider.bounds.min.y - 0.05f; // 바닥보다 조금 더 낮은 지점에서 predict line 출발
-        
-        var predictLineLeftRender = _predictionLineLeft.GetComponent<LineRenderer>(); // 블록 좌측 선
-        var predictLineRightRender = _predictionLineRight.GetComponent<LineRenderer>(); // 블록 우측 선
 
-        // left line
-        var leftLineUpperPoint = new Vector3(0, 0, 0); // predict line 상단
-        leftLineUpperPoint.y = blockCollider.bounds.min.y - 0.05f;
-        leftLineUpperPoint.x = blockCollider.bounds.min.x;
-
-        RaycastHit2D hit = Physics2D.Raycast(leftLineUpperPoint, Vector2.down, 10);
-        var line2Y = Mathf.Max(hit.point.y, -3);   // -3 지면 높이
-        var leftLineLowerPoint = new Vector3(leftLineUpperPoint.x, line2Y, 0); // predict line 하단
-
-        predictLineLeftRender.SetPosition(0, leftLineUpperPoint);
-        predictLineLeftRender.SetPosition(1, leftLineLowerPoint);
-
-        // right line
-        var rightLineUpperPoint = new Vector3(0, 0, 0); // predict line 상단
-        rightLineUpperPoint.y = leftLineUpperPoint.y; // == blockCollider.bounds.min.y - 0.05f
-        rightLineUpperPoint.x = blockCollider.bounds.max.x;
-
-        hit = Physics2D.Raycast(rightLineUpperPoint, Vector2.down, 10);
-        line2Y = Mathf.Max(hit.point.y, -3);   // -3 지면 높이
-        var rightLineLowerPoint = new Vector3(rightLineUpperPoint.x, line2Y, 0); // predict line 하단
-
-        predictLineRightRender.SetPosition(0, rightLineUpperPoint);
-        predictLineRightRender.SetPosition(1, rightLineLowerPoint);
-    }
-
-    public Vector3 GetBlockSpawnPoint()
-    {
-        return _blockSpawnPosition;
-    }
-
-    private void TogglePredictionLines(bool isActive)
-    {
-        _predictionLineLeft.gameObject.SetActive(isActive);
-        _predictionLineRight.gameObject.SetActive(isActive);
+        SetBlockPosition(eventData.position);
     }
 }
