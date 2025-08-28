@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class PlayManager : MonoBehaviour
 {
     // 상수
-    public const float GOAL_HEIGHT = 1.25f; // 블럭 쌓기의 목표 높이(2.25)
+    public const float GOAL_HEIGHT = 2.25f; // 블럭 쌓기의 목표 높이
     private const float STABLE_DURATION = 3f; // 블럭들이 안정화된 후 버텨야하는 시간
     private const float UNSTABLE_VELOCITY_THRESHOLD = -0.03f; // 블록이 불안정하다고 판단할 Y축 속도 임계값
 
