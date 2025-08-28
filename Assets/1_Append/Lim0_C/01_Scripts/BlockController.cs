@@ -7,31 +7,31 @@ using UnityEngine.UI;
 
 public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
-    [SerializeField]private Camera mainCamera;
-    [SerializeField]private GameObject blockPrefab;
-    [SerializeField]private GameObject predictionLinePrefab;
+    // private 필드(인스펙터 노출)
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private GameObject blockPrefab;
+    [SerializeField] private GameObject predictionLinePrefab;
 
+    // private 필드
     private Vector3 _blockSpawnPosition;
     private GameObject _currentBlock; 
     private Transform _predictionLineLeft;
     private Transform _predictionLineRight;
     private bool _isPointerDown;
 
+    // 유니티 콜백
     private void OnEnable()
     {
         EventBus.Instance.Subscribe<GameObject>("SpawnBlock", InitBlockPosition);
     }
-
     private void OnDisable()
     {
         EventBus.Instance.Unsubscribe<GameObject>("SpawnBlock", InitBlockPosition);
     }
-
     private void Start()
     {
         Init();
     }
-
     private void Update()
     {
         if (_isPointerDown)
@@ -40,10 +40,9 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         }
     }
 
-    //초기화
-    private void Init()
+    // 메인
+    private void Init() // 블록 좌우 예측선 초기화
     {
-        // 블록 좌우 예측선 초기화
         _predictionLineLeft = Instantiate(predictionLinePrefab).GetComponent<Transform>();
         _predictionLineLeft.gameObject.SetActive(false);
         _predictionLineRight = Instantiate(predictionLinePrefab).GetComponent<Transform>();
