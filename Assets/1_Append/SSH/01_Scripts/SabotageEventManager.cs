@@ -27,6 +27,7 @@ public class SabotageEventManager : MonoBehaviour
     [SerializeField] private GameManager gameManager;
     [SerializeField] private EffectObjectPool effectObjectPool;
     [SerializeField] private BlockController blockController;
+
     [SerializeField] private GameObject[] naturalGasObj;
     [SerializeField] private GameObject text_LavaAlarm;
     [SerializeField] private GameObject text_SabotageAlarm;
@@ -198,8 +199,26 @@ public class SabotageEventManager : MonoBehaviour
             });
         });
     }
+    private IEnumerator EventSequenceCoroutine() // 방해 이벤트 시퀀스 코루틴
+    {
+        for (int i = 0; i < eventTimes.Length; i++)
+        {
+            float waitTime = eventTimes[i] - gameManager.GameElaspedTime;
+            yield return new WaitForSeconds(waitTime);
 
-    // Etc
+            if (sabotageEvents.Count > 0)
+            {
+                // 남은 이벤트 중 랜덤 선택
+                int randomIndex = UnityEngine.Random.Range(0, sabotageEvents.Count);
+                sabotageEvents[randomIndex].Invoke();
+
+                // 선택한 이벤트 제거
+                sabotageEvents.RemoveAt(randomIndex);
+            }
+        }
+    }
+
+    // 용암
     private void ShakeCamera(float duration) // 카메라가 흔들리는 효과(배경 흔들기)
     {
         Vector3 originPos = backGround.transform.position;
@@ -243,23 +262,5 @@ public class SabotageEventManager : MonoBehaviour
         }
 
         lava.transform.position = LAVA_END_POS;
-    }
-    private IEnumerator EventSequenceCoroutine() // 방해 이벤트 시퀀스 코루틴
-    {
-        for (int i = 0; i < eventTimes.Length; i++)
-        {
-            float waitTime = eventTimes[i] - playManager.GameElapsedTime;
-            yield return new WaitForSeconds(waitTime);
-
-            if (sabotageEvents.Count > 0)
-            {
-                // 남은 이벤트 중 랜덤 선택
-                int randomIndex = UnityEngine.Random.Range(0, sabotageEvents.Count);
-                sabotageEvents[randomIndex].Invoke();
-
-                // 선택한 이벤트 제거
-                sabotageEvents.RemoveAt(randomIndex);
-            }
-        }
     }
 }

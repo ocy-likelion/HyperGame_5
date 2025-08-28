@@ -8,7 +8,6 @@ public class PlayManager : MonoBehaviour
 {
     // 상수
     public const float GOAL_HEIGHT = 1.25f; // 블럭 쌓기의 목표 높이(2.25)
-    private const float TIME_LIMIT = 60f; // 제한 시간
     private const float STABLE_DURATION = 3f; // 블럭들이 안정화된 후 버텨야하는 시간
     private const float UNSTABLE_VELOCITY_THRESHOLD = -0.03f; // 블록이 불안정하다고 판단할 Y축 속도 임계값
 
@@ -26,7 +25,6 @@ public class PlayManager : MonoBehaviour
     private List<GameObject> topBlockList = new List<GameObject>(); // 플레이어가 떨어뜨린 블럭 오브젝트 리스트
     private GameObject highestBlock; // 가장 높이 있는 블럭 오브젝트
     private float currentTowerHeight; // 현재 쌓은 블럭(이하 타워)의 높이
-    private float gameElapsedTime = 0.0f; // 게임 시작 후 경과된 시간
     private float stableElapsedTime = 0f; // 타워가 안정을 찾은 후 경과된 시간
     private bool isBlockLanded; // 떨어뜨린 블럭이 쌓인 블럭들에 닿았는지 여부
 
@@ -34,7 +32,6 @@ public class PlayManager : MonoBehaviour
     public List<GameObject> BlockList => topBlockList;
     public GameObject HighestBlock => highestBlock;
     public float CurrentTowerHeight => currentTowerHeight;
-    public float GameElapsedTime => gameElapsedTime;
     public Vector3 HighestTopPoint // 가장 높은 지점의 Position 값
     {
         get
@@ -65,7 +62,6 @@ public class PlayManager : MonoBehaviour
     }
     private void Start()
     {
-        StartCoroutine(GameTimer());
         spawnBlockManager.SpawnRandomBlock();
     }
     private void Update()
@@ -164,7 +160,7 @@ public class PlayManager : MonoBehaviour
         if (stableElapsedTime >= STABLE_DURATION)
         {
             uiManager.HideHoldCountdownUI();
-            gameManager.isClear = true; // 클리어 여부
+            gameManager.IsClear = true; // 클리어 여부
             EventBus.Instance.Publish(Consts.END_GAME);
         }
     }
@@ -187,15 +183,5 @@ public class PlayManager : MonoBehaviour
         }
 
         return false;
-    }
-    private IEnumerator GameTimer() // 게임 진행 시간 타이머 코루틴
-    {
-        while (gameElapsedTime < TIME_LIMIT)
-        {
-            gameElapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        EventBus.Instance.Publish(Consts.GAME_OVER);
     }
 }

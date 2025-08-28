@@ -330,7 +330,7 @@ public class UIManager : MonoBehaviour
 
         if (gameManager == null) return;
 
-        valueTw = Timer.DOValue(0f, gameManager.timerDuration)
+        valueTw = Timer.DOValue(0f, GameManager.GAME_TIME_LIMIT)
             .SetEase(Ease.Linear)
             .SetUpdate(false) // 타임스케일 영향 받음(일시정지 시 멈춤)
             .SetLink(Timer.gameObject, LinkBehaviour.KillOnDestroy | LinkBehaviour.PauseOnDisable)

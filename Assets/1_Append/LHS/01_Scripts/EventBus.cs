@@ -1,11 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EventBus : MonoBehaviour
 {
+    // private 필드
+    private Dictionary<string, Action> eventDictionary = new Dictionary<string, Action>();
+
     // singleton
-    static EventBus instance;
+    private static EventBus instance;
     public static EventBus Instance
     {
         get
@@ -21,9 +24,8 @@ public class EventBus : MonoBehaviour
         }
     }
 
-    Dictionary<string, Action> eventDictionary = new Dictionary<string, Action>();
-
-    void Awake()
+    // 유니티 콜백
+    private void Awake()
     {
         if (instance != null)
         {
@@ -35,16 +37,7 @@ public class EventBus : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-
-    }
-
-    void Update()
-    {
-
-    }
-
+    // 메인
     public void Subscribe(string eventName, Action listener)
     {
         if (eventDictionary.ContainsKey(eventName))
@@ -56,7 +49,6 @@ public class EventBus : MonoBehaviour
             eventDictionary[eventName] = listener;
         }
     }
-
     public void Unsubscribe(string eventName, Action listener)
     {
         if (eventDictionary.ContainsKey(eventName)) 
@@ -69,7 +61,6 @@ public class EventBus : MonoBehaviour
             }
         }
     }
-
     public void Publish(string eventName)
     {
         if (eventDictionary.ContainsKey(eventName))
@@ -77,10 +68,9 @@ public class EventBus : MonoBehaviour
             eventDictionary[eventName].Invoke();
         }
     }
-    
+
     // events using generic
     private Dictionary<string, Delegate> eventDictionaryT = new Dictionary<string, Delegate>();
-
     public void Subscribe<T>(string eventName, Action<T> listener)
     {
         if (eventDictionaryT.ContainsKey(eventName))
@@ -92,7 +82,6 @@ public class EventBus : MonoBehaviour
             eventDictionaryT[eventName] = listener;
         }
     }
-
     public void Unsubscribe<T>(string eventName, Action<T> listener)
     {
         if (eventDictionaryT.ContainsKey(eventName))
@@ -100,7 +89,6 @@ public class EventBus : MonoBehaviour
             eventDictionaryT[eventName] = (Action<T>)eventDictionaryT[eventName] - listener;
         }
     }
-
     public void Publish<T>(string eventName, T param)
     {
         if (eventDictionaryT.ContainsKey(eventName))

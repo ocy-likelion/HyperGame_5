@@ -4,13 +4,13 @@ using UnityEngine;
 public class MenuPopUp : MonoBehaviour
 {
     [Header("Target")]
-    public RectTransform target;        // ºñ¿öµÎ¸é ÀÚµ¿ ÇÒ´ç
-    public CanvasGroup canvasGroup;     // ºñ¿öµÎ¸é ÀÚµ¿ Ãß°¡
+    public RectTransform target;        // ë¹„ì›Œë‘ë©´ ìë™ í• ë‹¹
+    public CanvasGroup canvasGroup;     // ë¹„ì›Œë‘ë©´ ìë™ ì¶”ê°€
 
     [Header("Open (Pop)")]
     [Range(0.5f, 1f)] public float startScale = 0.85f;
-    public float popStep1 = 0.18f;      // 1´Ü°è(1.05±îÁö)
-    public float popStep2 = 0.10f;      // 2´Ü°è(1.0À¸·Î)
+    public float popStep1 = 0.18f;      // 1ë‹¨ê³„(1.05ê¹Œì§€)
+    public float popStep2 = 0.10f;      // 2ë‹¨ê³„(1.0ìœ¼ë¡œ)
     public float fadeIn = 0.15f;
 
     [Header("Close")]
@@ -19,12 +19,13 @@ public class MenuPopUp : MonoBehaviour
     public float fadeOut = 0.12f;
 
     [Header("Options")]
-    public bool playOnEnable = false;   // ÄÑÁú ¶§ ÀÚµ¿ ÆË¾÷
+    public bool playOnEnable = false;   // ì¼œì§ˆ ë•Œ ìë™ íŒì—…
 
-    Sequence _seq;
+    private Sequence _seq;
 
-    void Reset() { target = GetComponent<RectTransform>(); }
-    void Awake()
+    // ìœ ë‹ˆí‹° ì½œë°±
+    private void Reset() { target = GetComponent<RectTransform>(); }
+    private void Awake()
     {
         if (!target) target = GetComponent<RectTransform>();
         if (!canvasGroup) canvasGroup = gameObject.GetComponent<CanvasGroup>();
@@ -32,12 +33,12 @@ public class MenuPopUp : MonoBehaviour
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
     }
-
-    void OnEnable()
+    private void OnEnable()
     {
         if (playOnEnable) Show();
     }
 
+    // ë©”ì¸
     public void Show()
     {
         KillSeq();
@@ -46,14 +47,13 @@ public class MenuPopUp : MonoBehaviour
         target.localScale = Vector3.one * startScale;
         canvasGroup.alpha = 0f;
 
-        // timeScale ¿µÇâ X : SetUpdate(true)
+        // timeScale ì˜í–¥ X : SetUpdate(true)
         _seq = DOTween.Sequence().SetUpdate(true).SetLink(gameObject);
 
         _seq.Append(canvasGroup.DOFade(1f, fadeIn))
             .Join(target.DOScale(1.05f, popStep1).SetEase(Ease.OutCubic))
             .Append(target.DOScale(1.00f, popStep2).SetEase(Ease.OutBack, 2.2f));
     }
-
     public void Hide()
     {
         KillSeq();
@@ -68,7 +68,6 @@ public class MenuPopUp : MonoBehaviour
                 gameObject.SetActive(false);
             });
     }
-
     public void ShowInstant()
     {
         KillSeq();
@@ -76,7 +75,6 @@ public class MenuPopUp : MonoBehaviour
         target.localScale = Vector3.one;
         canvasGroup.alpha = 1f;
     }
-
     public void HideInstant()
     {
         KillSeq();
@@ -84,10 +82,10 @@ public class MenuPopUp : MonoBehaviour
         target.localScale = Vector3.one;
         canvasGroup.alpha = 0f;
     }
-
-    void KillSeq()
+    private void KillSeq()
     {
         if (_seq != null && _seq.IsActive()) _seq.Kill();
+
         _seq = null;
     }
 }

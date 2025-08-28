@@ -1,10 +1,12 @@
 using UnityEngine;
 public class SafeArea : MonoBehaviour
 {
+    // public 필드
     public Rect safeArea;
     public Vector2 minAnchor;
     public Vector2 maxAnchor;
 
+    // 유니티 콜백
     private void Awake()
     {
         RectTransform rect = this.GetComponent<RectTransform>();
@@ -22,5 +24,4 @@ public class SafeArea : MonoBehaviour
         rect.anchorMin = minAnchor;
         rect.anchorMax = maxAnchor;
     }
-
 }

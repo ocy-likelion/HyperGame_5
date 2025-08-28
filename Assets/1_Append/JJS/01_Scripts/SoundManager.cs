@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 
+// LEGACY
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance { get; private set; }
