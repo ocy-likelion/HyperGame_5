@@ -45,6 +45,7 @@ public class BlockController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     {
         _predictionLineLeft = Instantiate(predictionLinePrefab).GetComponent<Transform>();
         _predictionLineLeft.gameObject.SetActive(false);
+
         _predictionLineRight = Instantiate(predictionLinePrefab).GetComponent<Transform>();
         _predictionLineRight.gameObject.SetActive(false);
     }

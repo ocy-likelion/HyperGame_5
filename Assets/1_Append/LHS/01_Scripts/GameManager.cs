@@ -17,22 +17,20 @@ public class GameManager : MonoBehaviour
     // public Getter
     public bool IsGameEnd => isGameEnd;
 
-    void OnEnable()
+    // 유니티 콜백
+    private void OnEnable()
     {
         EventBus.Instance.Subscribe(Consts.END_GAME, EndGame);
     }
-
-    void OnDisable()
+    private void OnDisable()
     {
         EventBus.Instance.Unsubscribe(Consts.END_GAME, EndGame);
     }
-
-    void Start()
+    private void Start()
     {
         currentTime = timerDuration;
     }
-
-    void Update()
+    private void Update()
     {
         if (isGameEnd) return;
 
@@ -54,6 +52,7 @@ public class GameManager : MonoBehaviour
         
     }
 
+    // 메인
     private void EndGame()
     {
         uiManager.HideHoldCountdownUI();
@@ -88,6 +87,9 @@ public class GameManager : MonoBehaviour
     {
         this.score = score;
     }
-  
+    public void ModifyScore(int score)
+    {
+        this.score += score;
+    }
     public void Test() { isClear = true; }
 }

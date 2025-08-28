@@ -211,7 +211,7 @@ public class SabotageEventManager : MonoBehaviour
     {
         float elapsed = 0f;
         int frameCounter = 0; // 프레임마다 점수 차감을 위한 프레임 카운터
-        const int FIXED_FRAME = 3;
+        const int FIXED_FRAME = 5;
 
         while (elapsed < LAVA_DURATION)
         {
@@ -224,15 +224,12 @@ public class SabotageEventManager : MonoBehaviour
             {
                 text_LavaAlarm.SetActive(true);
 
-                // 3 프레임마다 2점 차감
+                // 점수 차감 로직
                 frameCounter++;
                 if (frameCounter >= FIXED_FRAME)
                 {
-                    if (gameManager.Score > 0)
-                    {
-                        gameManager.SetScore(-1);
-                        frameCounter = 0;
-                    }
+                    gameManager.ModifyScore(-1);
+                    frameCounter = 0;
                 }
             }
             else
