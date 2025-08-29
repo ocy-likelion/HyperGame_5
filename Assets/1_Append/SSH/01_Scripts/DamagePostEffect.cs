@@ -10,8 +10,8 @@ public class DamagePostEffect : MonoBehaviour
     private const float FADE_IN_TIME = 0.1f;  // 깜빡일 때 올라가는 시간
     private const float FADE_OUT_TIME = 0.5f; // 서서히 사라지는 시간
 
-    private const float SLOW_TIME_SCALE = 0.5f; // 피격 시 슬로우 모션 타임스케일
-    private const float SLOW_DURATION = 0.2f;   // 슬로우 유지 시간
+    private const float SLOW_TIME_SCALE = 0.23f; // 피격 시 슬로우 모션 타임스케일
+    private const float SLOW_DURATION = 0.2f; // 슬로우 유지 시간
     private const float TIME_RECOVER_DURATION = 0.3f; // 원래 속도로 복귀하는 시간
 
     // private 필드(인스펙터 노출)
@@ -74,21 +74,21 @@ public class DamagePostEffect : MonoBehaviour
                               FADE_OUT_TIME);
                });
 
-        // 타임스케일 연출
-        DOTween.To(() => Time.timeScale,
-                   x => Time.timeScale = x,
-                   SLOW_TIME_SCALE,
-                   0.05f) // 빠르게 느려짐
-               .OnComplete(() =>
-               {
-                   // 일정 시간 유지 후 원래 속도로 복귀
-                   DOVirtual.DelayedCall(SLOW_DURATION, () =>
-                   {
-                       DOTween.To(() => Time.timeScale,
-                                  x => Time.timeScale = x,
-                                  1f,
-                                  TIME_RECOVER_DURATION);
-                   });
-               });
+        //// 타임스케일 연출(LEGACY)
+        //DOTween.To(() => Time.timeScale,
+        //           x => Time.timeScale = x,
+        //           SLOW_TIME_SCALE,
+        //           0.05f) // 빠르게 느려짐
+        //       .OnComplete(() =>
+        //       {
+        //           // 일정 시간 유지 후 원래 속도로 복귀
+        //           DOVirtual.DelayedCall(SLOW_DURATION, () =>
+        //           {
+        //               DOTween.To(() => Time.timeScale,
+        //                          x => Time.timeScale = x,
+        //                          1f,
+        //                          TIME_RECOVER_DURATION);
+        //           });
+        //       });
     }
 }
