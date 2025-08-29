@@ -19,6 +19,8 @@ public class BottomCollider : MonoBehaviour
 
             uiManager.AnimateScoreChange(from, to); // UI 변경
 
+            DamagePostEffect.Instance.PlayDamageEffect(); // 포스트 프로세싱
+
             playManager.BlockList.Remove(collision.gameObject);
             Destroy(collision.gameObject);
         }
