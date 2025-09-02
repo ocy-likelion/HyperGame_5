@@ -122,8 +122,9 @@ public class GameManager : MonoBehaviour
             uiManager.ShowResultUI();
             uiManager.Result(false);
         }
-
-        PlayCounter.IncrementPlayCount(); // 플레이 횟수 증가
+#if UNITY_WEBGL && !UNITY_EDITOR
+        PlayCounter.IncrementPlayCount(); // 플레이 횟수 증가(광고 전용)
+#endif
     }
     public void SetScore(int score)
     {
