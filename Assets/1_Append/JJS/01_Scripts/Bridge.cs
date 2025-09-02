@@ -48,6 +48,7 @@ public class Bridge : MonoBehaviour
         {
             case "loaded": return AdLoadStatus.Loaded;
             case "failed": return AdLoadStatus.Failed;
+            case "closed": return AdLoadStatus.Closed;
             default: return AdLoadStatus.NotLoaded;
         }
 #else
@@ -59,5 +60,6 @@ public enum AdLoadStatus
 {
     Not_Loaded,
     Loaded,
-    Failed
+    Failed,
+    Closed
 }

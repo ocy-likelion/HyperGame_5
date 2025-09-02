@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 using static Enums;
 
@@ -36,9 +37,35 @@ public class GameManager : MonoBehaviour
     {
         EventBus.Instance.Unsubscribe(Consts.END_GAME, EndGame);
     }
-    private void Start()
+    private async void Start()
     {
         remainTime = GAME_TIME_LIMIT;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        // 시작 시 플레이 횟수가 3의 배수라면 광고 재생
+        if (PlayCounter.GetPlayCount() % 3 == 0)
+        {
+            // 게임 일시정지
+            Time.timeScale = 0f;
+
+            // 광고 재생
+            await ShowAd.LoadAndShowAdAsync();
+
+            // 광고 상태 확인
+            AdLoadStatus status = Bridge.GetAdStatus();
+            if (status == AdLoadStatus.Loaded)
+            {
+                // 광고가 로드되었으면 종료될 때까지 대기
+                while (Bridge.GetAdStatus() != AdLoadStatus.Closed)
+                {
+                    await Task.Yield();
+                }
+            }
+
+            // 광고가 로드되지 않았거나 종료된 경우 게임 재개
+            Time.timeScale = 1f;
+        }
+#endif
     }
     private void Update()
     {
@@ -95,6 +122,8 @@ public class GameManager : MonoBehaviour
             uiManager.ShowResultUI();
             uiManager.Result(false);
         }
+
+        PlayCounter.IncrementPlayCount(); // 플레이 횟수 증가
     }
     public void SetScore(int score)
     {
