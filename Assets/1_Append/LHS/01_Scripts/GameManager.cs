@@ -44,8 +44,10 @@ public class GameManager : MonoBehaviour
 
 #if UNITY_WEBGL && !UNITY_EDITOR
         // 시작 시 플레이 횟수가 3의 배수라면 광고 재생
-        if (PlayCounter.GetPlayCount() % 3 == 0)
-        {
+        //if (PlayCounter.GetPlayCount() % 3 == 0)
+        //{
+
+        //}
             // 게임 일시정지
             Time.timeScale = 0f;
 
@@ -65,7 +67,6 @@ public class GameManager : MonoBehaviour
 
             // 광고가 로드되지 않았거나 종료된 경우 게임 재개
             Time.timeScale = 1f;
-        }
 #endif
     }
     private void Update()
