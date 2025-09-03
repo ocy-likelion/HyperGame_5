@@ -17,15 +17,16 @@ public class GameManager : MonoBehaviour
     private bool isGameEnd = false;
     private bool isTimeFiveSecond = false;
     private float remainTime;
+    private float gameElaspedTime;
     private int score = 10000;
 
     // public 필드
-    public bool IsClear = false;
-    public float GameElaspedTime;
+    [HideInInspector] public bool IsClear = false;
 
     // public Getter
     public bool IsGameEnd => isGameEnd;
     public float RemainTime => remainTime;
+    public float GameElaspedTime => gameElaspedTime;
     public int Score => score;
 
     // 유니티 콜백
@@ -72,7 +73,7 @@ public class GameManager : MonoBehaviour
         if (isGameEnd) return;
 
         remainTime -= Time.deltaTime;
-        GameElaspedTime += Time.deltaTime;
+        gameElaspedTime += Time.deltaTime;
 
         if (remainTime <= TIME_WARNING_THRESHOLD && !isTimeFiveSecond) // 남은 시간이 5초 이하인 경우
         {
