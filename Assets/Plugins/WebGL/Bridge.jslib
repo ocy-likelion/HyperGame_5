@@ -13,10 +13,20 @@ var BridgePlugin = {
         var jsMethod = UTF8ToString(method);
         try {
             var result = eval(jsMethod); // JS 코드 실행
-            return allocateUTF8(result ? result.toString() : ""); // 문자열로 반환
+            var str = result ? result.toString() : "";
+            var lengthBytes = lengthBytesUTF8(str) + 1;
+            var buffer = _malloc(lengthBytes);
+            stringToUTF8(str, buffer, lengthBytes);
+            return buffer;
+            //return allocateUTF8(result ? result.toString() : ""); // 문자열로 반환
         } catch (error) {
             console.error('JavaScript Error : ', error);
-            return allocateUTF8("error");
+            var str = "error";
+            var lengthBytes = lengthBytesUTF8(str) + 1;
+            var buffer = _malloc(lengthBytes);
+            stringToUTF8(str, buffer, lengthBytes);
+            return buffer;
+            //return allocateUTF8("error");
         }
     }
 };
