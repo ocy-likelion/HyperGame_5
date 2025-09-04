@@ -21019,7 +21019,7 @@ GameObject:
   - component: {fileID: 1836921643}
   - component: {fileID: 1836921647}
   m_Layer: 5
-  m_Name: LogCanvas(TEMP)
+  m_Name: Logger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

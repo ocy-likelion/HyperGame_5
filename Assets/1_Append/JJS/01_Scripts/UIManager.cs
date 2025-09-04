@@ -547,6 +547,7 @@ public class UIManager : MonoBehaviour
 
             Logger.Instance.SetLog("광고 닫힘: 게임 재개");
             Debug.Log("광고 닫힘: 게임 재개");
+
         }
         else // 광고를 불러오는데 타임아웃했거나 실패했다면
         {
@@ -557,12 +558,13 @@ public class UIManager : MonoBehaviour
         // 게임 재개 로직
         Time.timeScale = 1f;
         KillTimerTweens();
+        Bridge.TEMPTEMP();
+
         SceneManager.LoadScene("MainScene");
 #else
         Time.timeScale = 1f;
         KillTimerTweens();
         Logger.Instance.SetLog("광고 로드");
-        Bridge.TEMPTEMP();
         SceneManager.LoadScene("MainScene");
 #endif
     }
