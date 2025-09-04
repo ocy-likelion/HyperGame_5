@@ -55,6 +55,20 @@ public class Bridge : MonoBehaviour
         return AdLoadStatus.Not_Loaded;
 #endif
     }
+    public void OnVisibilityChanged(string state)
+    {
+        // 백그라운드 실행 제한을 위한 코드
+        if (state == "hidden")
+        {
+            AudioListener.pause = true;
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            AudioListener.pause = false;
+            Time.timeScale = 1f;
+        }
+    }
 }
 public enum AdLoadStatus
 {
