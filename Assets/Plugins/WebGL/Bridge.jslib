@@ -8,6 +8,7 @@ var BridgePlugin = {
             console.error('JavaScript Error : ', error);
         }
     },
+    /*
     // 값을 반환하는 용도
     ExecuteJavaScriptReturnString: function (methodPtr) {
         var jsMethod = Module.UTF8ToString(methodPtr);
@@ -20,6 +21,7 @@ var BridgePlugin = {
             return "error";
         }
     }
+    */
 };
 
 mergeInto(LibraryManager.library, BridgePlugin);
