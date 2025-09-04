@@ -13,6 +13,7 @@ var BridgePlugin = {
     ExecuteJavaScriptReturnString: function (methodPtr) {
         var jsMethod = Module.UTF8ToString(methodPtr);
         try {
+
             var result = eval(jsMethod);
             if (result === undefined || result === null) return "";
             return result.toString();
