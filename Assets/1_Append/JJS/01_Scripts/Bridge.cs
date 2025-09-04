@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Bridge : MonoBehaviour
 {
+    #region 유니티에서 자바스크립트로
     [DllImport("__Internal")]
     private static extern void ExecuteJavaScriptMethod(string method); // 단순 메서드 실행용(반환값 없음)
     [DllImport("__Internal")]
@@ -55,6 +56,24 @@ public class Bridge : MonoBehaviour
         return AdLoadStatus.Not_Loaded;
 #endif
     }
+    #endregion
+
+    #region 자바스크립트에서 유니티로
+    public void OnVisibilityChanged(string state)
+    {
+        // 백그라운드 실행 제한을 위한 코드
+        if (state == "hidden")
+        {
+            AudioListener.pause = true;
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            AudioListener.pause = false;
+            Time.timeScale = 1f;
+        }
+    }
+    #endregion
 }
 public enum AdLoadStatus
 {
