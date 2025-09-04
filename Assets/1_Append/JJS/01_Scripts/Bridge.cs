@@ -8,7 +8,7 @@ public class Bridge : MonoBehaviour
     [DllImport("__Internal")]
     private static extern string ExecuteJavaScriptReturn(string method); // 반환값이 있는 메서드 실행용(단 무조건 string으로 반환됨)
 
-    public static void OpenLeaderBoard()
+    public static void OpenLeaderBoard() // 리더보드 열기
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
         ExecuteJavaScriptMethod("openLeaderBoard()");
@@ -16,7 +16,7 @@ public class Bridge : MonoBehaviour
         Debug.Log("리더보드 오픈");
 #endif
     }
-    public static void SubmitScore(int score)
+    public static void SubmitScore(int score) // 토스에 점수 보내기
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
         ExecuteJavaScriptMethod($"submitScore({score})");
@@ -24,7 +24,7 @@ public class Bridge : MonoBehaviour
         Debug.Log("점수 제출");
 #endif
     }
-    public static void LoadAd()
+    public static void LoadAd() // 광고 불러오기
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
         ExecuteJavaScriptMethod($"loadInterstitialAd()");
@@ -32,7 +32,7 @@ public class Bridge : MonoBehaviour
         Debug.Log("광고 불러오기");
 #endif
     }
-    public static void ShowAd()
+    public static void ShowAd() // 광고 보여주기
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
         ExecuteJavaScriptMethod($"showInterstitialAd()");
@@ -40,7 +40,7 @@ public class Bridge : MonoBehaviour
         Debug.Log("광고 보여주기");
 #endif
     }
-    public static AdLoadStatus GetAdStatus()
+    public static AdLoadStatus GetAdStatus() // 현재 광고 상태 불러오기
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
         string status = ExecuteJavaScriptReturn("GetAdLoadStatus()");

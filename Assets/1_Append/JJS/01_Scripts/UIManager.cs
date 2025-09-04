@@ -527,11 +527,49 @@ public class UIManager : MonoBehaviour
         IndexText.text = $"{currentTutorialIndex + 1}/{TutorialImages.Length}";
     }
 
-    public void Reset()
+    public async void Reset()
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        // 게임 일시정지
+        Time.timeScale = 0f;
+
+        // 광고 재생
+        Bridge.ShowAd(); // 동기 호출로 수정 (Toss SDK는 async 아님)
+
+        // 광고 상태 확인
+        AdLoadStatus status = Bridge.GetAdStatus();
+        if (status == AdLoadStatus.Loaded)
+        {
+            // 타임아웃 설정 (15초)
+            float timeout = 15f;
+            float elapsedTime = 0f;
+
+            // 광고가 닫힐 때까지 대기 또는 타임아웃
+            while (Bridge.GetAdStatus() != AdLoadStatus.Closed && elapsedTime < timeout)
+            {
+                await Task.Yield();
+                elapsedTime += Time.unscaledDeltaTime; // 일시정지 중에도 시간 측정
+            }
+
+            // 타임아웃 또는 광고 닫힘 후 게임 재개
+            Time.timeScale = 1f;
+            KillTimerTweens();
+            SceneManager.LoadScene("MainScene");
+            Debug.Log(elapsedTime >= timeout ? "광고 타임아웃: 게임 재개" : "광고 닫힘: 게임 재개");
+        }
+        else
+        {
+            // 광고가 로드되지 않은 경우 바로 게임 재개
+            Time.timeScale = 1f;
+            KillTimerTweens();
+            SceneManager.LoadScene("MainScene");
+            Debug.Log("광고 로드 실패: 게임 재개");
+        }
+#else
         Time.timeScale = 1f;
         KillTimerTweens();
         SceneManager.LoadScene("MainScene");
+#endif
     }
 
 
