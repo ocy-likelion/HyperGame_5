@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Bridge : MonoBehaviour
 {
+    #region 유니티에서 자바스크립트로
     [DllImport("__Internal")]
     private static extern void ExecuteJavaScriptMethod(string method); // 단순 메서드 실행용(반환값 없음)
     [DllImport("__Internal")]
@@ -46,16 +47,17 @@ public class Bridge : MonoBehaviour
         string status = ExecuteJavaScriptReturn("GetAdLoadStatus()");
         switch (status)
         {
-            case "loaded": return AdLoadStatus.Loaded;
-            case "failed": return AdLoadStatus.Failed;
-            case "closed": return AdLoadStatus.Closed;
-            default: return AdLoadStatus.NotLoaded;
+            AudioListener.pause = true;
+            Time.timeScale = 0f;
         }
-#else
-        return AdLoadStatus.Not_Loaded;
-#endif
+        else
+        {
+            AudioListener.pause = false;
+            Time.timeScale = 1f;
+        }
     }
 }
+
 public enum AdLoadStatus
 {
     Not_Loaded,
