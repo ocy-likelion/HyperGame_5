@@ -29,6 +29,10 @@ public static class ShowAd
                 Debug.LogWarning("광고 로드 실패");
                 return;
             }
+            else if (status == AdLoadStatus.Not_Loaded)
+            {
+                Debug.Log("아직 불러오는 중");
+            }
 
             await Task.Delay(TimeSpan.FromSeconds(checkInterval));
             elapsed += checkInterval;
