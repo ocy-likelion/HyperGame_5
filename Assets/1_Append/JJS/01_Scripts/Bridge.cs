@@ -15,7 +15,6 @@ public class Bridge : MonoBehaviour
         Logger.Instance.SetLog("리더보드를 오픈하려함.");
 #else
         Logger.Instance.SetLog("리더보드를 오픈하려함.");
-
         Debug.Log("리더보드 오픈");
 #endif
     }
@@ -25,6 +24,7 @@ public class Bridge : MonoBehaviour
         ExecuteJavaScriptMethod($"submitScore({score})");
         Logger.Instance.SetLog($"점수를 제출하려고 함{score}");
 #else
+        Logger.Instance.SetLog($"점수를 제출하려고 함{score}");
         Debug.Log("점수 제출");
 #endif
     }

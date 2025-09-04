@@ -537,7 +537,7 @@ public class UIManager : MonoBehaviour
         // 광고 재생
         AdLoadStatus loadStatus = await ShowAd.LoadAndShowAdAsync();
 
-        if (status == AdLoadStatus.Show) // 광고를 보여주는 중이라면
+        if (loadStatus == AdLoadStatus.Show) // 광고를 보여주는 중이라면
         {
             while (Bridge.GetAdStatus() != AdLoadStatus.Closed) // 광고가 닫힐 때까지 대기
             {
