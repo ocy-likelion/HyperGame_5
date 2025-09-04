@@ -33,6 +33,7 @@ public class Logger : MonoBehaviour
     {
         GameObject go = Instantiate(prefab_LogText, logContent);
         go.GetComponent<TMP_Text>().text = log;
+        DontDestroyOnLoad(go);
         Destroy(go, 5);
     }
     public void LogFromJS(string message)

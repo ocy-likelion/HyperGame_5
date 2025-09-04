@@ -560,6 +560,7 @@ public class UIManager : MonoBehaviour
 #else
         Time.timeScale = 1f;
         KillTimerTweens();
+        Logger.Instance.SetLog("광고 로드");
         SceneManager.LoadScene("MainScene");
 #endif
     }
