@@ -35,4 +35,9 @@ public class Logger : MonoBehaviour
         go.GetComponent<TMP_Text>().text = log;
         Destroy(go, 5);
     }
+    public void LogFromJS(string message)
+    {
+        SetLog("[JS] " + message);
+    }
+
 }
