@@ -8,10 +8,6 @@ public class Bridge : MonoBehaviour
     [DllImport("__Internal")]
     private static extern string ExecuteJavaScriptReturn(string method); // 반환값이 있는 메서드 실행용(단 무조건 string으로 반환됨)
 
-    public static void TEMPTEMP()
-    {
-        ExecuteJavaScriptMethod("tempTemp()");
-    }
     public static void OpenLeaderBoard()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR

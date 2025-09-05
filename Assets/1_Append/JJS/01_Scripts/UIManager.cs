@@ -130,7 +130,6 @@ public class UIManager : MonoBehaviour
         basicScore = gameManager.Score;
         text_Score.text = basicScore.ToString();
     }
-
     void Start()
     {
         timerRT = TimerImage.rectTransform;
@@ -156,10 +155,8 @@ public class UIManager : MonoBehaviour
             StartTimer();
         }
     }
-
     void OnDisable() { KillTimerTweens(); KillScoreTweens(); }
     void OnDestroy() { KillTimerTweens(); KillScoreTweens(); }
-
     void Update()
     {
         // 점수 애니 중에는 UI 텍스트 덮어쓰지 않음
@@ -173,8 +170,47 @@ public class UIManager : MonoBehaviour
             PlayedGame.hadPlayed = true;
         }
     }
+    public async void Reset()
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        //// 게임 일시정지
+        //Time.timeScale = 0f;
 
-  
+        //// 광고 재생
+        //AdLoadStatus loadStatus = await ShowAd.LoadAndShowAdAsync();
+
+        //if (loadStatus == AdLoadStatus.Show) // 광고를 보여주는 중이라면
+        //{
+        //    while (Bridge.GetAdStatus() != AdLoadStatus.Closed) // 광고가 닫힐 때까지 대기
+        //    {
+        //        await Task.Yield();
+        //    }
+
+        //    Logger.Instance.SetLog("광고 닫힘: 게임 재개");
+        //    Debug.Log("광고 닫힘: 게임 재개");
+
+        //}
+        //else // 광고를 불러오는데 타임아웃했거나 실패했다면
+        //{
+        //    Logger.Instance.SetLog("광고 로드 실패: 게임 재개");
+        //    Debug.Log("광고 로드 실패: 게임 재개");
+        //}
+
+        //// 게임 재개 로직
+        //Time.timeScale = 1f;
+        //KillTimerTweens();
+        //Bridge.TEMPTEMP();
+
+        //SceneManager.LoadScene("MainScene");
+#else
+        Time.timeScale = 1f;
+        KillTimerTweens();
+        Logger.Instance.SetLog("광고 로드");
+        SceneManager.LoadScene("MainScene");
+#endif
+    }
+
+    // 메인
     void HideTitleInstant()
     {
         if (!TitlePanel) return;
@@ -529,45 +565,6 @@ public class UIManager : MonoBehaviour
         IndexText.text = $"{currentTutorialIndex + 1}/{TutorialImages.Length}";
     }
 
-    public async void Reset()
-    {
-#if UNITY_WEBGL && !UNITY_EDITOR
-        // 게임 일시정지
-        Time.timeScale = 0f;
-
-        // 광고 재생
-        AdLoadStatus loadStatus = await ShowAd.LoadAndShowAdAsync();
-
-        if (loadStatus == AdLoadStatus.Show) // 광고를 보여주는 중이라면
-        {
-            while (Bridge.GetAdStatus() != AdLoadStatus.Closed) // 광고가 닫힐 때까지 대기
-            {
-                await Task.Yield();
-            }
-
-            Logger.Instance.SetLog("광고 닫힘: 게임 재개");
-            Debug.Log("광고 닫힘: 게임 재개");
-
-        }
-        else // 광고를 불러오는데 타임아웃했거나 실패했다면
-        {
-            Logger.Instance.SetLog("광고 로드 실패: 게임 재개");
-            Debug.Log("광고 로드 실패: 게임 재개");
-        }
-
-        // 게임 재개 로직
-        Time.timeScale = 1f;
-        KillTimerTweens();
-        Bridge.TEMPTEMP();
-
-        SceneManager.LoadScene("MainScene");
-#else
-        Time.timeScale = 1f;
-        KillTimerTweens();
-        Logger.Instance.SetLog("광고 로드");
-        SceneManager.LoadScene("MainScene");
-#endif
-    }
 
 
     void ActivateEffectUnscaled(GameObject fx)
