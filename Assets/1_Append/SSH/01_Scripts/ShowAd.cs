@@ -22,19 +22,19 @@ public static class ShowAd
             if (status == AdLoadStatus.Loaded)
             {
                 Debug.Log("광고 준비 완료. 표시합니다.");
-                Logger.Instance.SetLog("광고 준비 완료. 표시합니다.");
+                //Logger.Instance.SetLog("광고 준비 완료. 표시합니다.");
                 break;
             }
             else if (status == AdLoadStatus.Failed)
             {
                 Debug.LogWarning("광고 로드 실패");
-                Logger.Instance.SetLog("광고 불러오기 실패(그냥 실패. 원인 모름)");
+                //Logger.Instance.SetLog("광고 불러오기 실패(그냥 실패. 원인 모름)");
                 return AdLoadStatus.Failed;
             }
             else if (status == AdLoadStatus.Not_Loaded)
             {
                 Debug.Log("아직 불러오는 중");
-                Logger.Instance.SetLog("광고 불러 오는 중 기달");
+                //Logger.Instance.SetLog("광고 불러 오는 중 기달");
             }
 
             await Task.Delay(TimeSpan.FromSeconds(checkInterval));
@@ -43,7 +43,7 @@ public static class ShowAd
             if (elapsed >= timeout)
             {
                 Debug.LogWarning("광고 불러오기 실패(타임아웃 : 15초)");
-                Logger.Instance.SetLog("광고 불러오기 실패(타임아웃 : 15초)");
+                //Logger.Instance.SetLog("광고 불러오기 실패(타임아웃 : 15초)");
                 return AdLoadStatus.TimeOut;
             }
         }
@@ -53,7 +53,6 @@ public static class ShowAd
         return AdLoadStatus.Show;
 #else
         Debug.Log("에디터 또는 WebGL 미지원 환경: 광고 호출 스킵");
-        Logger.Instance.SetLog("에디터 또는 WebGL 미지원 환경: 광고 호출 스킵");
         return AdLoadStatus.Not_Loaded;
 
 #endif

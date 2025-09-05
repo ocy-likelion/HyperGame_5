@@ -192,7 +192,7 @@ public class UIManager : MonoBehaviour
         //}
         //else // 광고를 불러오는데 타임아웃했거나 실패했다면
         //{
-        //    Logger.Instance.SetLog("광고 로드 실패: 게임 재개");
+            //Logger.Instance.SetLog("광고 로드 실패: 게임 재개");
         //    Debug.Log("광고 로드 실패: 게임 재개");
         //}
 
@@ -205,7 +205,6 @@ public class UIManager : MonoBehaviour
 #else
         Time.timeScale = 1f;
         KillTimerTweens();
-        Logger.Instance.SetLog("광고 로드");
         SceneManager.LoadScene("MainScene");
 #endif
     }
