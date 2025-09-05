@@ -35,16 +35,6 @@
         productVersion: "0.1.0",
         // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
         // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
-      }).then((unityInstance) => {
-        window.unityInstance = unityInstance;
-
-        document.addEventListener("visibilitychange"/*자바스크립트에 내장된 이벤트*/, function () {
-          const state = document.hidden ? "hidden" : "visible";
-          window.unityInstance.SendMessage
-          ("Bridge"/*클래스 이름*/, "OnVisibilityChanged"/*메서드 이름*/, state);
-        });
-      }).catch((message) => {
-        alert(message);
       });
     </script>
   </body>

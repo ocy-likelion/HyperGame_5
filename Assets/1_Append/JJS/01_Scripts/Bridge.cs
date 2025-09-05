@@ -11,8 +11,8 @@ public class Bridge : MonoBehaviour
     public static void OpenLeaderBoard()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        ExecuteJavaScriptMethod("openLeaderBoard()");
         Logger.Instance.SetLog("리더보드를 오픈하려함.");
+        ExecuteJavaScriptMethod("openLeaderBoard()");
 #else
         Logger.Instance.SetLog("리더보드를 오픈하려함.");
         Debug.Log("리더보드 오픈");
@@ -21,8 +21,8 @@ public class Bridge : MonoBehaviour
     public static void SubmitScore(int score)
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        ExecuteJavaScriptMethod($"submitScore({score})");
         Logger.Instance.SetLog($"점수를 제출하려고 함{score}");
+        ExecuteJavaScriptMethod($"submitScore({score})");
 #else
         Logger.Instance.SetLog($"점수를 제출하려고 함{score}");
         Debug.Log("점수 제출");

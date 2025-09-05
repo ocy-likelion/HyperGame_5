@@ -21,7 +21,6 @@ var BridgePlugin = {
             return "error";
         }
     }
-    
 };
 
 mergeInto(LibraryManager.library, BridgePlugin);
