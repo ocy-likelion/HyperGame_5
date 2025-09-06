@@ -9921,7 +9921,7 @@ MonoBehaviour:
   m_text: "\uB7AD\uD0B9 \uBCF4\uAE30"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2c0196dd7994a0645bc21c8a67cd2685, type: 2}
-  m_sharedMaterial: {fileID: 6412805146833517776, guid: 8e50a271e2d465649ac1fb4965a7d43e, type: 2}
+  m_sharedMaterial: {fileID: 6412805146833517776, guid: 2c0196dd7994a0645bc21c8a67cd2685, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -10084,6 +10084,18 @@ MonoBehaviour:
       - m_Target: {fileID: 997108186004063920}
         m_TargetAssemblyTypeName: RealSoundManager, Assembly-CSharp
         m_MethodName: OnClickButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 732051078}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_MethodName: GoToLeaderBoard
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -19338,7 +19350,7 @@ MonoBehaviour:
   m_text: 10000
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2c0196dd7994a0645bc21c8a67cd2685, type: 2}
-  m_sharedMaterial: {fileID: 6412805146833517776, guid: 8e50a271e2d465649ac1fb4965a7d43e, type: 2}
+  m_sharedMaterial: {fileID: 6412805146833517776, guid: 2c0196dd7994a0645bc21c8a67cd2685, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -19820,7 +19832,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1649140883
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20560,7 +20572,7 @@ MonoBehaviour:
   m_text: "\uB2E4\uC2DC\uD558\uAE30"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2c0196dd7994a0645bc21c8a67cd2685, type: 2}
-  m_sharedMaterial: {fileID: 6412805146833517776, guid: 8e50a271e2d465649ac1fb4965a7d43e, type: 2}
+  m_sharedMaterial: {fileID: 6412805146833517776, guid: 2c0196dd7994a0645bc21c8a67cd2685, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

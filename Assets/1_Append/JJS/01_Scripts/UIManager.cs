@@ -196,12 +196,10 @@ public class UIManager : MonoBehaviour
         //    Debug.Log("광고 로드 실패: 게임 재개");
         //}
 
-        //// 게임 재개 로직
-        //Time.timeScale = 1f;
-        //KillTimerTweens();
-        //Bridge.TEMPTEMP();
-
-        //SceneManager.LoadScene("MainScene");
+        // 게임 재개 로직
+        Time.timeScale = 1f;
+        KillTimerTweens();
+        SceneManager.LoadScene("MainScene");
 #else
         Time.timeScale = 1f;
         KillTimerTweens();
