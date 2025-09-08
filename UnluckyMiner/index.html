@@ -8,6 +8,7 @@
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
     <canvas id="unity-canvas" width=720 height=1280 tabindex="-1" style="width: 720px; height: 1280px; background: #231F20"></canvas>
     <script src="Build/UnluckyMiner.loader.js"></script>
+    <script type="module" src="src/SDKWrapper.js"></script>
     <script>
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         // Mobile device style: fill the whole browser client area with the game canvas:
@@ -35,6 +36,16 @@
         productVersion: "0.1.0",
         // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
         // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+      }).then((unityInstance) => {
+        window.unityInstance = unityInstance;
+
+        document.addEventListener("visibilitychange"/*자바스크립트에 내장된 이벤트*/, function () {
+          const state = document.hidden ? "hidden" : "visible";
+          window.unityInstance.SendMessage
+          ("Bridge"/*클래스 이름*/, "OnVisibilityChanged"/*메서드 이름*/, state);
+        });
+      }).catch((message) => {
+        alert(message);
       });
     </script>
   </body>
