@@ -45,7 +45,7 @@ public class SabotageEventManager : MonoBehaviour
     private readonly Vector3 GREAT_MOLE_POS = new Vector3(4, 3, 0);
     private Vector3 LAVA_END_POS;
     private List<Action> sabotageEvents;
-    private readonly float[] eventTimes = { 7f, 17f, 27f, 37f, 47f }; // 이벤트 시작 시간
+    private readonly float[] eventTimes = { 7f, 17f, 27f, 37f, 47f }; // 이벤트 시작 시간(경과 후 시간)
 
     // 유니티 콜백
     private void Awake()
