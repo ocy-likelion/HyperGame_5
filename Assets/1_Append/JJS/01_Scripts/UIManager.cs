@@ -173,28 +173,28 @@ public class UIManager : MonoBehaviour
     public async void Reset()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        //// 게임 일시정지
-        //Time.timeScale = 0f;
+        // 게임 일시정지
+        Time.timeScale = 0f;
 
-        //// 광고 재생
-        //AdLoadStatus loadStatus = await ShowAd.LoadAndShowAdAsync();
+        // 광고 재생
+        AdLoadStatus loadStatus = await ShowAd.LoadAndShowAdAsync();
 
-        //if (loadStatus == AdLoadStatus.Show) // 광고를 보여주는 중이라면
-        //{
-        //    while (Bridge.GetAdStatus() != AdLoadStatus.Closed) // 광고가 닫힐 때까지 대기
-        //    {
-        //        await Task.Yield();
-        //    }
+        if (loadStatus == AdLoadStatus.Show) // 광고를 보여주는 중이라면
+        {
+            while (Bridge.GetAdStatus() != AdLoadStatus.Closed) // 광고가 닫힐 때까지 대기
+            {
+                await Task.Yield();
+            }
 
-        //    Logger.Instance.SetLog("광고 닫힘: 게임 재개");
-        //    Debug.Log("광고 닫힘: 게임 재개");
+            Logger.Instance.SetLog("광고 닫힘: 게임 재개");
+            Debug.Log("광고 닫힘: 게임 재개");
 
-        //}
-        //else // 광고를 불러오는데 타임아웃했거나 실패했다면
-        //{
-            //Logger.Instance.SetLog("광고 로드 실패: 게임 재개");
-        //    Debug.Log("광고 로드 실패: 게임 재개");
-        //}
+        }
+        else // 광고를 불러오는데 타임아웃했거나 실패했다면
+        {
+            Logger.Instance.SetLog("광고 로드 실패: 게임 재개");
+            Debug.Log("광고 로드 실패: 게임 재개");
+        }
 
         // 게임 재개 로직
         Time.timeScale = 1f;
