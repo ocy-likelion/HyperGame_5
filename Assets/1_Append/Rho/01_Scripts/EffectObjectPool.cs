@@ -6,7 +6,7 @@ using UnityEngine;
 public class EffectObjectPool : MonoBehaviour
 {
     // 상수
-    private const int LOAD_COUNT = 15;
+    private const int LOAD_COUNT = 30;
 
     // 프리팹
     [Header("프리팹")]

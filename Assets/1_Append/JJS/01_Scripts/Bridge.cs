@@ -3,10 +3,13 @@ using UnityEngine;
 
 public class Bridge : MonoBehaviour
 {
+#if UNITY_WEBGL && !UNITY_EDITOR
     [DllImport("__Internal")]
     private static extern void ExecuteJavaScriptMethod(string method); // 단순 메서드 실행용(반환값 없음)
+
     [DllImport("__Internal")]
     private static extern string ExecuteJavaScriptReturn(string method); // 반환값이 있는 메서드 실행용(단 무조건 string으로 반환됨)
+#endif
 
     public static void OpenLeaderBoard()
     {
